@@ -1,0 +1,14 @@
+name: Spleef
+version: '${project.version}'
+main: me.gipper1998.spleef.Spleef
+api-version: 1.13
+commands:
+  spleef:
+    description: All Spleef commands
+permissions:
+  spleef.admin:
+    description: Admin permissions
+    default: false
+  spleef.diamond:
+    description: Gives diamond shovels
+    default: false

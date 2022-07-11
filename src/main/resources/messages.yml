@@ -1,0 +1,60 @@
+# Main Messages File
+prefix: "&e&l[&b&lSpleef&e&l]&r"
+
+start_up: "<prefix> &aPlugin started with no problems!!!"
+shut_down: "<prefix> &cPlugin disabled "
+vault_enable: "<prefix> &bVault is enabled and hooked!"
+papi_enable: "<prefix> &dPlaceholderAPI enabled and hooked!"
+reloaded: "<prefix> &aSuccessfully reloaded!"
+
+# Modify the wizard setup messages (Note: Name can only be changed when in the editing wizard).
+no_name_wizard: "<prefix> &cNo name was designated, please type in a name to start the wizard."
+in_wizard: "<prefix> &aYou are now in the setup wizard, to cancel, click on the barrier."
+exit_wizard: "<prefix> &cYou have canceled the wizard, all progress has been lost."
+wizard_minimum_chat: "<prefix> &aType in chat the minimum players can be in the arena."
+wizard_maximum_chat: "<prefix> &aType in chat the maximum players can be in the arena."
+wizard_name_chat: "<prefix> &aType in chat the name you want to change it to."
+wizard_minimum_set: "<prefix> &aMinimum Set to &e<minimum>&a."
+wizard_maximum_set: "<prefix> &aMaximum Set to &e<maximum>&a."
+wizard_name_set: "<prefix> &aNew name set to &e<arenaname>&a."
+wizard_arena_saved: "<prefix> &aArena saved and completed, ready to go!"
+wizard_arena_spawn_set: "<prefix> &aArena Spawn Set!"
+wizard_lobby_spawn_set: "<prefix> &aLobby Spawn Set!"
+wizard_spectator_spawn_set: "<prefix> &aSpectator Spawn Set!"
+wizard_arena_not_set: "<prefix> &cArena not set."
+wizard_spectator_not_set: "<prefix> &cSpectator not set."
+wizard_minimum_not_set: "<prefix> &cMinimum not set."
+wizard_maximum_not_set: "<prefix> &cMaximum not set."
+
+# Wizard items
+cancel_wizard_item: "&cCancel_Wizard"
+set_minimum_item: "&bSet_Minimum"
+set_maximum_item: "&bSet_Maximum"
+set_arena_spawn_item: "&bSet_Arena_Spawn"
+set_lobby_spawn_item: "&bSet_Lobby_Spawn"
+set_spectator_spawn_item: "&bSet_Spectator_Spawn"
+complete_wizard_item: "&eComplete_Wizard"
+set_name_item: "&fChange_Name"
+
+# Modify arena messages
+no_name: "<prefix> &cNo name was designated, please type the name before continuing."
+arena_does_not_exist: "<prefix> &cThe arena with the name &d<arenaname> &cdoes not exist."
+player_join: "<prefix> &b<name> &ahas joined the game!"
+player_success_join: "<prefix> &aSuccessfully joined arena &d<arenaname>&a."
+player_quit: "<prefix> &b<name> &chas left the game."
+player_success_quit: "<prefix> &cYou have left arena &d<arenaname>&c."
+
+# In-Game messages
+gold_shovel: "&6&lSpleefer_Spade"
+diamond_shovel: "&b&lSpleefer_Spade"
+leave_item: "&c&lExit_Arena"
+snowball: "&f&lFIRE_THEM_SNOWBALLS"
+
+# Modify the command page here
+commands_page:
+  - "&f&l------------------------"
+  - "<prefix> &cCommands:"
+  - "/spleef create <name>"
+  - "/spleef delete <name>"
+  - "/spleef join <name>"
+  - "/spleef leave"

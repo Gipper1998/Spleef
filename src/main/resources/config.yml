@@ -1,0 +1,33 @@
+# Default Config.yml
+
+# The main game settings (this goes for all arenas):
+waiting_time: 30
+total_game_time: 120
+give_snowballs_on_begin:
+  enable: true
+  amount: 30
+# If it hits a certain time, an event will happen
+
+
+
+
+
+# Blocks given to players (Not the display name, but the actual block).
+setup_wizard_blocks:
+  cancel: "barrier"
+  maximum: "magenta_wool"
+  minimum: "lime_wool"
+  spectator: "white_wool"
+  lobby: "red_wool"
+  arena: "light_blue_wool"
+  complete: "sunflower"
+edit_wizard_blocks:
+  name: "paper"
+  maximum: "magenta_wool"
+  minimum: "lime_wool"
+  spectator: "white_wool"
+  lobby: "red_wool"
+  arena: "light_blue_wool"
+  complete: "sunflower"
+in_lobby:
+  leave: "barrier"
