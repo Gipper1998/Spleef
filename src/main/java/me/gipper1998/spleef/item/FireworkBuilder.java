@@ -122,6 +122,6 @@ public class FireworkBuilder {
     }
 
     private Color color (String color){
-        return Color.BLUE;
+        return Color.AQUA;
     }
 }
