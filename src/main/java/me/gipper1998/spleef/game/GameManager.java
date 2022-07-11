@@ -6,6 +6,7 @@ import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
+import me.gipper1998.spleef.item.FireworkBuilder;
 import me.gipper1998.spleef.item.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -157,6 +158,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     private void winnerShowOff(){
         if (currentTime == winnerDelay) {
             Player winner = playersInGame.get(0);
+            FireworkBuilder fb = new FireworkBuilder(winner.getLocation(), 25);
+            fb.launch();
             for (Player p : totalPlayers) {
                 MessageManager.getString("player_winner", winner.getName(), p);
             }

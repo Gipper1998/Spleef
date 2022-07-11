@@ -10,9 +10,12 @@ public class ItemBuilder {
     @Getter
     private ItemStack is;
 
+    @Getter
+    private ItemMeta im;
+
     public ItemBuilder(Material material, String name){
         this.is = new ItemStack(material);
-        ItemMeta im = is.getItemMeta();
+        this.im = is.getItemMeta();
         im.setDisplayName(name);
         im.setUnbreakable(true);
         is.setItemMeta(im);
@@ -20,7 +23,7 @@ public class ItemBuilder {
 
     public ItemBuilder(Material material, String name, int num){
         this.is = new ItemStack(material, num);
-        ItemMeta im = is.getItemMeta();
+        this.im = is.getItemMeta();
         im.setDisplayName(name);
         im.setUnbreakable(true);
         is.setItemMeta(im);
