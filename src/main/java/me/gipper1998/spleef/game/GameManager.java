@@ -50,6 +50,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     @Getter
     private List<Player> spectators = new ArrayList<>();
 
+    private List<Player> totalPlayers = new ArrayList<>();
+
     @Getter
     private Status status = Status.WAIT;
 
@@ -80,6 +82,10 @@ public class GameManager extends BukkitRunnable implements Listener {
                 playGame();
                 break;
             }
+            case WINNER: {
+                winnerShowOff();
+                break;
+            }
             case RESTARTING: {
                 resetArena();
                 break;
@@ -93,6 +99,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 for (Player p : playersInGame){
                     p.teleport(arena.getArena());
                     p.hidePlayer(Spleef.main, p);
+                    totalPlayers.add(p);
                 }
                 currentTime = startDelay;
                 status = Status.DELAYSTART;
@@ -124,11 +131,10 @@ public class GameManager extends BukkitRunnable implements Listener {
     private void playGame(){
         if (playersInGame.size() > 1){
             if (currentTime <= 0){
-                for (Player p : playersInGame){
-                  GameStoreItems gmi = playersStuff.get(p);
-                  gmi.giveBackItems();
+                for (Player p : totalPlayers){
+                    MessageManager.getString("arena_no_winner", p);
                 }
-                playersInGame.clear();
+                removeEverybody();
                 currentTime = resetDelay;
                 status = Status.RESTARTING;
                 return;
@@ -142,17 +148,26 @@ public class GameManager extends BukkitRunnable implements Listener {
                 currentTime--;
             }
         }
-        else {
+        if (playersInGame.size() == 1) {
+            currentTime = winnerDelay;
+            status = Status.WINNER;
+        }
+    }
+
+    private void winnerShowOff(){
+        if (currentTime == winnerDelay) {
             Player winner = playersInGame.get(0);
-            String name = winner.getName();
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Spleef.main, new Runnable() {
-                @Override
-                public void run() {
-                    PlayerStatManager.addWinPoint(winner.getUniqueId());
-                    status = Status.RESTARTING;
-                    removeEverybody();
-                }
-            }, 20L * winnerDelay);
+            for (Player p : totalPlayers) {
+                MessageManager.getString("player_winner", winner.getName(), p);
+            }
+        }
+        if (currentTime <= 0){
+            removeEverybody();
+            currentTime = resetDelay;
+            status = Status.RESTARTING;
+        }
+        else {
+            currentTime--;
         }
     }
 
@@ -191,6 +206,9 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void killPlayer(Player p){
+        for (Player player : totalPlayers){
+            MessageManager.getString("player_died", p.getName(), player);
+        }
         playersInGame.remove(p);
         spectators.add(p);
         p.teleport(arena.getSpectate());
@@ -227,24 +245,23 @@ public class GameManager extends BukkitRunnable implements Listener {
         MessageManager.getString("player_success_quit", arena.getName(), p);
         playersStuff.remove(p);
         if (status == Status.GAME){
+            MessageManager.getString("player_success_quit", arena.getName(), p);
+            totalPlayers.remove(p);
+            spectators.remove(p);
+            playersInGame.remove(p);
             PlayerStatManager.addLosePoint(p.getUniqueId());
         }
     }
 
     public void removeEverybody(){
         List<Player> totalPlayers = new ArrayList<>();
-        for (Player p : playersInGame){
-            totalPlayers.add(p);
-        }
-        for (Player p : spectators){
-            totalPlayers.add(p);
-        }
         playersInGame.clear();
         spectators.clear();
         for (Player p : totalPlayers){
             GameStoreItems gmi = playersStuff.get(p);
             gmi.giveBackItems();
         }
+        totalPlayers.clear();
         playersStuff.clear();
     }
 

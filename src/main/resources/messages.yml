@@ -39,9 +39,7 @@ set_name_item: "&fChange_Name"
 # Modify arena messages
 no_name: "<prefix> &cNo name was designated, please type the name before continuing."
 arena_does_not_exist: "<prefix> &cThe arena with the name &d<arenaname> &cdoes not exist."
-player_join: "<prefix> &b<name> &ahas joined the game!"
 player_success_join: "<prefix> &aSuccessfully joined arena &d<arenaname>&a."
-player_quit: "<prefix> &b<name> &chas left the game."
 player_success_quit: "<prefix> &cYou have left arena &d<arenaname>&c."
 
 # In-Game messages
@@ -49,6 +47,12 @@ gold_shovel: "&6&lSpleefer_Spade"
 diamond_shovel: "&b&lSpleefer_Spade"
 leave_item: "&c&lExit_Arena"
 snowball: "&f&lFIRE_THEM_SNOWBALLS"
+
+player_join: "<prefix> &b<name> &ahas joined the game!"
+player_quit: "<prefix> &b<name> &chas left the game."
+player_died: "<prefix> <name> has been eliminated."
+player_winner: "<prefix> <name> has won the game!!"
+arena_no_winner: "<prefix> The match took too long, arena resetting."
 
 # Modify the command page here
 commands_page:
