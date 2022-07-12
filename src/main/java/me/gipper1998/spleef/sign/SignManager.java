@@ -1,156 +1,109 @@
+// Special thanks to Ajneb97 for this sign Implementation
+
 package me.gipper1998.spleef.sign;
 
-import me.gipper1998.spleef.file.MessageManager;
-import me.gipper1998.spleef.game.GameManager;
+import me.gipper1998.spleef.Spleef;
+import me.gipper1998.spleef.arena.Arena;
+import me.gipper1998.spleef.arena.ArenaManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class SignManager implements Listener {
-
-    private GameManager gm;
-    private List<Sign> signs = new ArrayList<>();
 
     private String LINE_ZERO = "";
     private String LINE_ONE = "";
     private String LINE_TWO = "";
     private String LINE_THREE = "";
+    private static BukkitTask task;
 
-    public SignManager(GameManager gm){
-        this.gm = gm;
-        this.LINE_ZERO = MessageManager.getSignString(0, "main_sign.0");
-        this.LINE_ONE = MessageManager.getSignString(1, "main_sign.1");
-        this.LINE_TWO = MessageManager.getSignString(2, "main_sign.2");
-        this.LINE_THREE = MessageManager.getSignString(3, "main_sign.3");
+    public static void startUpdatingSigns(){
+        if (task != null){
+            task.cancel();
+        }
+        task = (new BukkitRunnable(){
+            public void run(){
+
+            }
+        }.runTaskTimerAsynchronously(Spleef.main, 0L, 20L));
     }
 
-    public void registerNewSigns(){
-        for (World world : Bukkit.getWorlds()){
-            for (Chunk c : world.getLoadedChunks()){
-                for (BlockState state : c.getTileEntities()){
-                    if (state instanceof Sign){
-                        Sign sign = (Sign) state;
-                        if (sign.getLine(1).equals(ChatColor.stripColor(gm.getArena().getName()))){
-                            if (!signs.contains(sign)){
-                                signs.add(sign);
-                            }
+    private void updateSigns(){
+        ConfigurationSection section = Spleef.main.getConfig().getConfigurationSection("Signs");
+        Set<String> keys = section.getKeys(false);
+        for (String key : keys){
+            Arena arena = ArenaManager.findArena(key);
+            if (arena != null){
+                List<String> details = new ArrayList<>();
+                if (Spleef.main.signs.getConfig().contains("Signs." + key)){
+                    details = Spleef.main.signs.getConfig().getStringList("Signs." + key);
+                }
+                for (int i = 0; i < details.size(); i++){
+                    String[] location = details.get(i).split(";");
+                    int x = Integer.valueOf(location[0]);
+                    int y = Integer.valueOf(location[1]);
+                    int z = Integer.valueOf(location[2]);
+                    World world = Bukkit.getWorld(location[3]);
+                    if (world != null){
+                        if (!world.isChunkLoaded(x >> 4, y >> 4)){
+                            continue;
                         }
                     }
-                }
-            }
-        }
-        updateSigns();
-    }
-
-    public void stopAllSigns(){
-        for (Sign sign : signs){
-            sign.setLine(0, LINE_ZERO);
-            sign.setLine(1, gm.getArena().getName());
-            sign.setLine(2, "");
-            sign.setLine(3, "");
-            sign.update();
-        }
-    }
-
-    public void updateSigns(){
-        for (Sign sign : signs){
-            updateSign(sign);
-        }
-    }
-
-    private void registerSign(Sign sign){
-        if (sign.getLine(1).equals((ChatColor.stripColor(gm.getArena().getName())))){
-            if (!signs.contains(sign)){
-                signs.add(sign);
-            }
-        }
-        updateSigns();
-    }
-
-    private void updateSign(Sign sign){
-        if (sign.getChunk().isLoaded()){
-            sign.getChunk().load();
-        }
-        switch (gm.getStatus()){
-            case WAIT: {
-                break;
-            }
-            case DELAYSTART: {
-                break;
-            }
-            case GAME: {
-                break;
-            }
-            case WINNER: {
-                break;
-            }
-            case RESTARTING: {
-                break;
-            }
-        }
-    }
-
-    @EventHandler
-    public void onSignPlace(SignChangeEvent event){
-        if (event.getPlayer().hasPermission("spleef.admin")){
-            if (event.getLine(0).equals("[Spleef]")){
-                if (event.getLine(1).equalsIgnoreCase(gm.getArena().getName())){
-                    Sign sign = (Sign) event.getBlock().getState();
-                    registerSign(sign);
-                }
-            }
-        }
-    }
-
-    @EventHandler
-    public void onSignBreak(BlockBreakEvent event){
-        if (event.getBlock().getState() instanceof Sign){
-            Sign sign = (Sign) event.getBlock().getState();
-            if (event.getPlayer().hasPermission("spleef.admin")){
-                if (signs.contains(sign)){
-                    signs.remove(sign);
-                }
-            }
-        }
-    }
-
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event){
-        for (BlockState state : event.getChunk().getTileEntities()){
-            if (state instanceof Sign){
-                Sign sign = (Sign) state;
-                if (sign.getLine(1).equalsIgnoreCase(ChatColor.stripColor(gm.getArena().getName()))){
-                    if (!signs.contains(sign)){
-                        signs.add(sign);
-                        updateSign(sign);
+                    Block block = world.getBlockAt(x, y, z);
+                    if (block instanceof Sign){
+                        Sign sign = (Sign) block.getState();
+                        String arenaUpdateLine = "";
+                        List<String>
                     }
                 }
+
             }
         }
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event){
-        if (event.getClickedBlock().getState() instanceof Sign){
-            Sign sign = (Sign) event.getClickedBlock().getState();
-            registerSign(sign);
-            if (sign.getLine(1).equalsIgnoreCase(ChatColor.stripColor(gm.getArena().getName()))){
-                gm.addPlayer(event.getPlayer());
-                event.setCancelled(true);
+    public void onSignCreation(SignChangeEvent event){
+        Player player = event.getPlayer();
+        if (player.isOp() || player.hasPermission("spleef.admin")){
+            if (event.getLine(0).equals("[Spleef]")){
+                String arena = event.getLine(1);
+                if (arena != null && ArenaManager.findArena(arena) != null){
+
+                }
             }
         }
     }
 
+    @EventHandler
+    public void onSignDelete(BlockBreakEvent event){
+        Player player = event.getPlayer();
+        if (event.getBlock() instanceof Sign){
+            if (player.isOp() || player.hasPermission("spleef.admin")){
+
+            }
+        }
+    }
+
+    @EventHandler
+    public void onSignInteract(PlayerInteractEvent event){
+        Player player = event.getPlayer();
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getClickedBlock() instanceof Sign){
+
+        }
+    }
 }

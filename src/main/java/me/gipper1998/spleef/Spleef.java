@@ -4,9 +4,11 @@ import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.command.CommandManager;
 import me.gipper1998.spleef.file.FileManager;
 import me.gipper1998.spleef.file.MessageManager;
+import me.gipper1998.spleef.sign.SignManager;
 import me.gipper1998.spleef.softdepend.PAPIManager;
 import me.gipper1998.spleef.softdepend.VaultManager;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Sign;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Spleef extends JavaPlugin {
@@ -28,6 +30,7 @@ public class Spleef extends JavaPlugin {
         ArenaManager.loadArenas();
         registerSoftDependencies();
         getCommand("spleef").setExecutor(new CommandManager());
+        Bukkit.getServer().getPluginManager().registerEvents(new SignManager(), this);
         MessageManager.sendMessage("start_up", null);
     }
 

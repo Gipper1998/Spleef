@@ -62,7 +62,6 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     public GameManager(Arena arena){
         Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
-        Spleef.main.getServer().getPluginManager().registerEvents(new SignManager(this), Spleef.main);
         this.arena = arena;
         this.waitTime = ConfigManager.getInt("waiting_time");
         this.gameTime = ConfigManager.getInt("total_game_time");
@@ -71,12 +70,10 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.DIAMOND_SPADE_ITEM = MessageManager.getString("diamond_shovel");
         this.SNOWBALL_ITEM = MessageManager.getString("snowball");
         this.runTaskTimer(Spleef.main, 20L, 20L);
-        sm.registerNewSigns();
     }
 
     @Override
     public void run(){
-        sm.updateSigns();
         switch (status){
             case WAIT: {
                 waitTask();

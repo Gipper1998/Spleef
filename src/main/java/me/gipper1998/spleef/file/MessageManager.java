@@ -116,6 +116,12 @@ public class MessageManager {
         }
     }
 
+    public static String getPrefix(){
+        String prefix = Spleef.main.messages.getConfig().getString("prefix");
+        prefix = translateHEX(prefix);
+        return ChatColor.translateAlternateColorCodes('&',prefix);
+    }
+
     private static String translateHEX(String message){
         final char colorChar = ChatColor.COLOR_CHAR;
         Pattern HEX = Pattern.compile("#([A-Fa-f0-9]{6})");
@@ -130,6 +136,8 @@ public class MessageManager {
         }
         return matcher.appendTail(buffer).toString();
     }
+
+
 
     public static String getSignString(int i, String s) {
         return null;
