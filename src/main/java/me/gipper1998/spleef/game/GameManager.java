@@ -8,6 +8,7 @@ import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.item.FireworkBuilder;
 import me.gipper1998.spleef.item.ItemBuilder;
+import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -29,7 +30,9 @@ import java.util.Map;
 
 public class GameManager extends BukkitRunnable implements Listener {
 
+    @Getter
     private Arena arena;
+
     private int waitTime = 10;
     private int gameTime = 120;
     private int resetDelay = 5;
@@ -47,17 +50,19 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @Getter
     private List<Player> playersInGame = new ArrayList<>();
-
     @Getter
     private List<Player> spectators = new ArrayList<>();
-
+    @Getter
     private List<Player> totalPlayers = new ArrayList<>();
 
     @Getter
     private Status status = Status.WAIT;
 
+    private SignManager sm;
+
     public GameManager(Arena arena){
         Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
+        Spleef.main.getServer().getPluginManager().registerEvents(new SignManager(this), Spleef.main);
         this.arena = arena;
         this.waitTime = ConfigManager.getInt("waiting_time");
         this.gameTime = ConfigManager.getInt("total_game_time");
@@ -66,10 +71,12 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.DIAMOND_SPADE_ITEM = MessageManager.getString("diamond_shovel");
         this.SNOWBALL_ITEM = MessageManager.getString("snowball");
         this.runTaskTimer(Spleef.main, 20L, 20L);
+        sm.registerNewSigns();
     }
 
     @Override
     public void run(){
+        sm.updateSigns();
         switch (status){
             case WAIT: {
                 waitTask();
@@ -158,7 +165,7 @@ public class GameManager extends BukkitRunnable implements Listener {
     private void winnerShowOff(){
         if (currentTime == winnerDelay) {
             Player winner = playersInGame.get(0);
-            FireworkBuilder fb = new FireworkBuilder(winner.getLocation(), 25);
+            FireworkBuilder fb = new FireworkBuilder(arena.getArena(), 25, "aqua", 2, 5);
             fb.launch();
             for (Player p : totalPlayers) {
                 MessageManager.getString("player_winner", winner.getName(), p);

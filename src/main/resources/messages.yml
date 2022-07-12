@@ -54,6 +54,17 @@ player_died: "<prefix> <name> has been eliminated."
 player_winner: "<prefix> <name> has won the game!!"
 arena_no_winner: "<prefix> The match took too long, arena resetting."
 
+main_sign:
+  1: "<prefix>"
+  2: "<areanname>"
+  3: "&3<ingame> &e/ &3<maximum>"
+  4: "<status>"
+
+sign_status:
+  wait: "Waiting"
+
+
+
 # Modify the command page here
 commands_page:
   - "&f&l------------------------"

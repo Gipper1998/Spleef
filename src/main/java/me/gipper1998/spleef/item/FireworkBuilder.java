@@ -12,49 +12,56 @@ public class FireworkBuilder {
 
     @Getter
     private Firework fw;
-    @Getter
-    private FireworkMeta fwm;
 
     public FireworkBuilder(Location location){
         this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        this.fwm = fw.getFireworkMeta();
+        FireworkMeta fwm = fw.getFireworkMeta();
         fw.detonate();
     }
 
     public FireworkBuilder(Location location, int power){
         this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        this.fwm = fw.getFireworkMeta();
+        FireworkMeta fwm = fw.getFireworkMeta();
         fwm.setPower(power);
         fw.setFireworkMeta(fwm);
     }
 
-    public FireworkBuilder(Location location, int power, Color color){
+    public FireworkBuilder(Location location, int power, String colorName){
         this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        this.fwm = fw.getFireworkMeta();
+        Color color = color(colorName);
+        FireworkMeta fwm = fw.getFireworkMeta();
         fwm.setPower(power);
         fwm.addEffect(FireworkEffect.builder().withColor(color).build());
         fw.setFireworkMeta(fwm);
     }
 
-    public FireworkBuilder(Location location, int power, Color color, int effect){
+    public FireworkBuilder(Location location, int power, String colorName, int effect){
         this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        this.fwm = fw.getFireworkMeta();
+        Color color = color(colorName);
+        FireworkMeta fwm = fw.getFireworkMeta();
         fwm.setPower(power);
-        getEffect(effect, color);
+        fwm = getEffect(fwm, effect, color);
         fw.setFireworkMeta(fwm);
     }
 
-    public FireworkBuilder(Location location, int power, Color color, int effect, int type){
+    public FireworkBuilder(Location location, int power, String colorName, int effect, int type){
         this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        this.fwm = fw.getFireworkMeta();
+        Color color = color(colorName);
+        FireworkMeta fwm = fw.getFireworkMeta();
         fwm.setPower(power);
         FireworkEffect.Type ft = getType(type);
         if (ft != null) {
-            getEffect(effect, color, ft);
+            fwm = getEffect(fwm, effect, color, ft);
         }
         else {
-            getEffect(effect, color);
+            fwm = getEffect(fwm, effect, color);
         }
+        fw.setFireworkMeta(fwm);
+    }
+
+    public void addColor(Color color){
+        FireworkMeta fwm = fw.getFireworkMeta();
+        fwm.addEffect(FireworkEffect.builder().withColor(color).build());
         fw.setFireworkMeta(fwm);
     }
 
@@ -87,7 +94,7 @@ public class FireworkBuilder {
         return ft;
     }
 
-    private void getEffect(int num, Color color){
+    private FireworkMeta getEffect(FireworkMeta fwm, int num, Color color){
         switch(num){
             case 1:
                 fwm.addEffect(FireworkEffect.builder().withColor(color).flicker(true).build());
@@ -102,9 +109,10 @@ public class FireworkBuilder {
                 fwm.addEffect(FireworkEffect.builder().withColor(color).build());
                 break;
         }
+        return fwm;
     }
 
-    private void getEffect(int num, Color color, FireworkEffect.Type ft){
+    private FireworkMeta getEffect(FireworkMeta fwm, int num, Color color, FireworkEffect.Type ft){
         switch(num){
             case 1:
                 fwm.addEffect(FireworkEffect.builder().withColor(color).flicker(true).with(ft).build());
@@ -119,9 +127,63 @@ public class FireworkBuilder {
                 fwm.addEffect(FireworkEffect.builder().withColor(color).with(ft).build());
                 break;
         }
+        return fwm;
     }
 
     private Color color (String color){
-        return Color.AQUA;
+        if (color.equalsIgnoreCase("aqua")){
+            return Color.AQUA;
+        }
+        else if (color.equalsIgnoreCase("black")){
+            return Color.BLACK;
+        }
+        else if (color.equalsIgnoreCase("blue")){
+            return Color.BLUE;
+        }
+        else if (color.equalsIgnoreCase("fuchsia")){
+            return Color.FUCHSIA;
+        }
+        else if (color.equalsIgnoreCase("gray")){
+            return Color.GRAY;
+        }
+        else if (color.equalsIgnoreCase("green")){
+            return Color.GREEN;
+        }
+        else if (color.equalsIgnoreCase("lime")){
+            return Color.LIME;
+        }
+        else if (color.equalsIgnoreCase("maroon")){
+            return Color.MAROON;
+        }
+        else if (color.equalsIgnoreCase("navy")){
+            return Color.NAVY;
+        }
+        else if (color.equalsIgnoreCase("olive")){
+            return Color.OLIVE;
+        }
+        else if (color.equalsIgnoreCase("orange")){
+            return Color.ORANGE;
+        }
+        else if (color.equalsIgnoreCase("purple")){
+            return Color.PURPLE;
+        }
+        else if (color.equalsIgnoreCase("red")){
+            return Color.RED;
+        }
+        else if (color.equalsIgnoreCase("silver")){
+            return Color.SILVER;
+        }
+        else if (color.equalsIgnoreCase("teal")){
+            return Color.TEAL;
+        }
+        else if (color.equalsIgnoreCase("white")){
+            return Color.WHITE;
+        }
+        else if (color.equalsIgnoreCase("yellow")){
+            return Color.YELLOW;
+        }
+        else {
+            return null;
+        }
     }
 }

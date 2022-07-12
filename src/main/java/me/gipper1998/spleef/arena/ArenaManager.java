@@ -108,18 +108,12 @@ public class ArenaManager {
     }
 
     private static void saveLocation(String path, Location location){
-        String world = location.getWorld().getName();
-        double x = location.getX();
-        double y = location.getY();
-        double z = location.getZ();
-        float pitch = location.getPitch();
-        float yaw = location.getYaw();
-        Spleef.main.arenas.getConfig().set(path + "world", world);
-        Spleef.main.arenas.getConfig().set(path + "x", x);
-        Spleef.main.arenas.getConfig().set(path + "y", y);
-        Spleef.main.arenas.getConfig().set(path + "z", z);
-        Spleef.main.arenas.getConfig().set(path + "pitch", pitch);
-        Spleef.main.arenas.getConfig().set(path + "yaw", yaw);
+        Spleef.main.arenas.getConfig().set(path + "world", location.getWorld().getName());
+        Spleef.main.arenas.getConfig().set(path + "x", location.getX());
+        Spleef.main.arenas.getConfig().set(path + "y", location.getY());
+        Spleef.main.arenas.getConfig().set(path + "z", location.getZ());
+        Spleef.main.arenas.getConfig().set(path + "pitch", location.getPitch());
+        Spleef.main.arenas.getConfig().set(path + "yaw", location.getYaw());
         Spleef.main.arenas.saveConfig();
     }
 

@@ -6,7 +6,6 @@ import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.edit.EditWizard;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.game.GameManager;
-import me.gipper1998.spleef.game.Status;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.setup.SetupWizard;
 import org.bukkit.Bukkit;

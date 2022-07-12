@@ -19,6 +19,7 @@ public class Spleef extends JavaPlugin {
     public FileManager messages;
     public FileManager config;
     public FileManager playerStats;
+    public FileManager signs;
 
     @Override
     public void onEnable() {
@@ -41,6 +42,7 @@ public class Spleef extends JavaPlugin {
         this.arenas = new FileManager(this, "arenas.yml");
         this.messages = new FileManager(this, "messages.yml");
         this.playerStats = new FileManager(this, "players.yml");
+        this.signs = new FileManager(this, "signs.yml");
     }
 
     private void registerSoftDependencies(){

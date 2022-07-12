@@ -17,5 +17,9 @@ public class VaultManager {
     }
 
     public static void deposit(Player player, int money){
-        economy.depositPlayer(player, money); }
+        economy.depositPlayer(player, money);
+    }
+    public static void withdraw(Player player, int money){
+        economy.withdrawPlayer(player, money);
+    }
 }
