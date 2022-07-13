@@ -16,12 +16,15 @@ give_snowballs_on_start:
 # the amount of players already in the arena, for best results, type 2.
 enable_time_events: true
 time_events:
+  90:
+    jump: 8
   60:
     snowballs: 20
+  45:
+    slow: 3
   30:
     snowballs: 30
   10:
-    tntdrop: 5
     tntfall: 2
   5:
     speed: 4

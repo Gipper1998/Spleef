@@ -2,6 +2,7 @@ name: Spleef
 version: '${project.version}'
 main: me.gipper1998.spleef.Spleef
 api-version: 1.13
+softdepend: [Vault, PlaceholderAPI]
 commands:
   spleef:
     description: All Spleef commands

@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,6 +90,7 @@ public class MessageManager {
 
     public static List<String> getStringList(String path){
         List<String> messages = Spleef.main.messages.getConfig().getStringList(path);
+        List<String> sendMessages = new ArrayList<>();
         for (String message : messages){
             String prefix = Spleef.main.messages.getConfig().getString("prefix");
             message = message.replaceAll("<prefix>", prefix);
@@ -96,9 +98,9 @@ public class MessageManager {
                 return null;
             }
             message = translateHEX(message);
-            messages.add(ChatColor.translateAlternateColorCodes('&', message));
+            sendMessages.add(ChatColor.translateAlternateColorCodes('&', message));
         }
-        return messages;
+        return sendMessages;
     }
 
     private static String translateHEX(String message){
