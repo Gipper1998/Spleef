@@ -9,9 +9,7 @@ import me.gipper1998.spleef.game.Status;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -21,7 +19,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class SignManager extends BukkitRunnable implements Listener {
 
@@ -58,10 +55,9 @@ public class SignManager extends BukkitRunnable implements Listener {
                         }
                         MessageManager.sendCustomeConsole("Goes to here");
                         Block block = world.getBlockAt(x, y, z);
-                        BlockState state = block.getState();
-                        if (state instanceof Sign) {
+                        if (block.getType().name().contains("SIGN")) {
                             MessageManager.sendCustomeConsole("Does enter here");
-                            Sign sign = (Sign) block.getState();
+                            Sign sign = (Sign) block;
                             String status = getSignStatus(gm);
                             List<String> signListMessages = MessageManager.getStringList("main_sign");
                             for (int line = 0; line < signListMessages.size(); line++) {
