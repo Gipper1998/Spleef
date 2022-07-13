@@ -107,10 +107,6 @@ public class CommandManager implements TabExecutor {
                     ew = new EditWizard(p, arena);
                     return true;
                 }
-                else {
-                    viewCommands(p);
-                    return false;
-                }
             }
             if (args[0].equalsIgnoreCase("join")) {
                 if (args.length < 2){
@@ -129,7 +125,9 @@ public class CommandManager implements TabExecutor {
                     return false;
                 }
                 gm = ArenaManager.findGame(name);
-                gm.addPlayer(p);
+                if (!gm.addPlayer(p)){
+                    return false;
+                }
                 MessageManager.getString("player_success_join", name, p);
                 return true;
             }

@@ -61,7 +61,7 @@ arena_in-game: "<prefix> The arena is already in progress, please try again late
 # Signs
 main_sign:
   - "<prefix>"
-  - "<areanname>"
+  - "<arenaname>"
   - "&3<ingame> &e/ &3<maximum>"
   - "<status>"
 sign_status:

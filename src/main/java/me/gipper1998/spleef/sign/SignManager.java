@@ -18,25 +18,19 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class SignManager implements Listener {
+public class SignManager extends BukkitRunnable implements Listener {
 
-    private BukkitTask task;
+    public SignManager() {
+        this.runTaskTimerAsynchronously(Spleef.main, 0L, 20L);
+    }
 
-    public SignManager(){
-        if (task != null){
-            task.cancel();
-        }
-        task = (new BukkitRunnable(){
-            public void run(){
-                updateSigns();
-            }
-        }.runTaskTimerAsynchronously(Spleef.main, 0L, 20L));
+    @Override
+    public void run(){
+        updateSigns();
     }
 
     private void updateSigns(){
@@ -128,7 +122,7 @@ public class SignManager implements Listener {
 
     @EventHandler
     public void onSignDelete(BlockBreakEvent event){
-        if (event.getBlock() instanceof Sign && event.getPlayer().isSneaking()){
+        if (event.getBlock() instanceof Sign){
             if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){
                 ConfigurationSection section = Spleef.main.signs.getConfig().getConfigurationSection("Signs");
                 if (section == null){
@@ -148,6 +142,9 @@ public class SignManager implements Listener {
                         World world = Bukkit.getWorld(location[3]);
                         if (world != null){
                             if(event.getBlock().getX() == x && event.getBlock().getY() == y && event.getBlock().getZ() == z && world.getName().equals(event.getBlock().getWorld().getName())) {
+                                if (!event.getPlayer().isSneaking()){
+                                    event.setCancelled(true);
+                                }
                                 listedSigns.remove(i);
                                 Spleef.main.signs.getConfig().set("Signs." + key, listedSigns);
                                 Spleef.main.signs.saveConfig();
@@ -185,7 +182,9 @@ public class SignManager implements Listener {
                         if (world != null) {
                             if (event.getClickedBlock().getX() == x && event.getClickedBlock().getY() == y && event.getClickedBlock().getZ() == z && world.getName().equals(event.getClickedBlock().getWorld().getName())) {
                                 if (gm != null){
-                                    gm.addPlayer(event.getPlayer());
+                                    if (gm.addPlayer(event.getPlayer())){
+                                        return;
+                                    }
                                 }
                             }
                         }
