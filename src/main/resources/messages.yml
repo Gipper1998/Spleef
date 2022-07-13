@@ -1,13 +1,14 @@
 # Main Messages File
 prefix: "&e&l[&b&lSpleef&e&l]&r"
 
+# Plugin stuff
 start_up: "<prefix> &aPlugin started with no problems!!!"
 shut_down: "<prefix> &cPlugin disabled "
 vault_enable: "<prefix> &bVault is enabled and hooked!"
 papi_enable: "<prefix> &dPlaceholderAPI enabled and hooked!"
 reloaded: "<prefix> &aSuccessfully reloaded!"
 
-# Modify the wizard setup messages (Note: Name can only be changed when in the editing wizard).
+# Modify the wizard setup messages
 no_name_wizard: "<prefix> &cNo name was designated, please type in a name to start the wizard."
 in_wizard: "<prefix> &aYou are now in the setup wizard, to cancel, click on the barrier."
 exit_wizard: "<prefix> &cYou have canceled the wizard, all progress has been lost."
@@ -42,34 +43,41 @@ arena_does_not_exist: "<prefix> &cThe arena with the name &d<arenaname> &cdoes n
 player_success_join: "<prefix> &aSuccessfully joined arena &d<arenaname>&a."
 player_success_quit: "<prefix> &cYou have left arena &d<arenaname>&c."
 
-# In-Game messages
+# In-Game Items
 gold_shovel: "&6&lSpleefer_Spade"
 diamond_shovel: "&b&lSpleefer_Spade"
 leave_item: "&c&lExit_Arena"
 snowball: "&f&lFIRE_THEM_SNOWBALLS"
 
+# Arena messages
 player_join: "<prefix> &b<name> &ahas joined the game!"
 player_quit: "<prefix> &b<name> &chas left the game."
 player_died: "<prefix> <name> has been eliminated."
 player_winner: "<prefix> <name> has won the game!!"
 arena_no_winner: "<prefix> The match took too long, arena resetting."
+arena_full: "<prefix> The arena is full, please try again later."
+arena_in-game: "<prefix> The arena is already in progress, please try agaiin later."
 
+# Signs
 main_sign:
-  1: "<prefix>"
-  2: "<areanname>"
-  3: "&3<ingame> &e/ &3<maximum>"
-  4: "<status>"
-
+  - "<prefix>"
+  - "<areanname>"
+  - "&3<ingame> &e/ &3<maximum>"
+  - "<status>"
 sign_status:
-  wait: "Waiting"
-
-
+  wait: "[Join]"
+  in-game: "[In-Progress]"
+  reset: "[RESETTING]"
 
 # Modify the command page here
-commands_page:
+commands_page_player:
+  - "&f&l------------------------"
+  - "<prefix> &cCommands:"
+  - "/spleef join <name>"
+  - "/spleef leave"
+commands_page_admin:
   - "&f&l------------------------"
   - "<prefix> &cCommands:"
   - "/spleef create <name>"
   - "/spleef delete <name>"
-  - "/spleef join <name>"
-  - "/spleef leave"
+

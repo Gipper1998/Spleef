@@ -30,7 +30,7 @@ public class Spleef extends JavaPlugin {
         ArenaManager.loadArenas();
         registerSoftDependencies();
         getCommand("spleef").setExecutor(new CommandManager());
-        Bukkit.getServer().getPluginManager().registerEvents(new SignManager(), this);
+        getServer().getPluginManager().registerEvents(new SignManager(), this);
         MessageManager.sendMessage("start_up", null);
     }
 

@@ -46,7 +46,7 @@ public class SetupWizard implements Listener {
     private boolean findMin = false;
     private boolean findMax = false;
 
-    public SetupWizard(Player player, String name){
+    public SetupWizard(Player p, String name){
         Bukkit.getPluginManager().registerEvents(this, Spleef.main);
         this.template = new ArenaSetupTemplate(name);
         this.CANCEL_WIZARD = MessageManager.getString("cancel_wizard_item");
@@ -56,9 +56,9 @@ public class SetupWizard implements Listener {
         this.SET_LOBBY_SPAWN = MessageManager.getString("set_lobby_spawn_item");
         this.SET_SPECTATOR_SPAWN = MessageManager.getString("set_spectator_spawn_item");
         this.COMPLETE_WIZARD = MessageManager.getString("complete_wizard_item");
-        this.ssi = new SetupStoreItems(player);
-        inSetupWizard.add(player);
-        giveItems(player, player.getInventory());
+        this.ssi = new SetupStoreItems(p);
+        inSetupWizard.add(p);
+        giveItems(p, p.getInventory());
     }
 
     private void giveItems(Player player, Inventory inventory){
@@ -167,10 +167,10 @@ public class SetupWizard implements Listener {
         }
     }
 
-    private void exitWizard(Player player, boolean finished){
-        player.getInventory().clear();
+    private void exitWizard(Player p, boolean finished){
+        p.getInventory().clear();
         ssi.giveBackItems();
-        player.updateInventory();
+        p.updateInventory();
         if (finished){
             if (template.lobby == null){
                 template.lobby = template.arena;
@@ -180,7 +180,7 @@ public class SetupWizard implements Listener {
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Spleef.main, new Runnable() {
             @Override
             public void run() {
-                inSetupWizard.remove(player);
+                inSetupWizard.remove(p);
             }
         }, 20L);
     }

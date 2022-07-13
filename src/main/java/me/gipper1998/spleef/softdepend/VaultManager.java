@@ -16,10 +16,11 @@ public class VaultManager {
         return economy != null;
     }
 
-    public static void deposit(Player player, int money){
-        economy.depositPlayer(player, money);
+    public static void deposit(Player p, int money){
+        economy.depositPlayer(p, money);
     }
-    public static void withdraw(Player player, int money){
-        economy.withdrawPlayer(player, money);
+    public static void withdraw(Player p, int money){
+
+        economy.withdrawPlayer(p, money);
     }
 }

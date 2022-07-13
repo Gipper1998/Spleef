@@ -8,34 +8,34 @@ public class SetupStoreItems {
 
     private ItemStack[] inventory;
     private ItemStack[] armor;
-    private Player player;
+    private Player p;
     private double health;
     private double hunger;
     private float xp;
     private GameMode gamemode;
 
-    public SetupStoreItems(Player player){
-        this.player = player;
-        this.inventory = player.getInventory().getContents();
-        this.armor = player.getInventory().getArmorContents();
-        this.health = player.getHealth();
-        this.hunger = player.getFoodLevel();
-        this.xp = player.getExp();
-        this.gamemode = player.getGameMode();
-        player.getInventory().clear();
-        player.getInventory().setArmorContents(null);
-        player.setGameMode(GameMode.CREATIVE);
-        player.updateInventory();
+    public SetupStoreItems(Player p){
+        this.p = p;
+        this.inventory = p.getInventory().getContents();
+        this.armor = p.getInventory().getArmorContents();
+        this.health = p.getHealth();
+        this.hunger = p.getFoodLevel();
+        this.xp = p.getExp();
+        this.gamemode = p.getGameMode();
+        p.getInventory().clear();
+        p.getInventory().setArmorContents(null);
+        p.setGameMode(GameMode.CREATIVE);
+        p.updateInventory();
     }
 
     public void giveBackItems(){
-        player.getInventory().setContents(inventory);
-        player.getInventory().setArmorContents(armor);
-        player.setGameMode(gamemode);
-        player.setExp(xp);
-        player.setHealth(health);
-        player.setFoodLevel((int) hunger);
-        player.updateInventory();
+        p.getInventory().setContents(inventory);
+        p.getInventory().setArmorContents(armor);
+        p.setGameMode(gamemode);
+        p.setExp(xp);
+        p.setHealth(health);
+        p.setFoodLevel((int) hunger);
+        p.updateInventory();
     }
 
 }

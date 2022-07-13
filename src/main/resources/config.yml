@@ -3,14 +3,28 @@
 # The main game settings (this goes for all arenas):
 waiting_time: 30
 total_game_time: 120
-give_snowballs_on_begin:
-  enable: true
-  amount: 30
-# If it hits a certain time, an event will happen
+give_snowballs_on_start:
+  amount: 10
 
-
-
-
+# If it hits a certain time, an event will happen in seconds.
+# Info on what you can do:
+# snowballs: give the player a certain amount of snowballs.
+# speed: make them go very fast for a duration of time (in seconds)
+# slow: Slow them down a little bit of time (in seconds).
+# jump: Make them jump a little higher for a duration of time (in seconds)
+# tntfall: Make tnt rain upon the players (only drops once for
+# the amount of players already in the arena, for best results, type 2.
+enable_time_events: true
+time_events:
+  60:
+    snowballs: 20
+  30:
+    snowballs: 30
+  10:
+    tntdrop: 5
+    tntfall: 2
+  5:
+    speed: 4
 
 # Blocks given to players (Not the display name, but the actual block).
 setup_wizard_blocks:

@@ -25,6 +25,7 @@ public class ArenaManager {
     }
 
     public static GameManager findGame(String name){
+        name = name.toUpperCase();
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             Arena am = set.getKey();
             if (am.getName().equalsIgnoreCase(name)){
@@ -35,6 +36,7 @@ public class ArenaManager {
     }
 
     public static Arena findArena(String name){
+        name = name.toUpperCase();
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             Arena am = set.getKey();
             if (am.getName().equalsIgnoreCase(name)){
@@ -45,6 +47,7 @@ public class ArenaManager {
     }
 
     public static boolean deleteArena(String name){
+        name = name.toUpperCase();
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             Arena am = set.getKey();
             if (am.getName().equalsIgnoreCase(name)){

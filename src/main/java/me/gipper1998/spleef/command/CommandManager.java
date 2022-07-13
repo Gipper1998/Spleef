@@ -28,22 +28,22 @@ public class CommandManager implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            Player player = (Player) sender;
+            Player p = (Player) sender;
             if (sender.hasPermission("spleef.admin")) {
                 if (args[0].equalsIgnoreCase("create")) {
                     String name = args[1].toUpperCase();
                     if (args.length < 2){
-                        MessageManager.getString("no_name_wizard", player);
+                        MessageManager.getString("no_name_wizard", p);
                         return false;
                     } else {
-                        MessageManager.getString("in_wizard", player);
-                        sw = new SetupWizard(player, name);
+                        MessageManager.getString("in_wizard", p);
+                        sw = new SetupWizard(p, name);
                         return true;
                     }
                 } else if (args[0].equalsIgnoreCase("delete")) {
                     String name = args[1];
                     if (args.length < 2){
-                        MessageManager.getString("no_name", player);
+                        MessageManager.getString("no_name", p);
                         return false;
                     }
                     if (name.isEmpty()) {
@@ -51,12 +51,12 @@ public class CommandManager implements TabExecutor {
                     }
                     arena = ArenaManager.findArena(name.toUpperCase());
                     if (arena == null){
-                        MessageManager.getString("arena_does_not_exist", name.toUpperCase(), player);
+                        MessageManager.getString("arena_does_not_exist", name.toUpperCase(), p);
                         return false;
                     }
                     else {
                         ArenaManager.deleteArena(name.toUpperCase());
-                        MessageManager.sendMessage("Should be deleted", player);
+                        MessageManager.sendMessage("Should be deleted", p);
                         return true;
                     }
                 }
@@ -87,58 +87,58 @@ public class CommandManager implements TabExecutor {
                     Spleef.main.messages.reloadConfig();
                     ArenaManager.forceQuitArenas();
                     ArenaManager.loadArenas();
-                    MessageManager.getString("reloaded", player);
+                    MessageManager.getString("reloaded", p);
                 }
                 else if (args[0].equalsIgnoreCase("edit")){
                     if (args.length < 2){
-                        MessageManager.getString("no_name", player);
+                        MessageManager.getString("no_name", p);
                         return false;
                     }
                     String name = args[1].toUpperCase();
                     arena = ArenaManager.findArena(name);
                     if (name.isEmpty()){
-                        MessageManager.getString("no_name", player);
+                        MessageManager.getString("no_name", p);
                         return false;
                     }
                     if (arena == null){
-                        MessageManager.getString("arena_does_not_exist", name.toUpperCase(), player);
+                        MessageManager.getString("arena_does_not_exist", name.toUpperCase(), p);
                         return false;
                     }
-                    ew = new EditWizard(player, arena);
+                    ew = new EditWizard(p, arena);
                     return true;
                 }
                 else {
-                    viewCommands(player);
+                    viewCommands(p);
                     return false;
                 }
             }
             if (args[0].equalsIgnoreCase("join")) {
                 if (args.length < 2){
-                    MessageManager.getString("no_name", player);
+                    MessageManager.getString("no_name", p);
                     return false;
                 }
                 String name = args[1].toUpperCase();
-                MessageManager.sendMessage(name, player);
+                MessageManager.sendMessage(name, p);
                 arena = ArenaManager.findArena(name);
                 if (name.isEmpty()){
-                    MessageManager.getString("no_name", player);
+                    MessageManager.getString("no_name", p);
                     return false;
                 }
                 if (arena == null){
-                    MessageManager.getString("arena_does_not_exist", name.toUpperCase(), player);
+                    MessageManager.getString("arena_does_not_exist", name.toUpperCase(), p);
                     return false;
                 }
                 gm = ArenaManager.findGame(name);
-                gm.addPlayer(player);
-                MessageManager.getString("player_success_join", name, player);
+                gm.addPlayer(p);
+                MessageManager.getString("player_success_join", name, p);
                 return true;
             }
             else if (args[0].equalsIgnoreCase("leave")){
                 List<String> arenas = ArenaManager.getArenaNames();
                 for (String arena: arenas){
                     gm = ArenaManager.findGame(arena);
-                    if (gm.getPlayersInGame().contains(player)){
-                        gm.removePlayer(player);
+                    if (gm.getPlayersInGame().contains(p)){
+                        gm.removePlayer(p);
                         return true;
                     }
                 }
@@ -146,8 +146,8 @@ public class CommandManager implements TabExecutor {
             }
             else if (args[0].equalsIgnoreCase("stats")){
                 if (args[1].isEmpty()){
-                    int wins = PlayerStatManager.getWins(player.getUniqueId());
-                    int loses = PlayerStatManager.getLosses(player.getUniqueId());
+                    int wins = PlayerStatManager.getWins(p.getUniqueId());
+                    int loses = PlayerStatManager.getLosses(p.getUniqueId());
                 }
                 else {
                     try {
@@ -162,10 +162,10 @@ public class CommandManager implements TabExecutor {
 
             }
             else if (args.length <= 0){
-                viewCommands(player);
+                viewCommands(p);
             }
             else {
-                viewCommands(player);
+                viewCommands(p);
             }
         }
         else {
@@ -198,7 +198,13 @@ public class CommandManager implements TabExecutor {
     }
 
     private void viewCommands(Player player){
-        MessageManager.getStringList("commands_page", player);
+        if (player.hasPermission("spleef.admin")){
+            MessageManager.getStringList("commands_page_admin", player);
+
+        }
+        else {
+            MessageManager.getStringList("commands_page_player", player);
+        }
     }
 
 }

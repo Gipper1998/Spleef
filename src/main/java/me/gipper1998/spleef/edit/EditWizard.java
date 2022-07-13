@@ -48,7 +48,7 @@ public class EditWizard implements Listener {
     private boolean findMax = false;
     private boolean findNewName = false;
 
-    public EditWizard(Player player, Arena arena){
+    public EditWizard(Player p, Arena arena){
         Bukkit.getPluginManager().registerEvents(this, Spleef.main);
         this.template = new ArenaEditTemplate(arena);
         this.EDIT_NAME = MessageManager.getString("set_name_item");
@@ -58,9 +58,9 @@ public class EditWizard implements Listener {
         this.SET_LOBBY_SPAWN = MessageManager.getString("set_lobby_spawn_item");
         this.SET_SPECTATOR_SPAWN = MessageManager.getString("set_spectator_spawn_item");
         this.COMPLETE_WIZARD = MessageManager.getString("complete_wizard_item");
-        this.esi = new EditStoreItems(player);
-        inEditWizard.add(player);
-        giveItems(player, player.getInventory());
+        this.esi = new EditStoreItems(p);
+        inEditWizard.add(p);
+        giveItems(p, p.getInventory());
     }
 
     private void giveItems(Player player, Inventory inventory){
@@ -171,15 +171,15 @@ public class EditWizard implements Listener {
         }
     }
 
-    private void exitWizard(Player player){
-        player.getInventory().clear();
+    private void exitWizard(Player p){
+        p.getInventory().clear();
         esi.giveBackItems();
-        player.updateInventory();
+        p.updateInventory();
         ArenaManager.saveEditedArena(template);
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Spleef.main, new Runnable() {
             @Override
             public void run() {
-                inEditWizard.remove(player);
+                inEditWizard.remove(p);
             }
         }, 20L);
     }

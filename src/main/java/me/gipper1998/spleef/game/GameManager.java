@@ -8,25 +8,26 @@ import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.item.FireworkBuilder;
 import me.gipper1998.spleef.item.ItemBuilder;
-import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameManager extends BukkitRunnable implements Listener {
 
@@ -44,6 +45,7 @@ public class GameManager extends BukkitRunnable implements Listener {
     private String GOLD_SPADE_ITEM = "";
     private String DIAMOND_SPADE_ITEM = "";
     private String SNOWBALL_ITEM = "";
+    private String TNT = "";
 
     private HashMap<Player, GameStoreItems> playersStuff = new HashMap<Player, GameStoreItems>();
     private HashMap<Material, Location> brokenBlocks = new HashMap<>();
@@ -54,11 +56,10 @@ public class GameManager extends BukkitRunnable implements Listener {
     private List<Player> spectators = new ArrayList<>();
     @Getter
     private List<Player> totalPlayers = new ArrayList<>();
+    private List<Integer> events = new ArrayList<>();
 
     @Getter
     private Status status = Status.WAIT;
-
-    private SignManager sm;
 
     public GameManager(Arena arena){
         Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
@@ -69,6 +70,8 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.GOLD_SPADE_ITEM = MessageManager.getString("gold_shovel");
         this.DIAMOND_SPADE_ITEM = MessageManager.getString("diamond_shovel");
         this.SNOWBALL_ITEM = MessageManager.getString("snowball");
+        this.TNT = "TNT_SPLEEF";
+        loadEvents();
         this.runTaskTimer(Spleef.main, 20L, 20L);
     }
 
@@ -150,6 +153,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                         killPlayer(p);
                     }
                 }
+                checkTime();
                 currentTime--;
             }
         }
@@ -199,8 +203,8 @@ public class GameManager extends BukkitRunnable implements Listener {
         else {
             p.getInventory().setItem(0, new ItemBuilder(Material.GOLDEN_SHOVEL, GOLD_SPADE_ITEM).getIs());
         }
-        if (ConfigManager.getBoolean("give_snowballs_on_begin")) {
-            p.getInventory().setItem(1, new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt("give_snowballs_on_begin")).getIs());
+        if (ConfigManager.getBoolean("give_snowballs_on_start")) {
+            p.getInventory().setItem(1, new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt("give_snowballs_on_start.amount")).getIs());
         }
     }
 
@@ -221,7 +225,104 @@ public class GameManager extends BukkitRunnable implements Listener {
         p.teleport(arena.getSpectate());
         p.setGameMode(GameMode.SPECTATOR);
         PlayerStatManager.addLosePoint(p.getUniqueId());
+        for (PotionEffect effect : p.getActivePotionEffects()){
+            p.removePotionEffect(effect.getType());
+        }
     }
+
+    private void checkTime() {
+        if (events.contains(currentTime)) {
+            String path = "time_events." + currentTime + ".";
+            if (Spleef.main.config.getConfig().contains(path + "snowballs")) {
+                for (Player p : playersInGame) {
+                    p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt((path + "snowballs"))).getIs());
+                    p.updateInventory();
+                }
+            }
+            if (Spleef.main.config.getConfig().contains(path + "tntfall")) {
+                int size = ConfigManager.getInt("tntfall");
+                if (size > playersInGame.size()) {
+                    for (Player p : playersInGame){
+                        ItemBuilder temp = new ItemBuilder(p, TNT);
+                    }
+                }
+                else {
+                    int[] playerTarget = {0};
+                    int index = 0;
+                    int temp = 0;
+                    Random rand = new Random();
+                    for (int i = 0; i < size; i++) {
+                        do {
+                            temp = rand.nextInt(size);
+                            for (int j = 0; j < size; j++) {
+                                if (temp == playerTarget[j]) {
+                                    temp = 0;
+                                    break;
+                                }
+                            }
+                        } while (temp == 0);
+                        playerTarget[index] = temp;
+                        index++;
+                    }
+                    for (int i = 0; i < size; i++){
+                        Player p = playersInGame.get(playerTarget[i]);
+                        ItemBuilder t = new ItemBuilder(p, TNT);
+                    }
+                }
+            }
+            if (Spleef.main.config.getConfig().contains(path + "speed")){
+                for (Player p : playersInGame){
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,ConfigManager.getInt(path + "speed"), 3));
+                }
+            }
+            if (Spleef.main.config.getConfig().contains(path + "slow")){
+                for (Player p : playersInGame){
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,ConfigManager.getInt(path + "slow"), 3));
+                }
+            }
+            if (Spleef.main.config.getConfig().contains(path + "jump")){
+                for (Player p : playersInGame){
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,ConfigManager.getInt(path + "jump"), 3));
+                }
+            }
+        }
+    }
+
+    private void loadEvents(){
+        if (Spleef.main.config.getConfig().getBoolean("enable_time_events")) {
+            ConfigurationSection section = Spleef.main.config.getConfig().getConfigurationSection("time_events");
+            if (section == null) {
+                return;
+            }
+            Set<String> keys = section.getKeys(false);
+            for (String key : keys) {
+                try {
+                    events.add(Integer.parseInt(key));
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityExplode(EntityExplodeEvent event) {
+        if (status == Status.GAME && event.getEntity().getCustomName().equals(TNT)) {
+            if (event.getEntity().getType() == EntityType.PRIMED_TNT) {
+                List destroyed = event.blockList();
+                Iterator it = destroyed.iterator();
+                while (it.hasNext()) {
+                    Block block = (Block) it.next();
+                    if (!(block.getType() == Material.SNOW_BLOCK)) {
+                        brokenBlocks.put(Material.SNOW_BLOCK, block.getLocation());
+                        it.remove();
+                    }
+                }
+            }
+        }
+    }
+
 
     public boolean addPlayer(Player p){
         if (status == Status.WAIT) {
@@ -239,7 +340,14 @@ public class GameManager extends BukkitRunnable implements Listener {
             p.teleport(arena.getLobby());
             return true;
         }
-        return false;
+        else if (playersInGame.size() == arena.getMaximum()){
+            MessageManager.sendMessage("arena_full", p);
+            return false;
+        }
+        else {
+            MessageManager.sendMessage("arena_in-game", p);
+            return false;
+        }
     }
 
     public void removePlayer(Player p) {
@@ -300,9 +408,11 @@ public class GameManager extends BukkitRunnable implements Listener {
     public void onProjectileLaunch(ProjectileLaunchEvent event){
         if (playersInGame.contains(event.getEntity().getShooter() instanceof Player) && status == Status.GAME){
             if (event.getEntity().getLocation().getBlock().getType() == Material.SNOW_BLOCK){
-                brokenBlocks.put(Material.SNOW_BLOCK, event.getEntity().getLocation());
-                Block b = event.getEntity().getLocation().getBlock();
-                b.setType(Material.AIR);
+                if (event.getEntity().getName().equals(SNOWBALL_ITEM)) {
+                    brokenBlocks.put(Material.SNOW_BLOCK, event.getEntity().getLocation());
+                    Block b = event.getEntity().getLocation().getBlock();
+                    b.setType(Material.AIR);
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 public class GameStoreItems {
     private ItemStack[] inventory;
@@ -28,6 +29,9 @@ public class GameStoreItems {
         player.getInventory().setArmorContents(null);
         player.setGameMode(GameMode.ADVENTURE);
         player.updateInventory();
+        for (PotionEffect effect : player.getActivePotionEffects()){
+            player.removePotionEffect(effect.getType());
+        }
     }
 
     public void giveBackItems(){
