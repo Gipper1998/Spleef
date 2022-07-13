@@ -140,7 +140,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         if (playersInGame.size() > 1){
             if (currentTime <= 0){
                 for (Player p : totalPlayers){
-                    MessageManager.getString("arena_no_winner", p);
+                    MessageManager.sendMessage("arena_no_winner", p);
                 }
                 removeEverybody();
                 currentTime = resetDelay;
@@ -169,7 +169,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             FireworkBuilder fb = new FireworkBuilder(arena.getArena(), 25, "aqua", 2, 5);
             fb.launch();
             for (Player p : totalPlayers) {
-                MessageManager.getString("player_winner", winner.getName(), p);
+                MessageManager.sendMessage("player_winner", winner.getName(), p);
             }
         }
         if (currentTime <= 0){
@@ -218,7 +218,7 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private void killPlayer(Player p){
         for (Player player : totalPlayers){
-            MessageManager.getString("player_died", p.getName(), player);
+            MessageManager.sendMessage("player_died", p.getName(), player);
         }
         playersInGame.remove(p);
         spectators.add(p);
@@ -330,7 +330,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 return false;
             }
             for (Player player : playersInGame) {
-                MessageManager.getString("player_join", p.getName(), player);
+                MessageManager.sendMessage("player_join", p.getName(), player);
             }
             playersInGame.add(p);
             GameStoreItems gmi = new GameStoreItems(p);
@@ -353,14 +353,14 @@ public class GameManager extends BukkitRunnable implements Listener {
     public void removePlayer(Player p) {
         playersInGame.remove(p);
         for (Player player : playersInGame) {
-            MessageManager.getString("player_quit", p.getName(), player);
+            MessageManager.sendMessage("player_quit", p.getName(), player);
         }
         GameStoreItems gmi = playersStuff.get(p);
         gmi.giveBackItems();
-        MessageManager.getString("player_success_quit", arena.getName(), p);
+        MessageManager.sendMessage("player_success_quit", arena.getName(), p);
         playersStuff.remove(p);
         if (status == Status.GAME){
-            MessageManager.getString("player_success_quit", arena.getName(), p);
+            MessageManager.sendMessage("player_success_quit", arena.getName(), p);
             totalPlayers.remove(p);
             spectators.remove(p);
             playersInGame.remove(p);
@@ -455,7 +455,13 @@ public class GameManager extends BukkitRunnable implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event){
         if (playersInGame.contains(event.getPlayer()) || spectators.contains(event.getPlayer())){
-            event.setCancelled(true);
+            String command = event.getMessage();
+            if (command.equalsIgnoreCase("/spleef leave") && status == Status.WAIT){
+                removePlayer(event.getPlayer());
+            }
+            else {
+                event.setCancelled(true);
+            }
         }
     }
 

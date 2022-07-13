@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class MessageManager {
 
-    public static void getString(String path, Player player){
+    public static void sendMessage(String path, Player p){
         String prefix = Spleef.main.messages.getConfig().getString("prefix");
         String message = Spleef.main.messages.getConfig().getString(path);
         message = message.replaceAll("<prefix>", prefix);
@@ -20,10 +20,10 @@ public class MessageManager {
             return;
         }
         message = translateHEX(message);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        sendTo(ChatColor.translateAlternateColorCodes('&', message), p);
     }
 
-    public static void getString(String path, int num, Player player){
+    public static void sendMessage(String path, int num, Player p){
         String prefix = Spleef.main.messages.getConfig().getString("prefix");
         String message = Spleef.main.messages.getConfig().getString(path);
         message = message.replaceAll("<prefix>", prefix);
@@ -33,10 +33,10 @@ public class MessageManager {
             return;
         }
         message = translateHEX(message);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        sendTo(ChatColor.translateAlternateColorCodes('&', message), p);
     }
 
-    public static void getString(String path, String name, Player player){
+    public static void sendMessage(String path, String name, Player p){
         String prefix = Spleef.main.messages.getConfig().getString("prefix");
         String message = Spleef.main.messages.getConfig().getString(path);
         message = message.replaceAll("<prefix>", prefix);
@@ -46,7 +46,48 @@ public class MessageManager {
             return;
         }
         message = translateHEX(message);
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        sendTo(ChatColor.translateAlternateColorCodes('&', message), p);
+    }
+
+    public static void sendConsoleMessage(String path){
+        String prefix = Spleef.main.messages.getConfig().getString("prefix");
+        String message = Spleef.main.messages.getConfig().getString(path);
+        message = message.replaceAll("<prefix>", prefix);
+        message = translateHEX(message);
+        sendTo(ChatColor.translateAlternateColorCodes('&', message), null);
+    }
+
+    public static void sendCustomeConsole(String message){
+        message = translateHEX(message);
+        sendTo(ChatColor.translateAlternateColorCodes('&', message), null);
+    }
+
+    public static void sendStringList(String path, Player p){
+        List<String> messageList = Spleef.main.messages.getConfig().getStringList(path);
+        for (String message : messageList){
+            String prefix = Spleef.main.messages.getConfig().getString("prefix");
+            message = message.replaceAll("<prefix>", prefix);
+            if (message.isEmpty()){
+                return;
+            }
+            message = translateHEX(message);
+            sendTo(ChatColor.translateAlternateColorCodes('&', message), p);
+        }
+    }
+
+    public static List<String> getStringList(String path){
+        List<String> messageList = Spleef.main.messages.getConfig().getStringList(path);
+        List<String> sendMessages = new ArrayList<>();
+        for (String message : messageList){
+            String prefix = Spleef.main.messages.getConfig().getString("prefix");
+            message = message.replaceAll("<prefix>", prefix);
+            if (message.isEmpty()){
+                return null;
+            }
+            message = translateHEX(message);
+            sendMessages.add(ChatColor.translateAlternateColorCodes('&', message));
+        }
+        return sendMessages;
     }
 
     public static String getString(String path){
@@ -60,47 +101,13 @@ public class MessageManager {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static void getStringList(String path, Player player){
-        List<String> messages = Spleef.main.messages.getConfig().getStringList(path);
-        for (String message : messages){
-            String prefix = Spleef.main.messages.getConfig().getString("prefix");
-            message = message.replaceAll("<prefix>", prefix);
-            if (message.isEmpty()){
-                return;
-            }
-            message = translateHEX(message);
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-        }
-    }
-
-    public static void sendMessage(String message, Player player){
-        String prefix = Spleef.main.messages.getConfig().getString("prefix");
-        message = message.replaceAll("<prefix>", prefix);
-        if (message.isEmpty()){
-            return;
-        }
-        message = translateHEX(message);
-        if (player == null){
-            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+    private static void sendTo(String message, Player p){
+        if (p != null){
+            p.sendMessage(message);
         }
         else {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+            Bukkit.getConsoleSender().sendMessage(message);
         }
-    }
-
-    public static List<String> getStringList(String path){
-        List<String> messages = Spleef.main.messages.getConfig().getStringList(path);
-        List<String> sendMessages = new ArrayList<>();
-        for (String message : messages){
-            String prefix = Spleef.main.messages.getConfig().getString("prefix");
-            message = message.replaceAll("<prefix>", prefix);
-            if (message.isEmpty()){
-                return null;
-            }
-            message = translateHEX(message);
-            sendMessages.add(ChatColor.translateAlternateColorCodes('&', message));
-        }
-        return sendMessages;
     }
 
     private static String translateHEX(String message){

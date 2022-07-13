@@ -94,38 +94,38 @@ public class EditWizard implements Listener {
             ItemStack item = event.getItem();
             ItemMeta im = event.getItem().getItemMeta();
             if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.name")) && (im.getDisplayName().equals(EDIT_NAME)) && bothClicks(event)) {
-                MessageManager.getString("wizard_name_chat", event.getPlayer());
+                MessageManager.sendMessage("wizard_name_chat", event.getPlayer());
                 findNewName = true;
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.maximum")) && (im.getDisplayName().equals(SET_MAXIMUM)) && bothClicks(event)) {
-                MessageManager.getString("wizard_maximum_chat", event.getPlayer());
+                MessageManager.sendMessage("wizard_maximum_chat", event.getPlayer());
                 findMax = true;
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.minimum")) && (im.getDisplayName().equals(SET_MINIMUM)) && bothClicks(event)) {
-                MessageManager.getString("wizard_minimum_chat", event.getPlayer());
+                MessageManager.sendMessage("wizard_minimum_chat", event.getPlayer());
                 findMin = true;
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.arena")) && (im.getDisplayName().equals(SET_ARENA_SPAWN)) && bothClicks(event)) {
                 template.setArena(event.getPlayer().getLocation());
-                MessageManager.getString("wizard_arena_spawn_set", event.getPlayer());
+                MessageManager.sendMessage("wizard_arena_spawn_set", event.getPlayer());
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.spectator")) && (im.getDisplayName().equals(SET_SPECTATOR_SPAWN)) && bothClicks(event)) {
                 template.setSpectate(event.getPlayer().getLocation());
-                MessageManager.getString("wizard_spectator_spawn_set", event.getPlayer());
+                MessageManager.sendMessage("wizard_spectator_spawn_set", event.getPlayer());
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.lobby")) && (im.getDisplayName().equals(SET_LOBBY_SPAWN)) && bothClicks(event)) {
                 template.setLobby(event.getPlayer().getLocation());
-                MessageManager.getString("wizard_lobby_spawn_set", event.getPlayer());
+                MessageManager.sendMessage("wizard_lobby_spawn_set", event.getPlayer());
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.complete")) && (im.getDisplayName().equals(COMPLETE_WIZARD)) && bothClicks(event)) {
                 exitWizard(event.getPlayer());
-                MessageManager.getString("wizard_arena_saved", event.getPlayer());
+                MessageManager.sendMessage("wizard_arena_saved", event.getPlayer());
                 return;
             }
         }
@@ -137,21 +137,21 @@ public class EditWizard implements Listener {
             if (isNumeric(event.getMessage())) {
                 if (findMin) {
                     template.setMinimum(Integer.parseInt(event.getMessage()));
-                    MessageManager.getString("wizard_minimum_set", Integer.parseInt(event.getMessage()), event.getPlayer());
+                    MessageManager.sendMessage("wizard_minimum_set", Integer.parseInt(event.getMessage()), event.getPlayer());
                     findMin = false;
                     event.setCancelled(true);
                     return;
                 }
                 if (findMax) {
                     template.setMaximum(Integer.parseInt(event.getMessage()));
-                    MessageManager.getString("wizard_maximum_set", Integer.parseInt(event.getMessage()), event.getPlayer());
+                    MessageManager.sendMessage("wizard_maximum_set", Integer.parseInt(event.getMessage()), event.getPlayer());
                     event.setCancelled(true);
                     findMax = false;
                     return;
                 }
                 if (findNewName){
                     template.setName(event.getMessage().toUpperCase());
-                    MessageManager.getString("wizard_name_set", event.getMessage(), event.getPlayer());
+                    MessageManager.sendMessage("wizard_name_set", event.getMessage(), event.getPlayer());
                 }
             }
         }

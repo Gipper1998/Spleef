@@ -16,6 +16,9 @@ public class ArenaManager {
     private static HashMap<Arena, GameManager> activeArenas = new HashMap<>();
 
     public static List<String> getArenaNames(){
+        if (activeArenas.isEmpty()){
+            return null;
+        }
         List<String> arenaNames = new ArrayList<>();
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             Arena am = set.getKey();
@@ -26,6 +29,9 @@ public class ArenaManager {
 
     public static GameManager findGame(String name){
         name = name.toUpperCase();
+        if (activeArenas.isEmpty()){
+            return null;
+        }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             Arena am = set.getKey();
             if (am.getName().equalsIgnoreCase(name)){
@@ -37,6 +43,9 @@ public class ArenaManager {
 
     public static Arena findArena(String name){
         name = name.toUpperCase();
+        if (activeArenas.isEmpty()){
+            return null;
+        }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             Arena am = set.getKey();
             if (am.getName().equalsIgnoreCase(name)){
@@ -48,6 +57,9 @@ public class ArenaManager {
 
     public static boolean deleteArena(String name){
         name = name.toUpperCase();
+        if (activeArenas.isEmpty()){
+            return false;
+        }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             Arena am = set.getKey();
             if (am.getName().equalsIgnoreCase(name)){

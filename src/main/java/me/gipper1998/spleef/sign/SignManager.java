@@ -9,6 +9,7 @@ import me.gipper1998.spleef.game.Status;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
@@ -25,6 +26,7 @@ import java.util.Set;
 public class SignManager extends BukkitRunnable implements Listener {
 
     public SignManager() {
+        Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
         this.runTaskTimerAsynchronously(Spleef.main, 0L, 20L);
     }
 
@@ -34,47 +36,47 @@ public class SignManager extends BukkitRunnable implements Listener {
     }
 
     private void updateSigns(){
-        ConfigurationSection section = Spleef.main.getConfig().getConfigurationSection("Signs");
-        if (section == null){
-            return;
-        }
-        Set<String> keys = section.getKeys(false);
-        for (String key : keys){
-            Arena arena = ArenaManager.findArena(key);
-            GameManager gm = ArenaManager.findGame(key);
-            if (arena != null){
-                List<String> listedSigns = new ArrayList<>();
-                if (Spleef.main.signs.getConfig().contains("Signs." + key)){
-                    listedSigns = Spleef.main.signs.getConfig().getStringList("Signs." + key);
-                }
-                for (int i = 0; i < listedSigns.size(); i++){
-                    String[] location = listedSigns.get(i).split(";");
-                    int x = Integer.valueOf(location[0]);
-                    int y = Integer.valueOf(location[1]);
-                    int z = Integer.valueOf(location[2]);
-                    World world = Bukkit.getWorld(location[3]);
-                    if (world != null){
-                        if (!world.isChunkLoaded(x >> 4, y >> 4)){
-                            continue;
+        if (Spleef.main.signs.getConfig().contains("Signs")) {
+            for (String key : Spleef.main.signs.getConfig().getConfigurationSection("Signs").getKeys(false)) {
+                Arena arena = ArenaManager.findArena(key);
+                if (arena != null) {
+                    GameManager gm = ArenaManager.findGame(key);
+                    List<String> listedSigns = new ArrayList<>();
+                    if (Spleef.main.signs.getConfig().contains("Signs." + key)) {
+                        listedSigns = Spleef.main.signs.getConfig().getStringList("Signs." + key);
+                    }
+                    for (int i = 0; i < listedSigns.size(); i++) {
+                        String[] location = listedSigns.get(i).split(";");
+                        int x = Integer.valueOf(location[0]);
+                        int y = Integer.valueOf(location[1]);
+                        int z = Integer.valueOf(location[2]);
+                        World world = Bukkit.getWorld(location[3]);
+                        if (world != null) {
+                            if (!world.isChunkLoaded(x >> 4, y >> 4)) {
+                                continue;
+                            }
+                        }
+                        MessageManager.sendCustomeConsole("Goes to here");
+                        Block block = world.getBlockAt(x, y, z);
+                        BlockState state = block.getState();
+                        if (state instanceof Sign) {
+                            MessageManager.sendCustomeConsole("Does enter here");
+                            Sign sign = (Sign) block.getState();
+                            String status = getSignStatus(gm);
+                            List<String> signListMessages = MessageManager.getStringList("main_sign");
+                            for (int line = 0; line < signListMessages.size(); line++) {
+                                String currentLine = signListMessages.get(line);
+                                currentLine = currentLine.replace("<arenaname>", gm.getArena().getName());
+                                currentLine = currentLine.replace("<status>", status);
+                                MessageManager.sendCustomeConsole(Integer.toString(gm.getTotalPlayers().size()));
+                                currentLine = currentLine.replace("<ingame>", Integer.toString(gm.getTotalPlayers().size()));
+                                currentLine = currentLine.replace("<maximum>", Integer.toString(gm.getArena().getMaximum()));
+                                sign.setLine(line, currentLine);
+                            }
+                            sign.update();
                         }
                     }
-                    Block block = world.getBlockAt(x, y, z);
-                    if (block instanceof Sign){
-                        Sign sign = (Sign) block.getState();
-                        String status = getSignStatus(gm);
-                        List<String> signListMessages = MessageManager.getStringList("main_sign");
-                        for (int line = 0; line < signListMessages.size(); line++){
-                            String currentLine = signListMessages.get(line);
-                            currentLine = currentLine.replace("<arenaname>", gm.getArena().getName());
-                            currentLine = currentLine.replace("<status>", status);
-                            currentLine = currentLine.replace("<ingame>", Integer.toString(gm.getTotalPlayers().size()));
-                            currentLine = currentLine.replace("<maximum>", Integer.toString(gm.getArena().getMaximum()));
-                            sign.setLine(line, currentLine);
-                        }
-                        sign.update();
-                    }
                 }
-
             }
         }
     }
@@ -122,36 +124,37 @@ public class SignManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onSignDelete(BlockBreakEvent event){
-        if (event.getBlock() instanceof Sign){
-            if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){
-                ConfigurationSection section = Spleef.main.signs.getConfig().getConfigurationSection("Signs");
-                if (section == null){
-                    return;
+        if (event.getBlock().getState() instanceof Sign){
+            MessageManager.sendCustomeConsole("Does enter here");
+            if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")) {
+                if (!event.getPlayer().isSneaking()) {
+                    event.setCancelled(true);
                 }
-                Set<String> keys = section.getKeys(false);
-                for (String key : keys){
-                    List<String> listedSigns = new ArrayList<>();
-                    if (Spleef.main.signs.getConfig().contains("Signs." + key)){
-                        listedSigns = Spleef.main.signs.getConfig().getStringList("Signs." + key);
-                    }
-                    for (int i = 0; i < listedSigns.size(); i++){
-                        String[] location = listedSigns.get(i).split(";");
-                        int x = Integer.valueOf(location[0]);
-                        int y = Integer.valueOf(location[1]);
-                        int z = Integer.valueOf(location[2]);
-                        World world = Bukkit.getWorld(location[3]);
-                        if (world != null){
-                            if(event.getBlock().getX() == x && event.getBlock().getY() == y && event.getBlock().getZ() == z && world.getName().equals(event.getBlock().getWorld().getName())) {
-                                if (!event.getPlayer().isSneaking()){
-                                    event.setCancelled(true);
+                if (Spleef.main.signs.getConfig().contains("Signs")) {
+                    MessageManager.sendCustomeConsole("Does enter here to process signs");
+                    for (String key : Spleef.main.signs.getConfig().getConfigurationSection("Signs").getKeys(false)) {
+                        List<String> listedSigns = new ArrayList<>();
+                        if (Spleef.main.signs.getConfig().contains("Signs." + key)) {
+                            listedSigns = Spleef.main.signs.getConfig().getStringList("Signs." + key);
+                        }
+                        for (int i = 0; i < listedSigns.size(); i++) {
+                            String[] location = listedSigns.get(i).split(";");
+                            int x = Integer.valueOf(location[0]);
+                            int y = Integer.valueOf(location[1]);
+                            int z = Integer.valueOf(location[2]);
+                            World world = Bukkit.getWorld(location[3]);
+                            if (world != null) {
+                                if (event.getBlock().getX() == x && event.getBlock().getY() == y && event.getBlock().getZ() == z && world.getName().equals(event.getBlock().getWorld().getName())) {
+                                    listedSigns.remove(i);
+                                    Spleef.main.signs.getConfig().set("Signs." + key, listedSigns);
+                                    MessageManager.sendCustomeConsole("Deleted a sign");
+                                    Spleef.main.signs.saveConfig();
                                 }
-                                listedSigns.remove(i);
-                                Spleef.main.signs.getConfig().set("Signs." + key, listedSigns);
-                                Spleef.main.signs.saveConfig();
-                                return;
                             }
                         }
                     }
+                } else {
+                    event.setCancelled(true);
                 }
             }
         }
@@ -159,31 +162,31 @@ public class SignManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onSignInteract(PlayerInteractEvent event){
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getClickedBlock() instanceof Sign){
-            ConfigurationSection section = Spleef.main.signs.getConfig().getConfigurationSection("Signs");
-            if (section == null){
-                return;
-            }
-            Set<String> keys = section.getKeys(false);
-            for (String key : keys) {
-                Arena arena = ArenaManager.findArena(key);
-                GameManager gm = ArenaManager.findGame(key);
-                if (arena != null){
-                    List<String> listedSigns = new ArrayList<>();
-                    if (Spleef.main.signs.getConfig().contains("Signs." + key)){
-                        listedSigns = Spleef.main.signs.getConfig().getStringList("Signs." + key);
-                    }
-                    for (int i = 0; i < listedSigns.size(); i++){
-                        String[] location = listedSigns.get(i).split(";");
-                        int x = Integer.valueOf(location[0]);
-                        int y = Integer.valueOf(location[1]);
-                        int z = Integer.valueOf(location[2]);
-                        World world = Bukkit.getWorld(location[3]);
-                        if (world != null) {
-                            if (event.getClickedBlock().getX() == x && event.getClickedBlock().getY() == y && event.getClickedBlock().getZ() == z && world.getName().equals(event.getClickedBlock().getWorld().getName())) {
-                                if (gm != null){
-                                    if (gm.addPlayer(event.getPlayer())){
-                                        return;
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getClickedBlock().getState() instanceof Sign) {
+            if (Spleef.main.signs.getConfig().contains("Signs")) {
+                for (String key : Spleef.main.signs.getConfig().getConfigurationSection("Signs").getKeys(false)) {
+                    MessageManager.sendCustomeConsole("Does enter here to process signs" + key);
+                    Arena arena = ArenaManager.findArena(key);
+                    GameManager gm = ArenaManager.findGame(key);
+                    if (arena != null) {
+                        List<String> listedSigns = new ArrayList<>();
+                        if (Spleef.main.signs.getConfig().contains("Signs." + key)) {
+                            listedSigns = Spleef.main.signs.getConfig().getStringList("Signs." + key);
+                        }
+                        for (int i = 0; i < listedSigns.size(); i++) {
+                            String[] location = listedSigns.get(i).split(";");
+                            int x = Integer.valueOf(location[0]);
+                            int y = Integer.valueOf(location[1]);
+                            int z = Integer.valueOf(location[2]);
+                            World world = Bukkit.getWorld(location[3]);
+                            if (world != null) {
+                                if (event.getClickedBlock().getX() == x && event.getClickedBlock().getY() == y && event.getClickedBlock().getZ() == z && world.getName().equals(event.getClickedBlock().getWorld().getName())) {
+                                    if (gm != null) {
+                                        MessageManager.sendCustomeConsole("Should let players join here");
+                                        if (!gm.addPlayer(event.getPlayer())) {
+                                            return;
+                                        }
+                                        MessageManager.sendCustomeConsole("Does enter here to process sign, but did not allow player to go through");
                                     }
                                 }
                             }

@@ -22,6 +22,7 @@ public class Spleef extends JavaPlugin {
     public FileManager config;
     public FileManager playerStats;
     public FileManager signs;
+    private SignManager sm;
 
     @Override
     public void onEnable() {
@@ -30,13 +31,13 @@ public class Spleef extends JavaPlugin {
         ArenaManager.loadArenas();
         registerSoftDependencies();
         getCommand("spleef").setExecutor(new CommandManager());
-        getServer().getPluginManager().registerEvents(new SignManager(), this);
-        MessageManager.sendMessage("start_up", null);
+        MessageManager.sendConsoleMessage("start_up");
+        this.sm = new SignManager();
     }
 
     @Override
     public void onDisable() {
-        MessageManager.sendMessage("shut_down", null);
+        MessageManager.sendConsoleMessage("shut_down");
         Bukkit.getPluginManager().disablePlugin(this);
     }
 
@@ -52,12 +53,12 @@ public class Spleef extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             if (VaultManager.registerVault()) {
                 this.vaultEnabled = true;
-                MessageManager.sendMessage("vault_enable", null);
+                MessageManager.sendConsoleMessage("vault_enable");
             }
         }
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null){
             new PAPIManager().register();
-            MessageManager.sendMessage("papi_enable", null);
+            MessageManager.sendConsoleMessage("papi_enable");
         }
 
     }
