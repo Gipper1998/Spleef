@@ -305,6 +305,80 @@ public class GameManager extends BukkitRunnable implements Listener {
         }
     }
 
+    public boolean addPlayer(Player p){
+        if (totalPlayers.contains(p)){
+            MessageManager.sendMessage("player_already_joined", p);
+            return false;
+        }
+        if (status == Status.WAIT) {
+            if (playersInGame.size() >= arena.getMaximum()) {
+                return false;
+            }
+            for (Player player : playersInGame) {
+                MessageManager.sendMessage("player_join", p.getName(), player);
+            }
+            for (PotionEffect effect : p.getActivePotionEffects()){
+                p.removePotionEffect(effect.getType());
+            }
+            MessageManager.sendMessage("player_success_join", getArena().getName(), p);
+            playersInGame.add(p);
+            totalPlayers.add(p);
+            GameStoreItems gmi = new GameStoreItems(p);
+            playersStuff.put(p, gmi);
+            p.teleport(arena.getLobby());
+            p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
+            p.updateInventory();
+            return true;
+        }
+        else if (playersInGame.size() == arena.getMaximum()){
+            MessageManager.sendMessage("arena_full", p);
+            return false;
+        }
+        else {
+            MessageManager.sendMessage("arena_in-game", p);
+            return false;
+        }
+    }
+
+    public void removePlayer(Player p) {
+        if (status == Status.WAIT) {
+            GameStoreItems gmi = playersStuff.get(p);
+            playersInGame.remove(p);
+            totalPlayers.remove(p);
+            for (Player player : playersInGame) {
+                MessageManager.sendMessage("player_quit", p.getName(), player);
+            }
+            gmi.giveBackItems();
+            playersStuff.remove(p);
+            MessageManager.sendMessage("player_success_quit", arena.getName(), p);
+        }
+        else {
+            MessageManager.sendMessage("player_success_quit", arena.getName(), p);
+            if (spectators.contains(p)) {
+                spectators.remove(p);
+            }
+            if (spectators.contains(p)) {
+                playersInGame.remove(p);
+            }
+            totalPlayers.remove(p);
+            GameStoreItems gmi = playersStuff.get(p);
+            gmi.giveBackItems();
+            playersStuff.remove(p);
+            PlayerStatManager.addLosePoint(p.getUniqueId());
+        }
+    }
+
+    public void removeEverybody(){
+        for (Player p : totalPlayers){
+            GameStoreItems gmi = playersStuff.get(p);
+            gmi.giveBackItems();
+        }
+        playersInGame.clear();
+        spectators.clear();
+        totalPlayers.clear();
+        playersStuff.clear();
+    }
+
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
         if (status == Status.GAME && event.getEntity().getCustomName().equals(TNT)) {
@@ -320,64 +394,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                 }
             }
         }
-    }
-
-
-    public boolean addPlayer(Player p){
-        if (status == Status.WAIT) {
-            if (playersInGame.size() >= arena.getMaximum()) {
-                return false;
-            }
-            for (Player player : playersInGame) {
-                MessageManager.sendMessage("player_join", p.getName(), player);
-            }
-            playersInGame.add(p);
-            totalPlayers.add(p);
-            GameStoreItems gmi = new GameStoreItems(p);
-            playersStuff.put(p, gmi);
-            p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
-            p.updateInventory();
-            p.teleport(arena.getLobby());
-            return true;
-        }
-        else if (playersInGame.size() == arena.getMaximum()){
-            MessageManager.sendMessage("arena_full", p);
-            return false;
-        }
-        else {
-            MessageManager.sendMessage("arena_in-game", p);
-            return false;
-        }
-    }
-
-    public void removePlayer(Player p) {
-        playersInGame.remove(p);
-        for (Player player : playersInGame) {
-            MessageManager.sendMessage("player_quit", p.getName(), player);
-        }
-        GameStoreItems gmi = playersStuff.get(p);
-        gmi.giveBackItems();
-        MessageManager.sendMessage("player_success_quit", arena.getName(), p);
-        playersStuff.remove(p);
-        if (status == Status.GAME){
-            MessageManager.sendMessage("player_success_quit", arena.getName(), p);
-            totalPlayers.remove(p);
-            spectators.remove(p);
-            playersInGame.remove(p);
-            PlayerStatManager.addLosePoint(p.getUniqueId());
-        }
-    }
-
-    public void removeEverybody(){
-        List<Player> totalPlayers = new ArrayList<>();
-        playersInGame.clear();
-        spectators.clear();
-        for (Player p : totalPlayers){
-            GameStoreItems gmi = playersStuff.get(p);
-            gmi.giveBackItems();
-        }
-        totalPlayers.clear();
-        playersStuff.clear();
     }
 
     @EventHandler

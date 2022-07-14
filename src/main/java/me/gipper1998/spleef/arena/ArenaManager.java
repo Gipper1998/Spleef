@@ -8,12 +8,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
 public class ArenaManager {
 
     private static HashMap<Arena, GameManager> activeArenas = new HashMap<>();
+
+    public static void shutGamesDown(){
+        if (activeArenas.isEmpty()){
+            return;
+        }
+        for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
+            GameManager gm = set.getValue();
+            gm.removeEverybody();
+        }
+    }
 
     public static List<String> getArenaNames(){
         if (activeArenas.isEmpty()){
@@ -55,6 +66,16 @@ public class ArenaManager {
         return null;
     }
 
+    public static GameManager findPlayerInArena(Player p) {
+        for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
+            GameManager gm = set.getValue();
+            if (gm.getTotalPlayers().contains(p)){
+                return gm;
+            }
+        }
+        return null;
+    }
+
     public static boolean deleteArena(String name){
         name = name.toUpperCase();
         if (activeArenas.isEmpty()){
@@ -70,6 +91,13 @@ public class ArenaManager {
             }
         }
         return false;
+    }
+
+    public static void forceQuitArenas() {
+        for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
+            GameManager gm = set.getValue();
+            gm.removeEverybody();
+        }
     }
 
     public static void createArena(ArenaSetupTemplate temp){
@@ -143,10 +171,4 @@ public class ArenaManager {
         return new Location(world, x, y, z, yaw, pitch);
     }
 
-    public static void forceQuitArenas() {
-        for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            GameManager gm = set.getValue();
-            gm.removeEverybody();
-        }
-    }
 }

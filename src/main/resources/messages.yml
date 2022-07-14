@@ -57,17 +57,21 @@ player_winner: "<prefix> <name> has won the game!!"
 arena_no_winner: "<prefix> The match took too long, arena resetting."
 arena_full: "<prefix> The arena is full, please try again later."
 arena_in-game: "<prefix> The arena is already in progress, please try again later."
+player_already_joined: "<prefix> You are already in this arena."
+player_not_in_game: "<prefix> You are not in an arena."
 
 # Signs
 main_sign:
   - "<prefix>"
-  - "<arenaname>"
-  - "&3<ingame> &e/ &3<maximum>"
+  - "&f<arenaname>"
+  - "&3<in_game> &e/ &3<maximum>"
   - "<status>"
 sign_status:
-  wait: "[Join]"
-  in-game: "[In-Progress]"
-  reset: "[RESETTING]"
+  wait: "&a[Join]"
+  in-game: "&e[In-Progress]"
+  reset: "&c[RESETTING]"
+sign_creation: "<prefix> &aSign created."
+sign_deletion: "<prefix> &cSign removed."
 
 # Modify the command page here
 commands_page_player:
@@ -75,9 +79,15 @@ commands_page_player:
   - "<prefix> &cCommands:"
   - "/spleef join <name>"
   - "/spleef leave"
+  - "/spleef stats"
 commands_page_admin:
   - "&f&l------------------------"
   - "<prefix> &cCommands:"
   - "/spleef create <name>"
   - "/spleef delete <name>"
+  - "/spleef edit <name>"
+  - "/spleef <setwins/setlosses> <name>"
+  - "/spleef join <name>"
+  - "/spleef leave"
+  - "/spleef stats"
 

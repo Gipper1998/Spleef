@@ -39,6 +39,7 @@ public class Spleef extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        ArenaManager.shutGamesDown();
         MessageManager.sendMessage("shut_down", null);
         Bukkit.getPluginManager().disablePlugin(this);
     }

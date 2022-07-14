@@ -57,7 +57,7 @@ public class MessageManager {
         sendTo(ChatColor.translateAlternateColorCodes('&', message), null);
     }
 
-    public static void sendCustomeConsole(String message){
+    public static void sendCustomConsole(String message){
         message = translateHEX(message);
         sendTo(ChatColor.translateAlternateColorCodes('&', message), null);
     }

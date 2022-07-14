@@ -13,6 +13,8 @@ public class GameStoreItems {
     private double health;
     private double hunger;
     private float xp;
+
+    private int selectedItemSlot;
     private GameMode gamemode;
     private Location location;
 
@@ -25,6 +27,7 @@ public class GameStoreItems {
         this.xp = player.getExp();
         this.gamemode = player.getGameMode();
         this.location = player.getLocation();
+        this.selectedItemSlot = player.getInventory().getHeldItemSlot();
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
         player.setGameMode(GameMode.ADVENTURE);
@@ -41,6 +44,7 @@ public class GameStoreItems {
         player.setExp(xp);
         player.setHealth(health);
         player.setFoodLevel((int) hunger);
+        player.getInventory().setHeldItemSlot(selectedItemSlot);
         player.updateInventory();
         player.teleport(location);
     }
