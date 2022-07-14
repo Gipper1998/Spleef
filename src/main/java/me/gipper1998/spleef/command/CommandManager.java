@@ -89,6 +89,8 @@ public class CommandManager implements TabExecutor {
                     Spleef.main.arenas.reloadConfig();
                     Spleef.main.playerStats.reloadConfig();
                     Spleef.main.messages.reloadConfig();
+                    Spleef.main.signs.reloadConfig();
+                    Spleef.main.signManager.startUpdater();
                     ArenaManager.forceQuitArenas();
                     ArenaManager.loadArenas();
                     MessageManager.sendMessage("reloaded", p);

@@ -107,7 +107,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                 for (Player p : playersInGame){
                     p.teleport(arena.getArena());
                     p.hidePlayer(Spleef.main, p);
-                    totalPlayers.add(p);
                 }
                 currentTime = startDelay;
                 status = Status.DELAYSTART;
@@ -333,6 +332,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 MessageManager.sendMessage("player_join", p.getName(), player);
             }
             playersInGame.add(p);
+            totalPlayers.add(p);
             GameStoreItems gmi = new GameStoreItems(p);
             playersStuff.put(p, gmi);
             p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
