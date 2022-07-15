@@ -163,8 +163,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void winnerShowOff(){
+        Player winner = playersInGame.get(0);
         if (currentTime == winnerDelay) {
-            Player winner = playersInGame.get(0);
             FireworkBuilder fb = new FireworkBuilder(arena.getArena(), 25, "aqua", 2, 5);
             fb.launch();
             for (Player p : totalPlayers) {
@@ -172,6 +172,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             }
         }
         if (currentTime <= 0){
+            PlayerStatManager.addWinPoint(winner.getUniqueId());
             removeEverybody();
             currentTime = resetDelay;
             status = Status.RESTARTING;
@@ -232,13 +233,13 @@ public class GameManager extends BukkitRunnable implements Listener {
     private void checkTime() {
         if (events.contains(currentTime)) {
             String path = "time_events." + currentTime + ".";
-            if (Spleef.main.config.getConfig().contains(path + "snowballs")) {
+            if (ConfigManager.contains(path + "snowballs")) {
                 for (Player p : playersInGame) {
                     p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt((path + "snowballs"))).getIs());
                     p.updateInventory();
                 }
             }
-            if (Spleef.main.config.getConfig().contains(path + "tntfall")) {
+            if (ConfigManager.contains(path + "tntfall")) {
                 int size = ConfigManager.getInt("tntfall");
                 if (size > playersInGame.size()) {
                     for (Player p : playersInGame){
@@ -269,17 +270,17 @@ public class GameManager extends BukkitRunnable implements Listener {
                     }
                 }
             }
-            if (Spleef.main.config.getConfig().contains(path + "speed")){
+            if (ConfigManager.contains(path + "speed")){
                 for (Player p : playersInGame){
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,ConfigManager.getInt(path + "speed"), 3));
                 }
             }
-            if (Spleef.main.config.getConfig().contains(path + "slow")){
+            if (ConfigManager.contains(path + "slow")){
                 for (Player p : playersInGame){
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,ConfigManager.getInt(path + "slow"), 3));
                 }
             }
-            if (Spleef.main.config.getConfig().contains(path + "jump")){
+            if (ConfigManager.contains(path + "jump")){
                 for (Player p : playersInGame){
                     p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,ConfigManager.getInt(path + "jump"), 3));
                 }
@@ -288,13 +289,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void loadEvents(){
-        if (Spleef.main.config.getConfig().getBoolean("enable_time_events")) {
-            ConfigurationSection section = Spleef.main.config.getConfig().getConfigurationSection("time_events");
-            if (section == null) {
-                return;
-            }
-            Set<String> keys = section.getKeys(false);
-            for (String key : keys) {
+        if (ConfigManager.getBoolean("enable_time_events")) {
+            for (String key : Spleef.main.config.getConfig().getConfigurationSection("time_events").getKeys(false)) {
                 try {
                     events.add(Integer.parseInt(key));
                 }
@@ -341,30 +337,37 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     public void removePlayer(Player p) {
-        if (status == Status.WAIT) {
-            GameStoreItems gmi = playersStuff.get(p);
-            playersInGame.remove(p);
-            totalPlayers.remove(p);
-            for (Player player : playersInGame) {
-                MessageManager.sendMessage("player_quit", p.getName(), player);
+        if (totalPlayers.contains(p)) {
+            if (status == Status.WAIT) {
+                GameStoreItems gmi = playersStuff.get(p);
+                playersInGame.remove(p);
+                totalPlayers.remove(p);
+                for (Player player : playersInGame) {
+                    MessageManager.sendMessage("player_quit", p.getName(), player);
+                }
+                gmi.giveBackItems();
+                playersStuff.remove(p);
+                MessageManager.sendMessage("player_success_quit", arena.getName(), p);
+                return;
+            } else {
+                MessageManager.sendMessage("player_success_quit", arena.getName(), p);
+                if (spectators.contains(p)) {
+                    spectators.remove(p);
+                }
+                if (spectators.contains(p)) {
+                    playersInGame.remove(p);
+                }
+                totalPlayers.remove(p);
+                GameStoreItems gmi = playersStuff.get(p);
+                gmi.giveBackItems();
+                playersStuff.remove(p);
+                PlayerStatManager.addLosePoint(p.getUniqueId());
+                return;
             }
-            gmi.giveBackItems();
-            playersStuff.remove(p);
-            MessageManager.sendMessage("player_success_quit", arena.getName(), p);
         }
         else {
-            MessageManager.sendMessage("player_success_quit", arena.getName(), p);
-            if (spectators.contains(p)) {
-                spectators.remove(p);
-            }
-            if (spectators.contains(p)) {
-                playersInGame.remove(p);
-            }
-            totalPlayers.remove(p);
-            GameStoreItems gmi = playersStuff.get(p);
-            gmi.giveBackItems();
-            playersStuff.remove(p);
-            PlayerStatManager.addLosePoint(p.getUniqueId());
+            MessageManager.sendMessage("player_not_in_game", p);
+            return;
         }
     }
 

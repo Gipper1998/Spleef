@@ -2,9 +2,7 @@ package me.gipper1998.spleef.file;
 
 import me.gipper1998.spleef.Spleef;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.Set;
 import java.util.UUID;
 
 public class PlayerStatManager {
@@ -74,12 +72,10 @@ public class PlayerStatManager {
     }
 
     public static UUID findPlayer(String name){
-        ConfigurationSection playerDataBoard = Spleef.main.playerStats.getConfig().getConfigurationSection("Players");
-        if (playerDataBoard == null) {
+        if (Spleef.main.playerStats.getConfig().getConfigurationSection("Players") == null) {
             return null;
         }
-        Set<String> keys = playerDataBoard.getKeys(false);
-        for (String key : keys) {
+        for (String key : Spleef.main.playerStats.getConfig().getConfigurationSection("Players").getKeys(false)) {
             try {
                 UUID uuid = UUID.fromString(key);
                 String temp = Bukkit.getOfflinePlayer(uuid).getName();

@@ -47,15 +47,15 @@ public class SignManager implements Listener {
     }
 
     private void updateSigns() {
-        FileConfiguration config = Spleef.main.signs.getConfig();
-        if (config.contains("Signs")) {
-            for (String arenaName : config.getConfigurationSection("Signs").getKeys(false)) {
+        FileConfiguration signs = Spleef.main.signs.getConfig();
+        if (signs.contains("Signs")) {
+            for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)) {
                 Arena arena = ArenaManager.findArena(arenaName);
                 GameManager gm = ArenaManager.findGame(arenaName);
                 if (arena != null) {
                     List<String> signLists = new ArrayList<>();
-                    if (config.contains("Signs." + arenaName)) {
-                        signLists = config.getStringList("Signs." + arenaName);
+                    if (signs.contains("Signs." + arenaName)) {
+                        signLists = signs.getStringList("Signs." + arenaName);
                     }
                     for (int i = 0; i < signLists.size(); i++) {
                         String[] location = signLists.get(i).split(";");
@@ -104,7 +104,7 @@ public class SignManager implements Listener {
 
     @EventHandler
     public void onSignCreation(SignChangeEvent event){
-        FileConfiguration config = Spleef.main.signs.getConfig();
+        FileConfiguration signs = Spleef.main.signs.getConfig();
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){
             if (event.getLine(0).equals("[Spleef]")){
                 if (event.getLine(1) != null && ArenaManager.findArena(event.getLine(1)) != null){
@@ -121,11 +121,11 @@ public class SignManager implements Listener {
                         event.setLine(line, currentLine);
                     }
                     List<String> listedSigns = new ArrayList<>();
-                    if (config.contains("Signs." + key)){
-                        listedSigns = config.getStringList("Signs." + gm.getArena().getName());
+                    if (signs.contains("Signs." + key)){
+                        listedSigns = signs.getStringList("Signs." + gm.getArena().getName());
                     }
                     listedSigns.add(event.getBlock().getX()+";"+event.getBlock().getY()+";"+event.getBlock().getZ()+";"+event.getBlock().getWorld().getName());
-                    config.set("Signs." + key, listedSigns);
+                    signs.set("Signs." + key, listedSigns);
                     MessageManager.sendMessage("sign_creation", event.getPlayer());
                     Spleef.main.signs.saveConfig();
                 }
@@ -135,16 +135,16 @@ public class SignManager implements Listener {
 
     @EventHandler
     public void onSignDelete(BlockBreakEvent event){
-        FileConfiguration config = Spleef.main.signs.getConfig();
+        FileConfiguration signs = Spleef.main.signs.getConfig();
         Block block = event.getBlock();
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){
             if (event.getPlayer().isSneaking()){
                 if (block.getType().name().contains("SIGN")) {
-                    if (config.contains("Signs")){
-                        for (String arenaName : config.getConfigurationSection("Signs").getKeys(false)){
+                    if (signs.contains("Signs")){
+                        for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)){
                             List<String> listedSigns = new ArrayList<>();
-                            if (config.contains("Signs." + arenaName)){
-                                listedSigns = config.getStringList("Signs." + arenaName);
+                            if (signs.contains("Signs." + arenaName)){
+                                listedSigns = signs.getStringList("Signs." + arenaName);
                             }
                             for (int i = 0; i < listedSigns.size(); i++){
                                 String[] location = listedSigns.get(i).split(";");
@@ -155,7 +155,7 @@ public class SignManager implements Listener {
                                 if (world != null){
                                     if (block.getX() == x && block.getY() == y && block.getZ() == z && world.getName().equals(block.getWorld().getName())) {
                                         listedSigns.remove(i);
-                                        config.set("Signs." + arenaName, listedSigns);
+                                        signs.set("Signs." + arenaName, listedSigns);
                                         Spleef.main.signs.saveConfig();
                                         MessageManager.sendMessage("sign_deletion", event.getPlayer());
                                         return;
@@ -179,17 +179,17 @@ public class SignManager implements Listener {
     public void onPlayerClick(PlayerInteractEvent event){
         Player p = event.getPlayer();
         Block block = event.getClickedBlock();
-        FileConfiguration config = Spleef.main.signs.getConfig();
+        FileConfiguration signs = Spleef.main.signs.getConfig();
         if (block != null && block.getType().name().contains("SIGN") && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-            if (config.contains("Signs")){
-                for (String arenaName : config.getConfigurationSection("Signs").getKeys(false)){
-                    if (config.contains("Signs." + arenaName)){
+            if (signs.contains("Signs")){
+                for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)){
+                    if (signs.contains("Signs." + arenaName)){
                         Arena arena = ArenaManager.findArena(arenaName);
                         if (arena != null) {
                             GameManager gm = ArenaManager.findGame(arenaName);
                             List<String> listedSigns = new ArrayList<>();
-                            if (config.contains("Signs." + arenaName)) {
-                                listedSigns = config.getStringList("Signs." + arenaName);
+                            if (signs.contains("Signs." + arenaName)) {
+                                listedSigns = signs.getStringList("Signs." + arenaName);
                             }
                             for (int i = 0; i < listedSigns.size(); i++) {
                                 String[] location = listedSigns.get(i).split(";");

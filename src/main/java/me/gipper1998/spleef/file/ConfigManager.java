@@ -22,4 +22,8 @@ public class ConfigManager {
     public static boolean getBoolean(String path){
         return Spleef.main.config.getConfig().getBoolean(path);
     }
+
+    public static boolean contains(String path){
+        return Spleef.main.config.getConfig().contains(path);
+    }
 }

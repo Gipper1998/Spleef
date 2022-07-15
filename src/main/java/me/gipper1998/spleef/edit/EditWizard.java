@@ -34,6 +34,8 @@ public class EditWizard implements Listener {
 
     private ArenaEditTemplate template;
 
+    private Arena prevArena;
+
     private EditStoreItems esi;
 
     private String EDIT_NAME = "";
@@ -51,6 +53,7 @@ public class EditWizard implements Listener {
     public EditWizard(Player p, Arena arena){
         Bukkit.getPluginManager().registerEvents(this, Spleef.main);
         this.template = new ArenaEditTemplate(arena);
+        this.prevArena = arena;
         this.EDIT_NAME = MessageManager.getString("set_name_item");
         this.SET_MINIMUM = MessageManager.getString("set_minimum_item");
         this.SET_MAXIMUM = MessageManager.getString("set_maximum_item");
@@ -175,7 +178,7 @@ public class EditWizard implements Listener {
         p.getInventory().clear();
         esi.giveBackItems();
         p.updateInventory();
-        ArenaManager.saveEditedArena(template);
+        ArenaManager.saveEditedArena(template, prevArena);
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Spleef.main, new Runnable() {
             @Override
             public void run() {

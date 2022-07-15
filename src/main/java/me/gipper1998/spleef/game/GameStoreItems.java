@@ -28,9 +28,13 @@ public class GameStoreItems {
         this.gamemode = player.getGameMode();
         this.location = player.getLocation();
         this.selectedItemSlot = player.getInventory().getHeldItemSlot();
+        if (selectedItemSlot == 8){
+            selectedItemSlot = 7;
+        }
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
         player.setGameMode(GameMode.ADVENTURE);
+        player.getInventory().setHeldItemSlot(0);
         player.updateInventory();
         for (PotionEffect effect : player.getActivePotionEffects()){
             player.removePotionEffect(effect.getType());
@@ -43,8 +47,8 @@ public class GameStoreItems {
         player.setGameMode(gamemode);
         player.setExp(xp);
         player.setHealth(health);
-        player.setFoodLevel((int) hunger);
         player.getInventory().setHeldItemSlot(selectedItemSlot);
+        player.setFoodLevel((int) hunger);
         player.updateInventory();
         player.teleport(location);
     }
