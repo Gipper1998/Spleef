@@ -10,7 +10,6 @@ import me.gipper1998.spleef.item.FireworkBuilder;
 import me.gipper1998.spleef.item.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -172,7 +171,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             }
         }
         if (currentTime <= 0){
-            PlayerStatManager.addWinPoint(winner.getUniqueId());
+            PlayerStatManager.getInstance().addWinPoint(winner.getUniqueId());
             removeEverybody();
             currentTime = resetDelay;
             status = Status.RESTARTING;
@@ -224,7 +223,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         spectators.add(p);
         p.teleport(arena.getSpectate());
         p.setGameMode(GameMode.SPECTATOR);
-        PlayerStatManager.addLosePoint(p.getUniqueId());
+        PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
         for (PotionEffect effect : p.getActivePotionEffects()){
             p.removePotionEffect(effect.getType());
         }
@@ -361,7 +360,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 GameStoreItems gmi = playersStuff.get(p);
                 gmi.giveBackItems();
                 playersStuff.remove(p);
-                PlayerStatManager.addLosePoint(p.getUniqueId());
+                PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
                 return;
             }
         }

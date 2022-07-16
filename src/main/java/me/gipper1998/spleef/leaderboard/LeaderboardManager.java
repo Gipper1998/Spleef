@@ -3,49 +3,96 @@ package me.gipper1998.spleef.leaderboard;
 import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
 
 public class LeaderboardManager {
 
-    private static HashMap<UUID, Integer> leaderBoard = new HashMap<UUID, Integer>();
+    public static LeaderboardManager lm;
 
-    public static String winsPositionPoints(int position){
+    private HashMap<UUID, Integer> winsLeaderboard = new HashMap<>();
+    private HashMap<UUID, Integer> lossesLeaderboard = new HashMap<>();
+    private FileConfiguration players;
+
+    public LeaderboardManager(){
+        this.players = Spleef.main.playerStats.getConfig();
+    }
+
+    public static LeaderboardManager getInstance(){
+        if (lm == null){
+            lm = new LeaderboardManager();
+        }
+        return lm;
+    }
+
+    public String winsPositionPoints(int position){
         sortWins();
-        if (leaderBoard.size() == 0 || position == 0 || position > leaderBoard.size()){
+        if (winsLeaderboard.size() == 0 || position == 0 || position > winsLeaderboard.size()){
             return null;
         }
-        return getNumber(position);
+        int index = 0;
+        for (Map.Entry<UUID, Integer> entry : winsLeaderboard.entrySet()){
+            if (position == (winsLeaderboard.size() - index)){
+                return Integer.toString(entry.getValue());
+            }
+            index++;
+        }
+        return null;
     }
 
-    public static String lossesPositionPoints(int position){
+    public String lossesPositionPoints(int position){
         sortLoses();
-        if (leaderBoard.size() == 0 || position == 0 || position > leaderBoard.size()){
+        if (lossesLeaderboard.size() == 0 || position == 0 || position > lossesLeaderboard.size()){
             return null;
         }
-        return getNumber(position);
+        int index = 0;
+        for (Map.Entry<UUID, Integer> entry : lossesLeaderboard.entrySet()){
+            if (position == (lossesLeaderboard.size() - index)){
+                return Integer.toString(entry.getValue());
+            }
+            index++;
+        }
+        return null;
     }
 
-    public static String winsPositionName(int position){
+    public String winsPositionName(int position){
         sortWins();
-        if (leaderBoard.size() == 0 || position == 0 || position > leaderBoard.size()){
+        if (winsLeaderboard.size() == 0 || position == 0 || position > winsLeaderboard.size()){
             return null;
         }
-        return getName(position);
+        int index = 0;
+        for (Map.Entry<UUID, Integer> entry : winsLeaderboard.entrySet()){
+            if (position == (winsLeaderboard.size() - index)){
+                OfflinePlayer player = Bukkit.getOfflinePlayer(entry.getKey());
+                return player.getName();
+            }
+            index++;
+        }
+        return null;
     }
 
-    public static String lossesPositionName(int position){
+    public String lossesPositionName(int position){
         sortLoses();
-        if (leaderBoard.size() == 0 || position == 0 || position > leaderBoard.size()){
+        if (lossesLeaderboard.size() == 0 || position == 0 || position > lossesLeaderboard.size()){
             return null;
         }
-        return getName(position);
+        int index = 0;
+        for (Map.Entry<UUID, Integer> entry : lossesLeaderboard.entrySet()){
+            if (position == (lossesLeaderboard.size() - index)){
+                OfflinePlayer player = Bukkit.getOfflinePlayer(entry.getKey());
+                return player.getName();
+            }
+            index++;
+        }
+        return null;
     }
 
-    private static void sortWins(){
+    private void sortWins(){
         HashMap<UUID, Integer> temp = new HashMap<>();
-        ConfigurationSection playerDataBoard = Spleef.main.playerStats.getConfig().getConfigurationSection("Players");
+        ConfigurationSection playerDataBoard = players.getConfigurationSection("Players");
         if (playerDataBoard == null) {
             return;
         }
@@ -53,18 +100,18 @@ public class LeaderboardManager {
         for (String key : keys) {
             try {
                 UUID uuid = UUID.fromString(key);
-                temp.put(uuid, PlayerStatManager.getWins(uuid));
+                temp.put(uuid, PlayerStatManager.getInstance().getWins(uuid));
             }
             catch (Exception e){
                 return;
             }
         }
-        leaderBoard = sort(temp);
+        winsLeaderboard = sort(temp);
     }
 
-    private static void sortLoses() {
+    private void sortLoses() {
         HashMap<UUID, Integer> temp = new HashMap<>();
-        ConfigurationSection playerDataBoard = Spleef.main.playerStats.getConfig().getConfigurationSection("Players");
+        ConfigurationSection playerDataBoard = players.getConfigurationSection("Players");
         if (playerDataBoard == null) {
             return;
         }
@@ -72,15 +119,15 @@ public class LeaderboardManager {
         for (String key : keys) {
             try {
                 UUID uuid = UUID.fromString(key);
-                temp.put(uuid, PlayerStatManager.getLosses(uuid));
+                temp.put(uuid, PlayerStatManager.getInstance().getLosses(uuid));
             } catch (Exception e) {
                 return;
             }
         }
-        leaderBoard = sort(temp);
+        lossesLeaderboard = sort(temp);
     }
 
-    private static HashMap<UUID, Integer> sort(HashMap<UUID, Integer> hm) {
+    private HashMap<UUID, Integer> sort(HashMap<UUID, Integer> hm) {
         List<Map.Entry<UUID, Integer> > list = new LinkedList<Map.Entry<UUID, Integer> >(hm.entrySet());
         Collections.sort(list, new Comparator<Map.Entry<UUID, Integer> >() {
             public int compare(Map.Entry<UUID, Integer> o1, Map.Entry<UUID, Integer> o2) {
@@ -94,27 +141,4 @@ public class LeaderboardManager {
         return temp;
     }
 
-    private static String getNumber(int position){
-        int size = leaderBoard.size();
-        int index = 0;
-        for (Map.Entry<UUID, Integer> en : leaderBoard.entrySet()){
-            if (position == (size - index)){
-                return Integer.toString(en.getValue());
-            }
-            index++;
-        }
-        return null;
-    }
-
-    private static String getName(int position){
-        int size = leaderBoard.size();
-        int index = 0;
-        for (Map.Entry<UUID, Integer> en : leaderBoard.entrySet()){
-            if (position == (size - index)){
-                return (Bukkit.getPlayer(en.getKey()).getName());
-            }
-            index++;
-        }
-        return null;
-    }
 }

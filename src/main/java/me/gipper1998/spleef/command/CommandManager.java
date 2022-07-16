@@ -102,11 +102,11 @@ public class CommandManager implements TabExecutor {
                     if (args[1].isEmpty()) {
                         return false;
                     } else {
-                        Player temp = Bukkit.getPlayer(PlayerStatManager.findPlayer(args[1]));
+                        Player temp = Bukkit.getPlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
                         if (args[2].isEmpty()){
                             return false;
                         }
-                        PlayerStatManager.setWinPoint(temp.getUniqueId(), Integer.parseInt(args[2]));
+                        PlayerStatManager.getInstance().setWinPoint(temp.getUniqueId(), Integer.parseInt(args[2]));
                         return true;
                     }
                 }
@@ -121,11 +121,11 @@ public class CommandManager implements TabExecutor {
                     if (args[1].isEmpty()) {
                         return false;
                     } else {
-                        Player temp = Bukkit.getPlayer(PlayerStatManager.findPlayer(args[1]));
+                        Player temp = Bukkit.getPlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
                         if (args[2].isEmpty()){
                             return false;
                         }
-                        PlayerStatManager.setLosePoint(temp.getUniqueId(), Integer.parseInt(args[2]));
+                        PlayerStatManager.getInstance().setLosePoint(temp.getUniqueId(), Integer.parseInt(args[2]));
                         return true;
                     }
                 }
@@ -193,16 +193,16 @@ public class CommandManager implements TabExecutor {
             // See Player Stats
             if (args[0].equalsIgnoreCase("stats")) {
                 if (args[1].isEmpty()) {
-                    int wins = PlayerStatManager.getWins(p.getUniqueId());
-                    int losses = PlayerStatManager.getLosses(p.getUniqueId());
+                    int wins = PlayerStatManager.getInstance().getWins(p.getUniqueId());
+                    int losses = PlayerStatManager.getInstance().getLosses(p.getUniqueId());
                     statBoard(p, wins, losses, p);
                     return true;
                 } else {
                     if (p.hasPermission("spleef.otherstats") || p.hasPermission("spleef.admin")) {
                         try {
-                            Player temp = Bukkit.getPlayer(PlayerStatManager.findPlayer(args[1]));
-                            int wins = PlayerStatManager.getWins(temp.getUniqueId());
-                            int losses = PlayerStatManager.getLosses(temp.getUniqueId());
+                            Player temp = Bukkit.getPlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
+                            int wins = PlayerStatManager.getInstance().getWins(temp.getUniqueId());
+                            int losses = PlayerStatManager.getInstance().getLosses(temp.getUniqueId());
                             statBoard(p, wins, losses, temp);
                             return true;
                         } catch (Exception e) {

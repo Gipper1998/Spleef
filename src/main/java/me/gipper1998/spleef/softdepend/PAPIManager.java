@@ -30,10 +30,10 @@ public class PAPIManager extends PlaceholderExpansion {
             return "";
         }
         if (identifier.equals("wins")){
-            return Integer.toString(PlayerStatManager.getWins(p.getUniqueId()));
+            return Integer.toString(PlayerStatManager.getInstance().getWins(p.getUniqueId()));
         }
         else if (identifier.equals("losses")){
-            return Integer.toString(PlayerStatManager.getLosses(p.getUniqueId()));
+            return Integer.toString(PlayerStatManager.getInstance().getLosses(p.getUniqueId()));
         }
         else if (identifier.contains("top")){
             String[] temp = identifier.split("_");
@@ -42,10 +42,10 @@ public class PAPIManager extends PlaceholderExpansion {
             String position = temp[3];
             if (type.equals("wins")){
                 if (dataType.equals("player")){
-                    return LeaderboardManager.winsPositionName(Integer.parseInt(position));
+                    return LeaderboardManager.getInstance().winsPositionName(Integer.parseInt(position));
                 }
                 else if (dataType.equals("amount")){
-                    return LeaderboardManager.winsPositionPoints(Integer.parseInt(position));
+                    return LeaderboardManager.getInstance().winsPositionPoints(Integer.parseInt(position));
                 }
                 else {
                     return null;
@@ -53,9 +53,9 @@ public class PAPIManager extends PlaceholderExpansion {
             }
             else if (type.equals("losses")) {
                 if (dataType.equals("player")) {
-                    return LeaderboardManager.lossesPositionName(Integer.parseInt(position));
+                    return LeaderboardManager.getInstance().lossesPositionName(Integer.parseInt(position));
                 } else if (dataType.equals("amount")) {
-                    return LeaderboardManager.lossesPositionPoints(Integer.parseInt(position));
+                    return LeaderboardManager.getInstance().lossesPositionPoints(Integer.parseInt(position));
                 } else {
                     return null;
                 }

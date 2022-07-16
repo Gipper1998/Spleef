@@ -2,80 +2,96 @@ package me.gipper1998.spleef.file;
 
 import me.gipper1998.spleef.Spleef;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.UUID;
 
 public class PlayerStatManager {
 
-    public static void addWinPoint(UUID uuid){
+    public static PlayerStatManager psm;
+
+    private FileConfiguration players;
+
+    public PlayerStatManager(){
+        this.players = Spleef.main.playerStats.getConfig();
+    }
+
+    public static PlayerStatManager getInstance(){
+        if (psm == null){
+            psm = new PlayerStatManager();
+        }
+        return psm;
+    }
+
+    public void addWinPoint(UUID uuid){
         String path = "Players." + uuid + ".";
         int wins = 0;
         int losses = 0;
         if (checkFiles(path)){
-            wins = Spleef.main.playerStats.getConfig().getInt(path + "Wins");
-            losses = Spleef.main.playerStats.getConfig().getInt(path + "Losses");
+            wins = players.getInt(path + "Wins");
+            losses = players.getInt(path + "Losses");
         }
-        Spleef.main.playerStats.getConfig().set(path + "Wins", wins++);
-        Spleef.main.playerStats.getConfig().set(path + "Losses", losses);
+        players.set(path + "Wins", wins++);
+        players.set(path + "Losses", losses);
         Spleef.main.playerStats.saveConfig();
     }
 
-    public static void addLosePoint(UUID uuid){
+    public void addLosePoint(UUID uuid){
         String path = "Players." + uuid + ".";
         int wins = 0;
         int losses = 0;
         if (checkFiles(path)){
-            wins = Spleef.main.playerStats.getConfig().getInt(path + "Wins");
-            losses = Spleef.main.playerStats.getConfig().getInt(path + "Losses");
+            wins = players.getInt(path + "Wins");
+            losses = players.getInt(path + "Losses");
         }
-        Spleef.main.playerStats.getConfig().set(path + "Wins", wins);
-        Spleef.main.playerStats.getConfig().set(path + "Losses", losses++);
+        players.set(path + "Wins", wins);
+        players.set(path + "Losses", losses++);
         Spleef.main.playerStats.saveConfig();
     }
 
-    public static void setWinPoint(UUID uuid, int score){
+    public void setWinPoint(UUID uuid, int score){
         String path = "Players." + uuid + ".";
         int losses = 0;
         if (checkFiles(path)){
-            losses = Spleef.main.playerStats.getConfig().getInt(path + "Losses");
+            losses = players.getInt(path + "Losses");
         }
-        Spleef.main.playerStats.getConfig().set(path + "Wins", score);
-        Spleef.main.playerStats.getConfig().set(path + "Losses", losses);
+        players.set(path + "Wins", score);
+        players.set(path + "Losses", losses);
         Spleef.main.playerStats.saveConfig();
     }
 
-    public static void setLosePoint(UUID uuid, int score){
+    public void setLosePoint(UUID uuid, int score){
         String path = "Players." + uuid + ".";
         int wins = 0;
         if (checkFiles(path)){
-            wins = Spleef.main.playerStats.getConfig().getInt(path + "Wins");
+            wins = players.getInt(path + "Wins");
         }
-        Spleef.main.playerStats.getConfig().set(path + "Wins", wins);
-        Spleef.main.playerStats.getConfig().set(path + "Losses", score);
+        players.set(path + "Wins", wins);
+        players.set(path + "Losses", score);
         Spleef.main.playerStats.saveConfig();
     }
 
-    public static int getWins(UUID uuid){
+    public int getWins(UUID uuid){
         String path = "Players." + uuid + ".";
         if (checkFiles(path)) {
-            return Spleef.main.playerStats.getConfig().getInt("Players." + uuid + ".Wins");
+            return players.getInt("Players." + uuid + ".Wins");
         }
         return 0;
     }
 
-    public static int getLosses(UUID uuid){
+    public int getLosses(UUID uuid){
         String path = "Players." + uuid + ".";
         if (checkFiles(path)) {
-            return Spleef.main.playerStats.getConfig().getInt("Players." + uuid + ".Losses");
+            return players.getInt("Players." + uuid + ".Losses");
         }
         return 0;
     }
 
-    public static UUID findPlayer(String name){
-        if (Spleef.main.playerStats.getConfig().getConfigurationSection("Players") == null) {
+    public UUID findPlayer(String name){
+        if (players.getConfigurationSection("Players") == null) {
             return null;
         }
-        for (String key : Spleef.main.playerStats.getConfig().getConfigurationSection("Players").getKeys(false)) {
+        for (String key : players.getConfigurationSection("Players").getKeys(false)) {
             try {
                 UUID uuid = UUID.fromString(key);
                 String temp = Bukkit.getOfflinePlayer(uuid).getName();
@@ -90,8 +106,8 @@ public class PlayerStatManager {
         return null;
     }
 
-    private static boolean checkFiles(String path){
-        return (Spleef.main.playerStats.getConfig().contains(path + "Wins") && Spleef.main.playerStats.getConfig().contains(path + "Losses"));
+    private boolean checkFiles(String path){
+        return (players.contains(path + "Wins") && players.contains(path + "Losses"));
     }
 
 }
