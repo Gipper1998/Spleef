@@ -300,14 +300,15 @@ public class GameManager extends BukkitRunnable implements Listener {
         }
     }
 
-    public boolean addPlayer(Player p){
+    public void addPlayer(Player p){
         if (totalPlayers.contains(p)){
             MessageManager.sendMessage("player_already_joined", p);
-            return false;
+            return;
         }
         if (status == Status.WAIT) {
             if (playersInGame.size() >= arena.getMaximum()) {
-                return false;
+                MessageManager.sendMessage("arena_full", p);
+                return;
             }
             for (Player player : playersInGame) {
                 MessageManager.sendMessage("player_join", p.getName(), player);
@@ -323,15 +324,9 @@ public class GameManager extends BukkitRunnable implements Listener {
             p.teleport(arena.getLobby());
             p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
             p.updateInventory();
-            return true;
-        }
-        else if (playersInGame.size() == arena.getMaximum()){
-            MessageManager.sendMessage("arena_full", p);
-            return false;
         }
         else {
             MessageManager.sendMessage("arena_in-game", p);
-            return false;
         }
     }
 
@@ -347,7 +342,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                 gmi.giveBackItems();
                 playersStuff.remove(p);
                 MessageManager.sendMessage("player_success_quit", arena.getName(), p);
-                return;
             } else {
                 MessageManager.sendMessage("player_success_quit", arena.getName(), p);
                 if (spectators.contains(p)) {
@@ -361,12 +355,10 @@ public class GameManager extends BukkitRunnable implements Listener {
                 gmi.giveBackItems();
                 playersStuff.remove(p);
                 PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
-                return;
             }
         }
         else {
             MessageManager.sendMessage("player_not_in_game", p);
-            return;
         }
     }
 
