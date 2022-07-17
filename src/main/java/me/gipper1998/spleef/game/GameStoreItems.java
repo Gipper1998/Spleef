@@ -33,7 +33,6 @@ public class GameStoreItems {
         }
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
-        player.setGameMode(GameMode.ADVENTURE);
         player.getInventory().setHeldItemSlot(0);
         player.updateInventory();
         for (PotionEffect effect : player.getActivePotionEffects()){

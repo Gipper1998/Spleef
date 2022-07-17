@@ -49,13 +49,13 @@ public class SetupWizard implements Listener {
     public SetupWizard(Player p, String name){
         Bukkit.getPluginManager().registerEvents(this, Spleef.main);
         this.template = new ArenaSetupTemplate(name);
-        this.CANCEL_WIZARD = MessageManager.getString("cancel_wizard_item");
-        this.SET_MINIMUM = MessageManager.getString("set_minimum_item");
-        this.SET_MAXIMUM = MessageManager.getString("set_maximum_item");
-        this.SET_ARENA_SPAWN = MessageManager.getString("set_arena_spawn_item");
-        this.SET_LOBBY_SPAWN = MessageManager.getString("set_lobby_spawn_item");
-        this.SET_SPECTATOR_SPAWN = MessageManager.getString("set_spectator_spawn_item");
-        this.COMPLETE_WIZARD = MessageManager.getString("complete_wizard_item");
+        this.CANCEL_WIZARD = MessageManager.getInstance().getString("cancel_wizard_item");
+        this.SET_MINIMUM = MessageManager.getInstance().getString("set_minimum_item");
+        this.SET_MAXIMUM = MessageManager.getInstance().getString("set_maximum_item");
+        this.SET_ARENA_SPAWN = MessageManager.getInstance().getString("set_arena_spawn_item");
+        this.SET_LOBBY_SPAWN = MessageManager.getInstance().getString("set_lobby_spawn_item");
+        this.SET_SPECTATOR_SPAWN = MessageManager.getInstance().getString("set_spectator_spawn_item");
+        this.COMPLETE_WIZARD = MessageManager.getInstance().getString("complete_wizard_item");
         this.ssi = new SetupStoreItems(p);
         inSetupWizard.add(p);
         giveItems(p, p.getInventory());
@@ -93,38 +93,38 @@ public class SetupWizard implements Listener {
             ItemMeta im = event.getItem().getItemMeta();
             if ((item.getType() == ConfigManager.getBlock("setup_wizard_blocks.cancel")) && (im.getDisplayName().equals(CANCEL_WIZARD)) && bothClicks(event)) {
                 exitWizard(event.getPlayer(), false);
-                MessageManager.sendMessage("exit_wizard", event.getPlayer());
+                MessageManager.getInstance().sendMessage("exit_wizard", event.getPlayer());
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("setup_wizard_blocks.maximum")) && (im.getDisplayName().equals(SET_MAXIMUM)) && bothClicks(event)) {
-                MessageManager.sendMessage("wizard_maximum_chat", event.getPlayer());
+                MessageManager.getInstance().sendMessage("wizard_maximum_chat", event.getPlayer());
                 findMax = true;
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("setup_wizard_blocks.minimum")) && (im.getDisplayName().equals(SET_MINIMUM)) && bothClicks(event)) {
-                MessageManager.sendMessage("wizard_minimum_chat", event.getPlayer());
+                MessageManager.getInstance().sendMessage("wizard_minimum_chat", event.getPlayer());
                 findMin = true;
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("setup_wizard_blocks.arena")) && (im.getDisplayName().equals(SET_ARENA_SPAWN)) && bothClicks(event)) {
                 template.setArena(event.getPlayer().getLocation());
-                MessageManager.sendMessage("wizard_arena_spawn_set", event.getPlayer());
+                MessageManager.getInstance().sendMessage("wizard_arena_spawn_set", event.getPlayer());
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("setup_wizard_blocks.spectator")) && (im.getDisplayName().equals(SET_SPECTATOR_SPAWN)) && bothClicks(event)) {
                 template.setSpectate(event.getPlayer().getLocation());
-                MessageManager.sendMessage("wizard_spectator_spawn_set", event.getPlayer());
+                MessageManager.getInstance().sendMessage("wizard_spectator_spawn_set", event.getPlayer());
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("setup_wizard_blocks.lobby")) && (im.getDisplayName().equals(SET_LOBBY_SPAWN)) && bothClicks(event)) {
                 template.setLobby(event.getPlayer().getLocation());
-                MessageManager.sendMessage("wizard_lobby_spawn_set", event.getPlayer());
+                MessageManager.getInstance().sendMessage("wizard_lobby_spawn_set", event.getPlayer());
                 return;
             }
             else if ((item.getType() == ConfigManager.getBlock("setup_wizard_blocks.complete")) && (im.getDisplayName().equals(COMPLETE_WIZARD)) && bothClicks(event)) {
                 if (isComplete(event.getPlayer())) {
                     exitWizard(event.getPlayer(), true);
-                    MessageManager.sendMessage("wizard_arena_saved", event.getPlayer());
+                    MessageManager.getInstance().sendMessage("wizard_arena_saved", event.getPlayer());
                 }
                 return;
             }
@@ -137,14 +137,14 @@ public class SetupWizard implements Listener {
             if (isNumeric(event.getMessage())) {
                 if (findMin) {
                     template.setMinimum(Integer.parseInt(event.getMessage()));
-                    MessageManager.sendMessage("wizard_minimum_set", Integer.parseInt(event.getMessage()), event.getPlayer());
+                    MessageManager.getInstance().sendNumberMessage("wizard_minimum_set", Integer.parseInt(event.getMessage()), event.getPlayer());
                     findMin = false;
                     event.setCancelled(true);
                     return;
                 }
                 if (findMax) {
                     template.setMaximum(Integer.parseInt(event.getMessage()));
-                    MessageManager.sendMessage("wizard_maximum_set", Integer.parseInt(event.getMessage()), event.getPlayer());
+                    MessageManager.getInstance().sendNumberMessage("wizard_maximum_set", Integer.parseInt(event.getMessage()), event.getPlayer());
                     event.setCancelled(true);
                     findMax = false;
                     return;
@@ -198,19 +198,19 @@ public class SetupWizard implements Listener {
 
     private boolean isComplete(Player player){
         if (template.arena == null){
-            MessageManager.sendMessage("wizard_arena_not_set", player);
+            MessageManager.getInstance().sendMessage("wizard_arena_not_set", player);
             return false;
         }
         else if (template.spectate == null){
-            MessageManager.sendMessage("wizard_spectator_not_set", player);
+            MessageManager.getInstance().sendMessage("wizard_spectator_not_set", player);
             return false;
         }
         else if (template.minimum == 0){
-            MessageManager.sendMessage("wizard_minimum_not_set", player);
+            MessageManager.getInstance().sendMessage("wizard_minimum_not_set", player);
             return false;
         }
         else if (template.maximum == 0){
-            MessageManager.sendMessage("wizard_maximum_not_set", player);
+            MessageManager.getInstance().sendMessage("wizard_maximum_not_set", player);
             return false;
         }
         else {

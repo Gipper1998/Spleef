@@ -35,7 +35,6 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private int waitTime = 10;
     private int gameTime = 120;
-    private int resetDelay = 5;
     private int startDelay = 5;
     private int winnerDelay = 5;
     public int currentTime = 0;
@@ -65,10 +64,10 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.arena = arena;
         this.waitTime = ConfigManager.getInt("waiting_time");
         this.gameTime = ConfigManager.getInt("total_game_time");
-        this.EXIT_ITEM = MessageManager.getString("leave_item");
-        this.GOLD_SPADE_ITEM = MessageManager.getString("gold_shovel");
-        this.DIAMOND_SPADE_ITEM = MessageManager.getString("diamond_shovel");
-        this.SNOWBALL_ITEM = MessageManager.getString("snowball");
+        this.EXIT_ITEM = MessageManager.getInstance().getString("leave_item");
+        this.GOLD_SPADE_ITEM = MessageManager.getInstance().getString("gold_shovel");
+        this.DIAMOND_SPADE_ITEM = MessageManager.getInstance().getString("diamond_shovel");
+        this.SNOWBALL_ITEM = MessageManager.getInstance().getString("snowball");
         this.TNT = "TNT_SPLEEF";
         loadEvents();
         this.runTaskTimer(Spleef.main, 20L, 20L);
@@ -93,10 +92,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                 winnerShowOff();
                 break;
             }
-            case RESTARTING: {
-                resetArena();
-                break;
-            }
         }
     }
 
@@ -110,9 +105,17 @@ public class GameManager extends BukkitRunnable implements Listener {
                 currentTime = startDelay;
                 status = Status.DELAYSTART;
             }
-            else {
-                currentTime--;
+            if (currentTime == 60 || currentTime == 50 || currentTime == 40 || currentTime == 30 || currentTime == 20 || currentTime == 10){
+                for (Player p : playersInGame) {
+                    MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
+                }
             }
+            if (currentTime <= 5){
+                for (Player p : playersInGame) {
+                    MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
+                }
+            }
+            currentTime--;
         }
         else {
             currentTime = waitTime;
@@ -120,10 +123,12 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void delayStart(){
-        if (currentTime >= 0){
+        if (currentTime <= 0){
             for (Player p : playersInGame){
                 giveItems(p);
                 p.showPlayer(Spleef.main, p);
+                MessageManager.getInstance().sendMessage("game_start", p);
+                p.setGameMode(GameMode.SURVIVAL);
             }
             currentTime = gameTime;
             status = Status.GAME;
@@ -138,11 +143,12 @@ public class GameManager extends BukkitRunnable implements Listener {
         if (playersInGame.size() > 1){
             if (currentTime <= 0){
                 for (Player p : totalPlayers){
-                    MessageManager.sendMessage("arena_no_winner", p);
+                    MessageManager.getInstance().sendMessage("arena_no_winner", p);
                 }
                 removeEverybody();
-                currentTime = resetDelay;
-                status = Status.RESTARTING;
+                resetArena();
+                currentTime = waitTime;
+                status = Status.WAIT;
                 return;
             }
             else {
@@ -167,14 +173,15 @@ public class GameManager extends BukkitRunnable implements Listener {
             FireworkBuilder fb = new FireworkBuilder(arena.getArena(), 25, "aqua", 2, 5);
             fb.launch();
             for (Player p : totalPlayers) {
-                MessageManager.sendMessage("player_winner", winner.getName(), p);
+                MessageManager.getInstance().sendPlayerNameMessage("player_winner", winner, p);
             }
         }
         if (currentTime <= 0){
             PlayerStatManager.getInstance().addWinPoint(winner.getUniqueId());
             removeEverybody();
-            currentTime = resetDelay;
-            status = Status.RESTARTING;
+            resetArena();
+            currentTime = waitTime;
+            status = Status.WAIT;
         }
         else {
             currentTime--;
@@ -182,16 +189,9 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void resetArena(){
-        if (resetDelay <= 0) {
-            for (Map.Entry<Material, Location> set : brokenBlocks.entrySet()) {
-                set.getValue().getBlock().setType(set.getKey());
-            }
-            currentTime = waitTime;
-            status = Status.WAIT;
-            return;
-        }
-        else {
-            currentTime--;
+        for (Map.Entry<Material, Location> set : brokenBlocks.entrySet()) {
+            Block b = set.getValue().getBlock();
+            b.setType(set.getKey());
         }
     }
 
@@ -217,7 +217,7 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private void killPlayer(Player p){
         for (Player player : totalPlayers){
-            MessageManager.sendMessage("player_died", p.getName(), player);
+            MessageManager.getInstance().sendPlayerNameMessage("player_died", p, player);
         }
         playersInGame.remove(p);
         spectators.add(p);
@@ -302,31 +302,32 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     public void addPlayer(Player p){
         if (totalPlayers.contains(p)){
-            MessageManager.sendMessage("player_already_joined", p);
+            MessageManager.getInstance().sendMessage("player_already_joined", p);
             return;
         }
         if (status == Status.WAIT) {
             if (playersInGame.size() >= arena.getMaximum()) {
-                MessageManager.sendMessage("arena_full", p);
+                MessageManager.getInstance().sendMessage("arena_full", p);
                 return;
             }
             for (Player player : playersInGame) {
-                MessageManager.sendMessage("player_join", p.getName(), player);
+                MessageManager.getInstance().sendPlayerNameMessage("player_join", p, player);
             }
             for (PotionEffect effect : p.getActivePotionEffects()){
                 p.removePotionEffect(effect.getType());
             }
-            MessageManager.sendMessage("player_success_join", getArena().getName(), p);
+            MessageManager.getInstance().sendArenaNameMessage("player_success_join", this, p);
             playersInGame.add(p);
             totalPlayers.add(p);
             GameStoreItems gmi = new GameStoreItems(p);
             playersStuff.put(p, gmi);
             p.teleport(arena.getLobby());
+            p.setGameMode(GameMode.ADVENTURE);
             p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
             p.updateInventory();
         }
         else {
-            MessageManager.sendMessage("arena_in-game", p);
+            MessageManager.getInstance().sendMessage("arena_in-game", p);
         }
     }
 
@@ -337,13 +338,13 @@ public class GameManager extends BukkitRunnable implements Listener {
                 playersInGame.remove(p);
                 totalPlayers.remove(p);
                 for (Player player : playersInGame) {
-                    MessageManager.sendMessage("player_quit", p.getName(), player);
+                    MessageManager.getInstance().sendPlayerNameMessage("player_quit", p, player);
                 }
                 gmi.giveBackItems();
                 playersStuff.remove(p);
-                MessageManager.sendMessage("player_success_quit", arena.getName(), p);
+                MessageManager.getInstance().sendArenaNameMessage("player_success_quit", this, p);
             } else {
-                MessageManager.sendMessage("player_success_quit", arena.getName(), p);
+                MessageManager.getInstance().sendArenaNameMessage("player_success_quit", this, p);
                 if (spectators.contains(p)) {
                     spectators.remove(p);
                 }
@@ -358,7 +359,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             }
         }
         else {
-            MessageManager.sendMessage("player_not_in_game", p);
+            MessageManager.getInstance().sendMessage("player_not_in_game", p);
         }
     }
 
@@ -403,10 +404,12 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        if (playersInGame.contains(event.getPlayer()) && event.getBlock().getType() == Material.SNOW_BLOCK){
+        Block b = event.getBlock();
+        if (playersInGame.contains(event.getPlayer()) && b.getType() == Material.SNOW_BLOCK){
             if (status == Status.GAME){
                 event.setDropItems(false);
-                brokenBlocks.put(Material.SNOW_BLOCK, event.getBlock().getLocation());
+                brokenBlocks.put(b.getType(), b.getLocation());
+                b.setType(Material.AIR);
             }
             else {
                 event.setCancelled(true);

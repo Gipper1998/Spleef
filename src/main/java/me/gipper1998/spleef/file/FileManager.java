@@ -48,7 +48,7 @@ public class FileManager {
         try {
             getConfig().save(dataConfigFile);
         } catch (IOException e) {
-            MessageManager.sendConsoleMessage("<prefix> &cFile &d" + name + " &cFailed to load, backup previous data from &d" + name + " &cand try again.");
+            MessageManager.getInstance().sendConsoleMessage("<prefix> &cFile &d" + name + " &cFailed to load, backup previous data from &d" + name + " &cand try again.");
         }
     }
 

@@ -59,6 +59,8 @@ arena_full: "<prefix> The arena is full, please try again later."
 arena_in-game: "<prefix> The arena is already in progress, please try again later."
 player_already_joined: "<prefix> You are already in this arena."
 player_not_in_game: "<prefix> You are not in an arena."
+starting_game: "<prefix> &bGame starting in &d<time>&b seconds."
+game_start: "<prefix> &aGet ready for a swell battle, and &dBEGIN!!!"
 
 # Signs
 main_sign:
