@@ -45,6 +45,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     private String SNOWBALL_ITEM = "";
     private String TNT = "";
 
+    private Random rand;
+
     private HashMap<Player, GameStoreItems> playersStuff = new HashMap<Player, GameStoreItems>();
 
     private List<Location> blocksBroken = new ArrayList<>();
@@ -71,6 +73,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.DIAMOND_SPADE_ITEM = MessageManager.getInstance().getString("diamond_shovel");
         this.SNOWBALL_ITEM = MessageManager.getInstance().getString("snowball");
         this.TNT = "TNT_SPLEEF";
+        this.rand = new Random();
         loadEvents();
         this.runTaskTimer(Spleef.main, 20L, 20L);
     }
@@ -216,26 +219,10 @@ public class GameManager extends BukkitRunnable implements Listener {
                     }
                 }
                 else {
-                    int[] playerTarget = {0};
-                    int index = 0;
-                    int temp = 0;
-                    Random rand = new Random();
-                    for (int i = 0; i < size; i++) {
-                        do {
-                            temp = rand.nextInt(size);
-                            for (int j = 0; j < size; j++) {
-                                if (temp == playerTarget[j]) {
-                                    temp = 0;
-                                    break;
-                                }
-                            }
-                        } while (temp == 0);
-                        playerTarget[index] = temp;
-                        index++;
-                    }
-                    for (int i = 0; i < size; i++){
-                        Player p = playersInGame.get(playerTarget[i]);
-                        ItemBuilder t = new ItemBuilder(p, TNT);
+                    for (Player p : playersInGame){
+                        if (rand.nextBoolean()) {
+                            ItemBuilder temp = new ItemBuilder(p, TNT);
+                        }
                     }
                 }
             }
@@ -386,8 +373,9 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onProjectileLaunch(ProjectileHitEvent event){
-        if (playersInGame.contains(event.getEntity().getShooter()) && status == Status.GAME){
-            if (event.getHitBlock().getType() == Material.SNOW_BLOCK){
+        Player p = (Player) event.getEntity().getShooter();
+        if (playersInGame.contains(p) && status == Status.GAME){
+            if (event.getHitBlock() != null && event.getHitBlock().getType() == Material.SNOW_BLOCK){
                 blocksBroken.add(event.getHitBlock().getLocation());
                 event.getHitBlock().setType(Material.AIR);
             }

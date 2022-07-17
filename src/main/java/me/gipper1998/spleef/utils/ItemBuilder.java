@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.gipper1998.spleef.file.MessageManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.inventory.ItemStack;
@@ -36,9 +37,9 @@ public class ItemBuilder {
     public ItemBuilder(Player player, String name){
         Location location = player.getLocation();
         location.setY(player.getLocation().getY() + 5);
-        TNTPrimed tntPrimed = player.getWorld().spawn(player.getLocation(), TNTPrimed.class);
-        tntPrimed.setCustomName(name);
-        tntPrimed.setFuseTicks(200);
+        TNTPrimed TNT = location.getWorld().spawn(location, TNTPrimed.class);
+        TNT.setCustomName(name);
+        TNT.setFuseTicks(200);
     }
 
 }
