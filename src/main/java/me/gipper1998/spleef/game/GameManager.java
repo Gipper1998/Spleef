@@ -46,7 +46,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     private String TNT = "";
 
     private HashMap<Player, GameStoreItems> playersStuff = new HashMap<Player, GameStoreItems>();
-    private HashMap<Material, Location> brokenBlocks = new HashMap<>();
+
+    private List<Location> blocksBroken = new ArrayList<>();
 
     @Getter
     private List<Player> playersInGame = new ArrayList<>();
@@ -110,7 +111,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                     MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
                 }
             }
-            if (currentTime <= 5){
+            if (currentTime <= 5 && currentTime >= 1){
                 for (Player p : playersInGame) {
                     MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
                 }
@@ -140,31 +141,23 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void playGame(){
-        if (playersInGame.size() > 1){
-            if (currentTime <= 0){
-                for (Player p : totalPlayers){
-                    MessageManager.getInstance().sendMessage("arena_no_winner", p);
-                }
-                removeEverybody();
-                resetArena();
-                currentTime = waitTime;
-                status = Status.WAIT;
-                return;
+        if (currentTime <= 0){
+            for (Player p : totalPlayers){
+                MessageManager.getInstance().sendMessage("arena_no_winner", p);
             }
-            else {
-                for (Player p : playersInGame){
-                    if (loseFloor(p)){
-                        killPlayer(p);
-                    }
-                }
-                checkTime();
-                currentTime--;
-            }
+            removeEverybody();
+            resetArena();
+            currentTime = waitTime;
+            status = Status.WAIT;
+            return;
         }
         if (playersInGame.size() == 1) {
             currentTime = winnerDelay;
             status = Status.WINNER;
+            return;
         }
+        checkTime();
+        currentTime--;
     }
 
     private void winnerShowOff(){
@@ -189,10 +182,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void resetArena(){
-        for (Map.Entry<Material, Location> set : brokenBlocks.entrySet()) {
-            Block b = set.getValue().getBlock();
-            b.setType(set.getKey());
-        }
+        blocksBroken.forEach(location -> location.getBlock().setType(Material.SNOW_BLOCK));
+        blocksBroken.clear();
     }
 
     private void giveItems(Player p){
@@ -209,10 +200,6 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private boolean bothClicks(PlayerInteractEvent event){
         return (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK);
-    }
-
-    private boolean loseFloor(Player p){
-        return (p.getLocation().getBlock().getType().name().contains("WATER") || p.getLocation().getBlock().getType().name().contains("LAVA"));
     }
 
     private void killPlayer(Player p){
@@ -381,10 +368,10 @@ public class GameManager extends BukkitRunnable implements Listener {
                 List destroyed = event.blockList();
                 Iterator it = destroyed.iterator();
                 while (it.hasNext()) {
-                    Block block = (Block) it.next();
-                    if (!(block.getType() == Material.SNOW_BLOCK)) {
-                        brokenBlocks.put(Material.SNOW_BLOCK, block.getLocation());
-                        it.remove();
+                    Block b = (Block) it.next();
+                    if (!(b.getType() == Material.SNOW_BLOCK)) {
+                        blocksBroken.add(b.getLocation());
+                        b.setType(Material.AIR);
                     }
                 }
             }
@@ -408,7 +395,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         if (playersInGame.contains(event.getPlayer()) && b.getType() == Material.SNOW_BLOCK){
             if (status == Status.GAME){
                 event.setDropItems(false);
-                brokenBlocks.put(b.getType(), b.getLocation());
+                blocksBroken.add(b.getLocation());
                 b.setType(Material.AIR);
             }
             else {
@@ -422,8 +409,8 @@ public class GameManager extends BukkitRunnable implements Listener {
         if (playersInGame.contains(event.getEntity().getShooter() instanceof Player) && status == Status.GAME){
             if (event.getEntity().getLocation().getBlock().getType() == Material.SNOW_BLOCK){
                 if (event.getEntity().getName().equals(SNOWBALL_ITEM)) {
-                    brokenBlocks.put(Material.SNOW_BLOCK, event.getEntity().getLocation());
                     Block b = event.getEntity().getLocation().getBlock();
+                    blocksBroken.add(b.getLocation());
                     b.setType(Material.AIR);
                 }
             }
@@ -463,6 +450,12 @@ public class GameManager extends BukkitRunnable implements Listener {
         if (playersInGame.contains(event.getPlayer())){
             event.setCancelled(true);
         }
+        if (spectators.contains(event.getPlayer())){
+            double distance = event.getPlayer().getEyeLocation().distance(arena.getSpectate());
+            if (distance > 100){
+                event.getPlayer().teleport(arena.getSpectate());
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -482,6 +475,16 @@ public class GameManager extends BukkitRunnable implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event){
         if (playersInGame.contains(event.getPlayer()) || spectators.contains(event.getPlayer())){
             removePlayer(event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void playerMoveEvent(PlayerMoveEvent event){
+        if (playersInGame.contains(event.getPlayer())){
+            Player p = event.getPlayer();
+            if (p.getLocation().getBlock().getType() == Material.WATER || p.getLocation().getBlock().getType() == Material.LAVA){
+                killPlayer(p);
+            }
         }
     }
 }
