@@ -3,6 +3,8 @@
 # The main game settings (this goes for all arenas):
 waiting_time: 30
 total_game_time: 120
+scoreboard_enable: true
+exp_time_enable: true
 give_snowballs_on_start:
   amount: 10
 

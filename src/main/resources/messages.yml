@@ -81,6 +81,17 @@ stats:
   - "Wins:   <wins>"
   - "Losses: <losses>"
 
+scoreboard:
+  - "&f&lSpleef"
+  - ""
+  - "Alive"
+  - "<playername>"
+  - "<playername>"
+  - "<playername>"
+  - "<playername>"
+  - "<playername>"
+  - ""
+  - "Time left: <time>"
 # Modify the command page here
 commands_page_player:
   - "&f&l------------------------"

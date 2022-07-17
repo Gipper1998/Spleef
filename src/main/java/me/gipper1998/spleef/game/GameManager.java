@@ -37,7 +37,9 @@ public class GameManager extends BukkitRunnable implements Listener {
     private int gameTime = 120;
     private int startDelay = 5;
     private int winnerDelay = 5;
-    public int currentTime = 0;
+
+    @Getter
+    private int currentTime = 0;
 
     private String EXIT_ITEM = "";
     private String GOLD_SPADE_ITEM = "";
@@ -55,6 +57,7 @@ public class GameManager extends BukkitRunnable implements Listener {
     private List<Player> spectators = new ArrayList<>();
     @Getter
     private List<Player> totalPlayers = new ArrayList<>();
+
     private List<Integer> events = new ArrayList<>();
 
     @Getter
@@ -94,6 +97,18 @@ public class GameManager extends BukkitRunnable implements Listener {
                 break;
             }
         }
+        if (ConfigManager.getBoolean("scoreboard_enable")){
+            if (status == Status.GAME) {
+                for (Player p : playersInGame) {
+                    GameScoreboard.getInstance().updateScoreboard(this);
+                }
+            }
+        }
+        if (ConfigManager.getBoolean("exp_time_enable")){
+            for (Player p : totalPlayers){
+                p.setTotalExperience(currentTime);
+            }
+        }
     }
 
     private void waitTask(){
@@ -130,6 +145,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 p.showPlayer(Spleef.main, p);
                 MessageManager.getInstance().sendMessage("game_start", p);
                 p.setGameMode(GameMode.SURVIVAL);
+                GameScoreboard.getInstance().createScoreboard(p, this);
             }
             currentTime = gameTime;
             status = Status.GAME;
@@ -319,16 +335,17 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     public void removePlayer(Player p) {
+        GameStoreItems gmi = playersStuff.get(p);
+        gmi.giveBackItems();
+        playersStuff.remove(p);
+        GameScoreboard.getInstance().removePlayerFromScoreboard(p);
         if (totalPlayers.contains(p)) {
             if (status == Status.WAIT) {
-                GameStoreItems gmi = playersStuff.get(p);
                 playersInGame.remove(p);
                 totalPlayers.remove(p);
                 for (Player player : playersInGame) {
                     MessageManager.getInstance().sendPlayerNameMessage("player_quit", p, player);
                 }
-                gmi.giveBackItems();
-                playersStuff.remove(p);
                 MessageManager.getInstance().sendArenaNameMessage("player_success_quit", this, p);
             } else {
                 MessageManager.getInstance().sendArenaNameMessage("player_success_quit", this, p);
@@ -339,9 +356,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                     playersInGame.remove(p);
                 }
                 totalPlayers.remove(p);
-                GameStoreItems gmi = playersStuff.get(p);
-                gmi.giveBackItems();
-                playersStuff.remove(p);
                 PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
             }
         }
@@ -354,6 +368,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         for (Player p : totalPlayers){
             GameStoreItems gmi = playersStuff.get(p);
             gmi.giveBackItems();
+            GameScoreboard.getInstance().removePlayerFromScoreboard(p);
         }
         playersInGame.clear();
         spectators.clear();

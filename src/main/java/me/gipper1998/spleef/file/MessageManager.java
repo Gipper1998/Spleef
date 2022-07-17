@@ -92,25 +92,29 @@ public class MessageManager {
     public void sendLeaderboardStringList(Player sender, String wins, String losses, Player target){
         List<String> messageList = messages.getStringList("stats");
         for (String message : messageList){
-            if (message.isEmpty()){
-                return;
+            if (!message.isEmpty()) {
+                message = message.replaceAll("<prefix>", getPrefix());
+                message = message.replaceAll("<playername>", target.getName());
+                message = message.replaceAll("<wins>", wins);
+                message = message.replaceAll("<losses>", losses);
+                sender.sendMessage(translateHEX(message));
             }
-            message = message.replaceAll("<prefix>", getPrefix());
-            message = message.replaceAll("<playername>", target.getName());
-            message = message.replaceAll("<wins>", wins);
-            message = message.replaceAll("<losses>", losses);
-            sender.sendMessage(translateHEX(message));
+            else {
+                continue;
+            }
         }
     }
 
     public void sendStringList(String path, Player p){
         List<String> messageList = messages.getStringList(path);
         for (String message : messageList){
-            if (message.isEmpty()){
-                return;
+            if (!message.isEmpty()) {
+                message = message.replaceAll("<prefix>", getPrefix());
+                p.sendMessage(translateHEX(message));
             }
-            message = message.replaceAll("<prefix>", getPrefix());
-            p.sendMessage(translateHEX(message));
+            else {
+                continue;
+            }
         }
     }
 
@@ -118,13 +122,28 @@ public class MessageManager {
         List<String> messageList = messages.getStringList(path);
         List<String> sendMessages = new ArrayList<>();
         for (String message : messageList){
-            String prefix = Spleef.main.messages.getConfig().getString("prefix");
-            message = message.replaceAll("<prefix>", prefix);
-            if (message.isEmpty()){
-                return null;
+            if (!message.isEmpty()) {
+                message = message.replaceAll("<prefix>", getPrefix());
+                sendMessages.add(translateHEX(message));
             }
-            message = translateHEX(message);
-            sendMessages.add(ChatColor.translateAlternateColorCodes('&', message));
+            else {
+                continue;
+            }
+        }
+        return sendMessages;
+    }
+
+    public List<String> getScoreboardStringList(String path){
+        List<String> messageList = messages.getStringList(path);
+        List<String> sendMessages = new ArrayList<>();
+        for (String message : messageList){
+            if (!message.isEmpty()){
+                message = message.replaceAll("<prefix>", getPrefix());
+                sendMessages.add(translateHEX(message));
+            }
+            else {
+                sendMessages.add("");
+            }
         }
         return sendMessages;
     }
@@ -135,7 +154,6 @@ public class MessageManager {
             return "";
         }
         message = message.replaceAll("<prefix>", getPrefix());
-        message = translateHEX(message);
         return translateHEX(message);
     }
 
