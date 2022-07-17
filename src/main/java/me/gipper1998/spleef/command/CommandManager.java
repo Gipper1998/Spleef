@@ -8,6 +8,7 @@ import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.setup.SetupWizard;
+import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -143,7 +144,7 @@ public class CommandManager implements TabExecutor {
                 Spleef.main.playerStats.reloadConfig();
                 Spleef.main.messages.reloadConfig();
                 Spleef.main.signs.reloadConfig();
-                Spleef.main.signManager.startUpdater();
+                SignManager.getInstance().startUpdater();
                 ArenaManager.forceQuitArenas();
                 ArenaManager.loadArenas();
                 MessageManager.getInstance().sendMessage("reloaded", p);
@@ -174,24 +175,16 @@ public class CommandManager implements TabExecutor {
 
             // Leave
             if (args[0].equalsIgnoreCase("leave")){
-                if (args.length < 2){
-                    MessageManager.getInstance().sendMessage("no_name", p);
+                gm = ArenaManager.findPlayerInGame(p);
+                if (gm != null) {
+                    gm.removePlayer(p);
+                    MessageManager.getInstance().sendMessage("player_success_quit", p);
+                    return true;
+                }
+                else {
+                    MessageManager.getInstance().sendMessage("player_not_in_game", p);
                     return false;
                 }
-                String name = args[1].toUpperCase();
-                if (name.isEmpty()){
-                    MessageManager.getInstance().sendMessage("no_name", p);
-                    return false;
-                }
-                arena = ArenaManager.findArena(name);
-                gm = ArenaManager.findGame(name);
-                if (arena == null){
-                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm, p);
-                    return false;
-                }
-                gm = ArenaManager.findGame(name);
-                gm.removePlayer(p);
-                return true;
             }
 
             // See Player Stats

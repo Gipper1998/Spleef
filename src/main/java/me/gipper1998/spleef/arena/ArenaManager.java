@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -46,6 +47,19 @@ public class ArenaManager {
             Arena am = set.getKey();
             if (am.getName().equalsIgnoreCase(name)){
                 return set.getValue();
+            }
+        }
+        return null;
+    }
+
+    public static GameManager findPlayerInGame(Player p){
+        if (activeArenas.isEmpty()){
+            return null;
+        }
+        for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
+            GameManager gm = set.getValue();
+            if (gm.getTotalPlayers().contains(p)){
+                return gm;
             }
         }
         return null;

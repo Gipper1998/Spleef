@@ -24,30 +24,72 @@ import java.util.List;
 
 public class SignManager implements Listener {
 
+    public static SignManager sm;
     private int taskID = 0;
+    private FileConfiguration signs;
 
     public SignManager(){
         Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
+        this.signs = Spleef.main.signs.getConfig();
     }
 
-    public void startUpdater() {
+    public static SignManager getInstance(){
+        if (sm == null){
+            sm = new SignManager();
+        }
+        return sm;
+    }
+
+    public void startUpdater(){
         if (taskID != 0) {
             Bukkit.getScheduler().cancelTask(taskID);
         }
-        updater();
+        else {
+            taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Spleef.main, new Runnable() {
+                @Override
+                public void run() {
+                    updateSigns();
+                }
+            }, 0L, 20L);
+        }
     }
 
-    private void updater(){
-        taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Spleef.main, new Runnable() {
-            @Override
-            public void run() {
-                updateSigns();
+    public void makeSignsBlank(){
+        if (signs.contains("Signs")) {
+            for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)) {
+                Arena arena = ArenaManager.findArena(arenaName);
+                if (arena != null) {
+                    List<String> signLists = new ArrayList<>();
+                    if (signs.contains("Signs." + arenaName)) {
+                        signLists = signs.getStringList("Signs." + arenaName);
+                    }
+                    for (int i = 0; i < signLists.size(); i++) {
+                        String[] location = signLists.get(i).split(";");
+                        int x = Integer.valueOf(location[0]);
+                        int y = Integer.valueOf(location[1]);
+                        int z = Integer.valueOf(location[2]);
+                        World world = Bukkit.getWorld(location[3]);
+                        if (world != null) {
+                            if (!world.isChunkLoaded(x >> 4, z >> 4)) {
+                                continue;
+                            }
+                            Block block = world.getBlockAt(x, y, z);
+                            if (block.getType().name().contains("SIGN")) {
+                                Sign sign = (Sign) block.getState();
+                                for (int line = 0; line < sign.getLines().length; line++){
+                                    sign.setLine(line, "");
+                                }
+                                sign.update();
+                            }
+                        }
+                    }
+
+                }
             }
-        },0L, 20L);
+        }
     }
 
     private void updateSigns() {
-        FileConfiguration signs = Spleef.main.signs.getConfig();
         if (signs.contains("Signs")) {
             for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)) {
                 Arena arena = ArenaManager.findArena(arenaName);
@@ -104,7 +146,6 @@ public class SignManager implements Listener {
 
     @EventHandler
     public void onSignCreation(SignChangeEvent event){
-        FileConfiguration signs = Spleef.main.signs.getConfig();
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){
             if (event.getLine(0).equals("[Spleef]")){
                 if (event.getLine(1) != null && ArenaManager.findArena(event.getLine(1)) != null){
@@ -135,7 +176,6 @@ public class SignManager implements Listener {
 
     @EventHandler
     public void onSignDelete(BlockBreakEvent event){
-        FileConfiguration signs = Spleef.main.signs.getConfig();
         Block block = event.getBlock();
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){
             if (block.getType().name().contains("SIGN")) {
@@ -176,7 +216,6 @@ public class SignManager implements Listener {
     public void onPlayerClick(PlayerInteractEvent event){
         Player p = event.getPlayer();
         Block block = event.getClickedBlock();
-        FileConfiguration signs = Spleef.main.signs.getConfig();
         if (block != null && block.getType().name().contains("SIGN") && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
             if (signs.contains("Signs")){
                 for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)){

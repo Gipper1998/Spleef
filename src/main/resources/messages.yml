@@ -54,6 +54,7 @@ player_join: "<prefix> &b<playername> &ahas joined the game!"
 player_quit: "<prefix> &b<playername> &chas left the game."
 player_died: "<prefix> <playername> has been eliminated."
 player_winner: "<prefix> <playername> has won the game!!"
+arena_not_enough_players: "<prefix> &cNot enough players have joined, currently on hold."
 arena_no_winner: "<prefix> The match took too long, arena resetting."
 arena_full: "<prefix> The arena is full, please try again later."
 arena_in-game: "<prefix> The arena is already in progress, please try again later."
@@ -80,14 +81,6 @@ stats:
   - "&f---------------------------------"
   - "Wins:   <wins>"
   - "Losses: <losses>"
-
-scoreboard_top: "<prefix>"
-
-scoreboard_wait:
-  - "<prefix>>"
-  - "Arena: <arenaname>"
-  - ""
-  - "Time left to start: <time>"
 
 # Modify the command page here
 commands_page_player:

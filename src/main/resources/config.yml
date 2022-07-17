@@ -19,16 +19,19 @@ give_snowballs_on_start:
 # tntfall: Make tnt rain upon the players (only drops once for
 # the amount of players already in the arena, for best results, type 2.
 # Amplification (amp) is only for potion effects.
+# If you want to make it random for a player, type random: true after the effect (except for tnt).
 enable_time_events: true
 time_events:
   90:
     jump: 8
     amp: 8
+    random: true
   60:
     snowballs: 20
   45:
     slow: 3
     amp: 5
+    random: true
   30:
     snowballs: 30
   10:

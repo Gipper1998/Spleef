@@ -33,13 +33,4 @@ public class ItemBuilder {
         MessageManager.getInstance().sendCustomConsoleMessage("Should be given");
     }
 
-    // TNT
-    public ItemBuilder(Player player, String name){
-        Location location = player.getLocation();
-        location.setY(player.getLocation().getY() + 5);
-        TNTPrimed TNT = location.getWorld().spawn(location, TNTPrimed.class);
-        TNT.setCustomName(name);
-        TNT.setFuseTicks(200);
-    }
-
 }

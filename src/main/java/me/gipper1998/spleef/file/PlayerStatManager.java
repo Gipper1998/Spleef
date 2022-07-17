@@ -31,7 +31,7 @@ public class PlayerStatManager {
             wins = players.getInt(path + "Wins");
             losses = players.getInt(path + "Losses");
         }
-        players.set(path + "Wins", wins++);
+        players.set(path + "Wins", wins + 1);
         players.set(path + "Losses", losses);
         Spleef.main.playerStats.saveConfig();
     }
@@ -45,7 +45,7 @@ public class PlayerStatManager {
             losses = players.getInt(path + "Losses");
         }
         players.set(path + "Wins", wins);
-        players.set(path + "Losses", losses++);
+        players.set(path + "Losses", losses + 1);
         Spleef.main.playerStats.saveConfig();
     }
 

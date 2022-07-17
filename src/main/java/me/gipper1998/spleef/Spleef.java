@@ -7,8 +7,6 @@ import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.sign.SignManager;
 import me.gipper1998.spleef.softdepend.PAPIManager;
 import me.gipper1998.spleef.softdepend.VaultManager;
-import org.bukkit.Bukkit;
-import org.bukkit.block.Sign;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Spleef extends JavaPlugin {
@@ -23,7 +21,6 @@ public class Spleef extends JavaPlugin {
     public FileManager playerStats;
     public FileManager signs;
 
-    public SignManager signManager;
 
     @Override
     public void onEnable() {
@@ -32,14 +29,14 @@ public class Spleef extends JavaPlugin {
         ArenaManager.loadArenas();
         registerSoftDependencies();
         getCommand("spleef").setExecutor(new CommandManager());
-        this.signManager = new SignManager();
-        signManager.startUpdater();
+        SignManager.getInstance().startUpdater();
         MessageManager.getInstance().sendConsoleMessage("start_up");
     }
 
     @Override
     public void onDisable() {
         ArenaManager.shutGamesDown();
+        SignManager.getInstance().makeSignsBlank();
         MessageManager.getInstance().sendConsoleMessage("shut_down");
     }
 
