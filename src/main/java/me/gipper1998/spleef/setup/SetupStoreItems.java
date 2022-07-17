@@ -13,6 +13,7 @@ public class SetupStoreItems {
     private double hunger;
     private float xp;
     private GameMode gamemode;
+    private int levels;
 
     public SetupStoreItems(Player p){
         this.p = p;
@@ -22,6 +23,7 @@ public class SetupStoreItems {
         this.hunger = p.getFoodLevel();
         this.xp = p.getExp();
         this.gamemode = p.getGameMode();
+        this.levels = p.getLevel();
         p.getInventory().clear();
         p.getInventory().setArmorContents(null);
         p.setGameMode(GameMode.CREATIVE);
@@ -36,6 +38,7 @@ public class SetupStoreItems {
         p.setHealth(health);
         p.setFoodLevel((int) hunger);
         p.updateInventory();
+        p.setLevel(levels);
     }
 
 }

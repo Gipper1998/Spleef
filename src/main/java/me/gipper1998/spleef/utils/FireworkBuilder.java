@@ -1,4 +1,4 @@
-package me.gipper1998.spleef.item;
+package me.gipper1998.spleef.utils;
 
 import lombok.Getter;
 import org.bukkit.Color;

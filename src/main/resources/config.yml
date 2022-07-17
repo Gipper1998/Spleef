@@ -4,8 +4,10 @@
 waiting_time: 30
 total_game_time: 120
 scoreboard_enable: true
+names_on_board_max: 5
 exp_time_enable: true
 give_snowballs_on_start:
+  enable: true
   amount: 10
 
 # If it hits a certain time, an event will happen in seconds.
@@ -16,20 +18,24 @@ give_snowballs_on_start:
 # jump: Make them jump a little higher for a duration of time (in seconds)
 # tntfall: Make tnt rain upon the players (only drops once for
 # the amount of players already in the arena, for best results, type 2.
+# Amplification (amp) is only for potion effects.
 enable_time_events: true
 time_events:
   90:
     jump: 8
+    amp: 8
   60:
     snowballs: 20
   45:
     slow: 3
+    amp: 5
   30:
     snowballs: 30
   10:
     tntfall: 2
   5:
     speed: 4
+    amp: 5
 
 # Blocks given to players (Not the display name, but the actual block).
 setup_wizard_blocks:

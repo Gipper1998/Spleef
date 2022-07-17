@@ -6,8 +6,8 @@ import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
-import me.gipper1998.spleef.item.FireworkBuilder;
-import me.gipper1998.spleef.item.ItemBuilder;
+import me.gipper1998.spleef.utils.FireworkBuilder;
+import me.gipper1998.spleef.utils.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -17,9 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffect;
@@ -79,6 +77,11 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @Override
     public void run(){
+        if (ConfigManager.getBoolean("exp_time_enable")){
+            for (Player p : totalPlayers){
+                p.setLevel(currentTime);
+            }
+        }
         switch (status){
             case WAIT: {
                 waitTask();
@@ -97,18 +100,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                 break;
             }
         }
-        if (ConfigManager.getBoolean("scoreboard_enable")){
-            if (status == Status.GAME) {
-                for (Player p : playersInGame) {
-                    GameScoreboard.getInstance().updateScoreboard(this);
-                }
-            }
-        }
-        if (ConfigManager.getBoolean("exp_time_enable")){
-            for (Player p : totalPlayers){
-                p.setTotalExperience(currentTime);
-            }
-        }
     }
 
     private void waitTask(){
@@ -120,13 +111,9 @@ public class GameManager extends BukkitRunnable implements Listener {
                 }
                 currentTime = startDelay;
                 status = Status.DELAYSTART;
+                return;
             }
-            if (currentTime == 60 || currentTime == 50 || currentTime == 40 || currentTime == 30 || currentTime == 20 || currentTime == 10){
-                for (Player p : playersInGame) {
-                    MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
-                }
-            }
-            if (currentTime <= 5 && currentTime >= 1){
+            if (currentTime % 10 == 0 || currentTime <= 5){
                 for (Player p : playersInGame) {
                     MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
                 }
@@ -145,7 +132,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                 p.showPlayer(Spleef.main, p);
                 MessageManager.getInstance().sendMessage("game_start", p);
                 p.setGameMode(GameMode.SURVIVAL);
-                GameScoreboard.getInstance().createScoreboard(p, this);
             }
             currentTime = gameTime;
             status = Status.GAME;
@@ -165,11 +151,6 @@ public class GameManager extends BukkitRunnable implements Listener {
             resetArena();
             currentTime = waitTime;
             status = Status.WAIT;
-            return;
-        }
-        if (playersInGame.size() == 1) {
-            currentTime = winnerDelay;
-            status = Status.WINNER;
             return;
         }
         checkTime();
@@ -209,27 +190,13 @@ public class GameManager extends BukkitRunnable implements Listener {
         else {
             p.getInventory().setItem(0, new ItemBuilder(Material.GOLDEN_SHOVEL, GOLD_SPADE_ITEM).getIs());
         }
-        if (ConfigManager.getBoolean("give_snowballs_on_start")) {
+        if (ConfigManager.getBoolean("give_snowballs_on_start.enable")) {
             p.getInventory().setItem(1, new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt("give_snowballs_on_start.amount")).getIs());
         }
     }
 
     private boolean bothClicks(PlayerInteractEvent event){
         return (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK);
-    }
-
-    private void killPlayer(Player p){
-        for (Player player : totalPlayers){
-            MessageManager.getInstance().sendPlayerNameMessage("player_died", p, player);
-        }
-        playersInGame.remove(p);
-        spectators.add(p);
-        p.teleport(arena.getSpectate());
-        p.setGameMode(GameMode.SPECTATOR);
-        PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
-        for (PotionEffect effect : p.getActivePotionEffects()){
-            p.removePotionEffect(effect.getType());
-        }
     }
 
     private void checkTime() {
@@ -274,17 +241,17 @@ public class GameManager extends BukkitRunnable implements Listener {
             }
             if (ConfigManager.contains(path + "speed")){
                 for (Player p : playersInGame){
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,ConfigManager.getInt(path + "speed"), 3));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,ConfigManager.getInt(path + "speed") * 20, ConfigManager.getInt(path + "amp")));
                 }
             }
             if (ConfigManager.contains(path + "slow")){
                 for (Player p : playersInGame){
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,ConfigManager.getInt(path + "slow"), 3));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,ConfigManager.getInt(path + "slow") * 20, ConfigManager.getInt(path + "amp")));
                 }
             }
             if (ConfigManager.contains(path + "jump")){
                 for (Player p : playersInGame){
-                    p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,ConfigManager.getInt(path + "jump"), 3));
+                    p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,ConfigManager.getInt(path + "jump") * 20,ConfigManager.getInt(path + "amp")));
                 }
             }
         }
@@ -338,7 +305,6 @@ public class GameManager extends BukkitRunnable implements Listener {
         GameStoreItems gmi = playersStuff.get(p);
         gmi.giveBackItems();
         playersStuff.remove(p);
-        GameScoreboard.getInstance().removePlayerFromScoreboard(p);
         if (totalPlayers.contains(p)) {
             if (status == Status.WAIT) {
                 playersInGame.remove(p);
@@ -368,7 +334,6 @@ public class GameManager extends BukkitRunnable implements Listener {
         for (Player p : totalPlayers){
             GameStoreItems gmi = playersStuff.get(p);
             gmi.giveBackItems();
-            GameScoreboard.getInstance().removePlayerFromScoreboard(p);
         }
         playersInGame.clear();
         spectators.clear();
@@ -420,22 +385,22 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     @EventHandler
-    public void onProjectileLaunch(ProjectileLaunchEvent event){
-        if (playersInGame.contains(event.getEntity().getShooter() instanceof Player) && status == Status.GAME){
-            if (event.getEntity().getLocation().getBlock().getType() == Material.SNOW_BLOCK){
-                if (event.getEntity().getName().equals(SNOWBALL_ITEM)) {
-                    Block b = event.getEntity().getLocation().getBlock();
-                    blocksBroken.add(b.getLocation());
-                    b.setType(Material.AIR);
-                }
+    public void onProjectileLaunch(ProjectileHitEvent event){
+        if (playersInGame.contains(event.getEntity().getShooter()) && status == Status.GAME){
+            if (event.getHitBlock().getType() == Material.SNOW_BLOCK){
+                blocksBroken.add(event.getHitBlock().getLocation());
+                event.getHitBlock().setType(Material.AIR);
             }
         }
     }
 
     @EventHandler
     public void foodLevel(FoodLevelChangeEvent event){
-        if (playersInGame.contains(event.getEntity() instanceof Player)){
-            event.setCancelled(true);
+        if (event.getEntity() instanceof Player){
+            Player p = (Player) event.getEntity();
+            if (playersInGame.contains(p)){
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -455,8 +420,11 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onCraftEvent(CraftItemEvent event){
-        if (playersInGame.contains(event.getWhoClicked() instanceof Player)){
-            event.setCancelled(true);
+        if (event.getWhoClicked() instanceof Player){
+            Player p = (Player) event.getWhoClicked();
+            if (playersInGame.contains(p)){
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -495,10 +463,35 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void playerMoveEvent(PlayerMoveEvent event){
-        if (playersInGame.contains(event.getPlayer())){
+        if (playersInGame.contains(event.getPlayer()) && status == Status.GAME){
             Player p = event.getPlayer();
             if (p.getLocation().getBlock().getType() == Material.WATER || p.getLocation().getBlock().getType() == Material.LAVA){
-                killPlayer(p);
+                for (Player player : totalPlayers){
+                    MessageManager.getInstance().sendPlayerNameMessage("player_died", p, player);
+                }
+                playersInGame.remove(p);
+                spectators.add(p);
+                p.teleport(arena.getSpectate());
+                p.setGameMode(GameMode.SPECTATOR);
+                PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
+                for (PotionEffect effect : p.getActivePotionEffects()){
+                    p.removePotionEffect(effect.getType());
+                }
+                if (playersInGame.size() == 1) {
+                    currentTime = winnerDelay;
+                    status = Status.WINNER;
+                    return;
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player){
+            Player p = (Player) event.getEntity();
+            if (playersInGame.contains(p)){
+                event.setCancelled(true);
             }
         }
     }

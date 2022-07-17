@@ -9,46 +9,51 @@ import org.bukkit.potion.PotionEffect;
 public class GameStoreItems {
     private ItemStack[] inventory;
     private ItemStack[] armor;
-    private Player player;
+    private Player p;
     private double health;
     private double hunger;
     private float xp;
+
+    private int levels;
 
     private int selectedItemSlot;
     private GameMode gamemode;
     private Location location;
 
     public GameStoreItems(Player player){
-        this.player = player;
-        this.inventory = player.getInventory().getContents();
-        this.armor = player.getInventory().getArmorContents();
-        this.health = player.getHealth();
-        this.hunger = player.getFoodLevel();
-        this.xp = player.getExp();
-        this.gamemode = player.getGameMode();
-        this.location = player.getLocation();
+        this.p = player;
+        this.inventory = p.getInventory().getContents();
+        this.armor = p.getInventory().getArmorContents();
+        this.health = p.getHealth();
+        this.hunger = p.getFoodLevel();
+        this.xp = p.getExp();
+        this.gamemode = p.getGameMode();
+        this.location = p.getLocation();
         this.selectedItemSlot = player.getInventory().getHeldItemSlot();
+        this.levels = p.getLevel();
         if (selectedItemSlot == 8){
             selectedItemSlot = 7;
         }
-        player.getInventory().clear();
-        player.getInventory().setArmorContents(null);
-        player.getInventory().setHeldItemSlot(0);
-        player.updateInventory();
-        for (PotionEffect effect : player.getActivePotionEffects()){
-            player.removePotionEffect(effect.getType());
+        p.getInventory().clear();
+        p.getInventory().setArmorContents(null);
+        p.getInventory().setHeldItemSlot(0);
+        p.updateInventory();
+        p.setLevel(0);
+        for (PotionEffect effect : p.getActivePotionEffects()){
+            p.removePotionEffect(effect.getType());
         }
     }
 
     public void giveBackItems(){
-        player.getInventory().setContents(inventory);
-        player.getInventory().setArmorContents(armor);
-        player.setGameMode(gamemode);
-        player.setExp(xp);
-        player.setHealth(health);
-        player.getInventory().setHeldItemSlot(selectedItemSlot);
-        player.setFoodLevel((int) hunger);
-        player.updateInventory();
-        player.teleport(location);
+        p.getInventory().setContents(inventory);
+        p.getInventory().setArmorContents(armor);
+        p.setGameMode(gamemode);
+        p.setExp(xp);
+        p.setHealth(health);
+        p.getInventory().setHeldItemSlot(selectedItemSlot);
+        p.setFoodLevel((int) hunger);
+        p.updateInventory();
+        p.teleport(location);
+        p.setLevel(levels);
     }
 }

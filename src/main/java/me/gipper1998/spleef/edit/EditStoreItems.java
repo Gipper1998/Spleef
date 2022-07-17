@@ -13,6 +13,8 @@ public class EditStoreItems {
     private float xp;
     private GameMode gamemode;
 
+    private int levels;
+
     public EditStoreItems(Player p){
         this.p = p;
         this.inventory = p.getInventory().getContents();
@@ -21,6 +23,7 @@ public class EditStoreItems {
         this.hunger = p.getFoodLevel();
         this.xp = p.getExp();
         this.gamemode = p.getGameMode();
+        this.levels = p.getLevel();
         p.getInventory().clear();
         p.getInventory().setArmorContents(null);
         p.setGameMode(GameMode.CREATIVE);

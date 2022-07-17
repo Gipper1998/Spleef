@@ -7,7 +7,7 @@ import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
-import me.gipper1998.spleef.item.ItemBuilder;
+import me.gipper1998.spleef.utils.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

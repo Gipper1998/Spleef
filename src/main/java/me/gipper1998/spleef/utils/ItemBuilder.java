@@ -1,6 +1,7 @@
-package me.gipper1998.spleef.item;
+package me.gipper1998.spleef.utils;
 
 import lombok.Getter;
+import me.gipper1998.spleef.file.MessageManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,8 +28,8 @@ public class ItemBuilder {
         this.is = new ItemStack(material, num);
         this.im = is.getItemMeta();
         im.setDisplayName(name);
-        im.setUnbreakable(true);
         is.setItemMeta(im);
+        MessageManager.getInstance().sendCustomConsoleMessage("Should be given");
     }
 
     // TNT
