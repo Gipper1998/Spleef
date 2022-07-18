@@ -14,9 +14,6 @@ public class Spleef extends JavaPlugin {
 
     public static Spleef main;
 
-    @Getter
-    public boolean vaultEnabled = false;
-
     public FileManager arenas;
     public FileManager messages;
     public FileManager config;
@@ -53,7 +50,6 @@ public class Spleef extends JavaPlugin {
     private void registerSoftDependencies(){
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             if (VaultManager.getInstance().registerVault()) {
-                this.vaultEnabled = true;
                 MessageManager.getInstance().sendConsoleMessage("vault_enable");
             }
         }

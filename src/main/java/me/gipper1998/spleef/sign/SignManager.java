@@ -1,5 +1,6 @@
 package me.gipper1998.spleef.sign;
 // Special thanks to Ajneb97 for this sign Implementation
+
 import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.arena.ArenaManager;
@@ -48,7 +49,46 @@ public class SignManager implements Listener {
             taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Spleef.main, new Runnable() {
                 @Override
                 public void run() {
-                    updateSigns();
+                    if (signs.contains("Signs")) {
+                        for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)) {
+                            Arena arena = ArenaManager.getInstance().findArena(arenaName);
+                            GameManager gm = ArenaManager.getInstance().findGame(arenaName);
+                            if (arena != null) {
+                                List<String> signLists = new ArrayList<>();
+                                if (signs.contains("Signs." + arenaName)) {
+                                    signLists = signs.getStringList("Signs." + arenaName);
+                                }
+                                for (int i = 0; i < signLists.size(); i++) {
+                                    String[] location = signLists.get(i).split(";");
+                                    int x = Integer.valueOf(location[0]);
+                                    int y = Integer.valueOf(location[1]);
+                                    int z = Integer.valueOf(location[2]);
+                                    World world = Bukkit.getWorld(location[3]);
+                                    if (world != null) {
+                                        if (!world.isChunkLoaded(x >> 4, z >> 4)) {
+                                            continue;
+                                        }
+                                        Block block = world.getBlockAt(x, y, z);
+                                        if (block.getType().name().contains("SIGN")) {
+                                            Sign sign = (Sign) block.getState();
+                                            String status = getSignStatus(gm);
+                                            List<String> signListMessages = MessageManager.getInstance().getSignStringList("main_sign");
+                                            for (int line = 0; line < signListMessages.size(); line++){
+                                                String currentLine = signListMessages.get(line);
+                                                currentLine = currentLine.replaceAll("<arenaname>", gm.getArena().getName());
+                                                currentLine = currentLine.replaceAll("<status>", status);
+                                                currentLine = currentLine.replaceAll("<in_game>", Integer.toString(gm.getTotalPlayers().size()));
+                                                currentLine = currentLine.replaceAll("<maximum>", Integer.toString(gm.getArena().getMaximum()));
+                                                sign.setLine(line, currentLine);
+                                            }
+                                            sign.update();
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                 }
             }, 0L, 20L);
         }
@@ -78,49 +118,6 @@ public class SignManager implements Listener {
                                 Sign sign = (Sign) block.getState();
                                 for (int line = 0; line < sign.getLines().length; line++){
                                     sign.setLine(line, "");
-                                }
-                                sign.update();
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
-    private void updateSigns() {
-        if (signs.contains("Signs")) {
-            for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)) {
-                Arena arena = ArenaManager.getInstance().findArena(arenaName);
-                GameManager gm = ArenaManager.getInstance().findGame(arenaName);
-                if (arena != null) {
-                    List<String> signLists = new ArrayList<>();
-                    if (signs.contains("Signs." + arenaName)) {
-                        signLists = signs.getStringList("Signs." + arenaName);
-                    }
-                    for (int i = 0; i < signLists.size(); i++) {
-                        String[] location = signLists.get(i).split(";");
-                        int x = Integer.valueOf(location[0]);
-                        int y = Integer.valueOf(location[1]);
-                        int z = Integer.valueOf(location[2]);
-                        World world = Bukkit.getWorld(location[3]);
-                        if (world != null) {
-                            if (!world.isChunkLoaded(x >> 4, z >> 4)) {
-                                continue;
-                            }
-                            Block block = world.getBlockAt(x, y, z);
-                            if (block.getType().name().contains("SIGN")) {
-                                Sign sign = (Sign) block.getState();
-                                String status = getSignStatus(gm);
-                                List<String> signListMessages = MessageManager.getInstance().getSignStringList("main_sign");
-                                for (int line = 0; line < signListMessages.size(); line++){
-                                    String currentLine = signListMessages.get(line);
-                                    currentLine = currentLine.replaceAll("<arenaname>", gm.getArena().getName());
-                                    currentLine = currentLine.replaceAll("<status>", status);
-                                    currentLine = currentLine.replaceAll("<in_game>", Integer.toString(gm.getTotalPlayers().size()));
-                                    currentLine = currentLine.replaceAll("<maximum>", Integer.toString(gm.getArena().getMaximum()));
-                                    sign.setLine(line, currentLine);
                                 }
                                 sign.update();
                             }
@@ -235,11 +232,9 @@ public class SignManager implements Listener {
                                 World world = Bukkit.getWorld(location[3]);
                                 if (world != null) {
                                     if (block.getX() == x && block.getY() == y && block.getZ() == z && world.getName().equals(block.getWorld().getName())) {
-                                        if (arena != null) {
-                                            gm.addPlayer(p);
-                                        }
-                                        return;
+                                        gm.addPlayer(p);
                                     }
+                                    return;
                                 }
                             }
                         }

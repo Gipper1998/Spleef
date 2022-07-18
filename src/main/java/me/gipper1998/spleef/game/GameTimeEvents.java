@@ -40,7 +40,7 @@ public class GameTimeEvents {
     }
 
     public void loadEvents(){
-        if (ConfigManager.getBoolean("enable_time_events")) {
+        if (ConfigManager.getInstance().getBoolean("enable_time_events")) {
             for (String key : Spleef.main.config.getConfig().getConfigurationSection("time_events").getKeys(false)) {
                 try {
                     events.add(Integer.parseInt(key));
@@ -55,28 +55,28 @@ public class GameTimeEvents {
     public void checkTime(int currentTime, GameManager gm) {
         if (events.contains(currentTime)) {
             String path = "time_events." + currentTime + ".";
-            if (ConfigManager.contains(path + "snowballs")) {
+            if (ConfigManager.getInstance().contains(path + "snowballs")) {
                 for (Player p : gm.getPlayersInGame()) {
-                    if (ConfigManager.contains(path + "random")){
-                        if (ConfigManager.getBoolean(path + "random")){
+                    if (ConfigManager.getInstance().contains(path + "random")){
+                        if (ConfigManager.getInstance().getBoolean(path + "random")){
                             if (rand.nextBoolean()){
-                                p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt((path + "snowballs"))).getIs());
+                                p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt((path + "snowballs"))).getIs());
                                 p.updateInventory();
                             }
                         }
                         else {
-                            p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt((path + "snowballs"))).getIs());
+                            p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt((path + "snowballs"))).getIs());
                             p.updateInventory();
                         }
                     }
                     else {
-                        p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt((path + "snowballs"))).getIs());
+                        p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt((path + "snowballs"))).getIs());
                         p.updateInventory();
                     }
                 }
             }
-            if (ConfigManager.contains(path + "tntfall")) {
-                int size = ConfigManager.getInt("tntfall");
+            if (ConfigManager.getInstance().contains(path + "tntfall")) {
+                int size = ConfigManager.getInstance().getInt("tntfall");
                 if (size > gm.getPlayersInGame().size()) {
                     for (Player p : gm.getPlayersInGame()){
                         TNTBuilder.getInstance().create(p.getLocation(), TNT);
@@ -90,10 +90,10 @@ public class GameTimeEvents {
                     }
                 }
             }
-            if (ConfigManager.contains(path + "speed")) {
-                PotionBuilder potion = new PotionBuilder(PotionEffectType.SPEED, ConfigManager.getInt(path + "speed") * 20, ConfigManager.getInt(path + "amp"));
-                if (ConfigManager.contains(path + "random")) {
-                    if (ConfigManager.getBoolean(path + "random")) {
+            if (ConfigManager.getInstance().contains(path + "speed")) {
+                PotionBuilder potion = new PotionBuilder(PotionEffectType.SPEED, ConfigManager.getInstance().getInt(path + "speed") * 20, ConfigManager.getInstance().getInt(path + "amp"));
+                if (ConfigManager.getInstance().contains(path + "random")) {
+                    if (ConfigManager.getInstance().getBoolean(path + "random")) {
                         for (Player p : gm.getPlayersInGame()){
                             if (rand.nextBoolean()){
                                 potion.addPlayer(p);
@@ -114,10 +114,10 @@ public class GameTimeEvents {
                     }
                 }
             }
-            if (ConfigManager.contains(path + "slow")){
-                PotionBuilder potion = new PotionBuilder(PotionEffectType.SLOW,ConfigManager.getInt(path + "slow") * 20, ConfigManager.getInt(path + "amp"));
-                if (ConfigManager.contains(path + "random")) {
-                    if (ConfigManager.getBoolean(path + "random")) {
+            if (ConfigManager.getInstance().contains(path + "slow")){
+                PotionBuilder potion = new PotionBuilder(PotionEffectType.SLOW,ConfigManager.getInstance().getInt(path + "slow") * 20, ConfigManager.getInstance().getInt(path + "amp"));
+                if (ConfigManager.getInstance().contains(path + "random")) {
+                    if (ConfigManager.getInstance().getBoolean(path + "random")) {
                         for (Player p : gm.getPlayersInGame()){
                             if (rand.nextBoolean()){
                                 potion.addPlayer(p);
@@ -138,10 +138,10 @@ public class GameTimeEvents {
                     }
                 }
             }
-            if (ConfigManager.contains(path + "jump")){
-                PotionBuilder potion = new PotionBuilder(PotionEffectType.JUMP,ConfigManager.getInt(path + "jump") * 20, ConfigManager.getInt(path + "amp"));
-                if (ConfigManager.contains(path + "random")) {
-                    if (ConfigManager.getBoolean(path + "random")) {
+            if (ConfigManager.getInstance().contains(path + "jump")){
+                PotionBuilder potion = new PotionBuilder(PotionEffectType.JUMP,ConfigManager.getInstance().getInt(path + "jump") * 20, ConfigManager.getInstance().getInt(path + "amp"));
+                if (ConfigManager.getInstance().contains(path + "random")) {
+                    if (ConfigManager.getInstance().getBoolean(path + "random")) {
                         for (Player p : gm.getPlayersInGame()){
                             if (rand.nextBoolean()){
                                 potion.addPlayer(p);

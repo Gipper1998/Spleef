@@ -67,13 +67,13 @@ public class EditWizard implements Listener {
     }
 
     private void giveItems(Player player, Inventory inventory){
-        inventory.setItem(0, new ItemBuilder(ConfigManager.getBlock("edit_wizard_blocks.name"), EDIT_NAME).getIs());
-        inventory.setItem(6, new ItemBuilder(ConfigManager.getBlock("edit_wizard_blocks.maximum"), SET_MAXIMUM).getIs());
-        inventory.setItem(5, new ItemBuilder(ConfigManager.getBlock("edit_wizard_blocks.minimum"), SET_MINIMUM).getIs());
-        inventory.setItem(4, new ItemBuilder(ConfigManager.getBlock("edit_wizard_blocks.spectator"), SET_SPECTATOR_SPAWN).getIs());
-        inventory.setItem(3, new ItemBuilder(ConfigManager.getBlock("edit_wizard_blocks.lobby"), SET_LOBBY_SPAWN).getIs());
-        inventory.setItem(2, new ItemBuilder(ConfigManager.getBlock("edit_wizard_blocks.arena"), SET_ARENA_SPAWN).getIs());
-        inventory.setItem(8, new ItemBuilder(ConfigManager.getBlock("edit_wizard_blocks.complete"), COMPLETE_WIZARD).getIs());
+        inventory.setItem(0, new ItemBuilder(ConfigManager.getInstance().getBlock("edit_wizard_blocks.name"), EDIT_NAME).getIs());
+        inventory.setItem(6, new ItemBuilder(ConfigManager.getInstance().getBlock("edit_wizard_blocks.maximum"), SET_MAXIMUM).getIs());
+        inventory.setItem(5, new ItemBuilder(ConfigManager.getInstance().getBlock("edit_wizard_blocks.minimum"), SET_MINIMUM).getIs());
+        inventory.setItem(4, new ItemBuilder(ConfigManager.getInstance().getBlock("edit_wizard_blocks.spectator"), SET_SPECTATOR_SPAWN).getIs());
+        inventory.setItem(3, new ItemBuilder(ConfigManager.getInstance().getBlock("edit_wizard_blocks.lobby"), SET_LOBBY_SPAWN).getIs());
+        inventory.setItem(2, new ItemBuilder(ConfigManager.getInstance().getBlock("edit_wizard_blocks.arena"), SET_ARENA_SPAWN).getIs());
+        inventory.setItem(8, new ItemBuilder(ConfigManager.getInstance().getBlock("edit_wizard_blocks.complete"), COMPLETE_WIZARD).getIs());
         player.updateInventory();
     }
 
@@ -96,37 +96,37 @@ public class EditWizard implements Listener {
         if (inEditWizard.contains(event.getPlayer())) {
             ItemStack item = event.getItem();
             ItemMeta im = event.getItem().getItemMeta();
-            if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.name")) && (im.getDisplayName().equals(EDIT_NAME)) && bothClicks(event)) {
+            if ((item.getType() == ConfigManager.getInstance().getBlock("edit_wizard_blocks.name")) && (im.getDisplayName().equals(EDIT_NAME)) && bothClicks(event)) {
                 MessageManager.getInstance().sendMessage("wizard_name_chat", event.getPlayer());
                 findNewName = true;
                 return;
             }
-            else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.maximum")) && (im.getDisplayName().equals(SET_MAXIMUM)) && bothClicks(event)) {
+            else if ((item.getType() == ConfigManager.getInstance().getBlock("edit_wizard_blocks.maximum")) && (im.getDisplayName().equals(SET_MAXIMUM)) && bothClicks(event)) {
                 MessageManager.getInstance().sendMessage("wizard_maximum_chat", event.getPlayer());
                 findMax = true;
                 return;
             }
-            else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.minimum")) && (im.getDisplayName().equals(SET_MINIMUM)) && bothClicks(event)) {
+            else if ((item.getType() == ConfigManager.getInstance().getBlock("edit_wizard_blocks.minimum")) && (im.getDisplayName().equals(SET_MINIMUM)) && bothClicks(event)) {
                 MessageManager.getInstance().sendMessage("wizard_minimum_chat", event.getPlayer());
                 findMin = true;
                 return;
             }
-            else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.arena")) && (im.getDisplayName().equals(SET_ARENA_SPAWN)) && bothClicks(event)) {
+            else if ((item.getType() == ConfigManager.getInstance().getBlock("edit_wizard_blocks.arena")) && (im.getDisplayName().equals(SET_ARENA_SPAWN)) && bothClicks(event)) {
                 template.setArena(event.getPlayer().getLocation());
                 MessageManager.getInstance().sendMessage("wizard_arena_spawn_set", event.getPlayer());
                 return;
             }
-            else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.spectator")) && (im.getDisplayName().equals(SET_SPECTATOR_SPAWN)) && bothClicks(event)) {
+            else if ((item.getType() == ConfigManager.getInstance().getBlock("edit_wizard_blocks.spectator")) && (im.getDisplayName().equals(SET_SPECTATOR_SPAWN)) && bothClicks(event)) {
                 template.setSpectate(event.getPlayer().getLocation());
                 MessageManager.getInstance().sendMessage("wizard_spectator_spawn_set", event.getPlayer());
                 return;
             }
-            else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.lobby")) && (im.getDisplayName().equals(SET_LOBBY_SPAWN)) && bothClicks(event)) {
+            else if ((item.getType() == ConfigManager.getInstance().getBlock("edit_wizard_blocks.lobby")) && (im.getDisplayName().equals(SET_LOBBY_SPAWN)) && bothClicks(event)) {
                 template.setLobby(event.getPlayer().getLocation());
                 MessageManager.getInstance().sendMessage("wizard_lobby_spawn_set", event.getPlayer());
                 return;
             }
-            else if ((item.getType() == ConfigManager.getBlock("edit_wizard_blocks.complete")) && (im.getDisplayName().equals(COMPLETE_WIZARD)) && bothClicks(event)) {
+            else if ((item.getType() == ConfigManager.getInstance().getBlock("edit_wizard_blocks.complete")) && (im.getDisplayName().equals(COMPLETE_WIZARD)) && bothClicks(event)) {
                 exitWizard(event.getPlayer());
                 MessageManager.getInstance().sendMessage("wizard_arena_saved", event.getPlayer());
                 return;

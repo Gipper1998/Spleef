@@ -6,11 +6,13 @@ import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
+import me.gipper1998.spleef.softdepend.VaultManager;
 import me.gipper1998.spleef.utils.FireworkBuilder;
 import me.gipper1998.spleef.utils.ItemBuilder;
 import me.gipper1998.spleef.utils.PotionBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +23,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -70,8 +73,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     public GameManager(Arena arena){
         Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
         this.arena = arena;
-        this.waitTime = ConfigManager.getInt("waiting_time");
-        this.gameTime = ConfigManager.getInt("total_game_time");
+        this.waitTime = ConfigManager.getInstance().getInt("waiting_time");
+        this.gameTime = ConfigManager.getInstance().getInt("total_game_time");
         this.EXIT_ITEM = MessageManager.getInstance().getString("leave_item");
         this.GOLD_SPADE_ITEM = MessageManager.getInstance().getString("gold_shovel");
         this.DIAMOND_SPADE_ITEM = MessageManager.getInstance().getString("diamond_shovel");
@@ -85,7 +88,7 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @Override
     public void run(){
-        if (ConfigManager.getBoolean("exp_time_enable")){
+        if (ConfigManager.getInstance().getBoolean("exp_time_enable")){
             for (Player p : totalPlayers){
                 p.setLevel(currentTime);
             }
@@ -186,6 +189,8 @@ public class GameManager extends BukkitRunnable implements Listener {
         }
         if (currentTime <= 0){
             PlayerStatManager.getInstance().addWinPoint(winner.getUniqueId());
+            winnerRewards();
+            winner = null;
             removeEverybody();
             resetArena();
             currentTime = waitTime;
@@ -208,13 +213,31 @@ public class GameManager extends BukkitRunnable implements Listener {
         else {
             p.getInventory().setItem(0, new ItemBuilder(Material.GOLDEN_SHOVEL, GOLD_SPADE_ITEM).getIs());
         }
-        if (ConfigManager.getBoolean("give_snowballs_on_start.enable")) {
-            p.getInventory().setItem(1, new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt("give_snowballs_on_start.amount")).getIs());
+        if (ConfigManager.getInstance().getBoolean("give_snowballs_on_start.enable")) {
+            p.getInventory().setItem(1, new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt("give_snowballs_on_start.amount")).getIs());
         }
     }
 
     private boolean bothClicks(PlayerInteractEvent event){
         return (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK);
+    }
+
+    private void winnerRewards(){
+        VaultManager.getInstance().deposit(winner, ConfigManager.getInstance().getInt("vault"));
+        List<String> rewardCommands = ConfigManager.getInstance().getStringList("commands");
+        ConsoleCommandSender console = Spleef.main.getServer().getConsoleSender();
+        Iterator var9 = rewardCommands.iterator();
+        if (rewardCommands.size() != 0) {
+            while (var9.hasNext()) {
+                String command = (String) var9.next();
+                command = command.replace("<player>", winner.getName());
+                ServerCommandEvent commandEvent = new ServerCommandEvent(console, command);
+                Spleef.main.getServer().getPluginManager().callEvent(commandEvent);
+                Spleef.main.getServer().getScheduler().callSyncMethod(Spleef.main, () -> {
+                    return Spleef.main.getServer().dispatchCommand(commandEvent.getSender(), commandEvent.getCommand());
+                });
+            }
+        }
     }
 
     public void addPlayer(Player p){
@@ -240,7 +263,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             playersStuff.put(p, gmi);
             p.teleport(arena.getLobby());
             p.setGameMode(GameMode.ADVENTURE);
-            p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
+            p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getInstance().getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
             p.updateInventory();
         }
         else {

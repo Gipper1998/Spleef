@@ -79,6 +79,16 @@ public class MessageManager {
         p.sendMessage(translateHEX(message));
     }
 
+    public void sendVaultPlayerMessage(String path, Player p, int amount) {
+        String message = messages.getString(path);
+        if (message.isEmpty()){
+            return;
+        }
+        message = message.replaceAll("<prefix>", getPrefix());
+        message = message.replaceAll("<money>", Integer.toString(amount));
+        p.sendMessage(translateHEX(message));
+    }
+
     public void sendConsoleMessage(String path){
         String message = messages.getString(path);
         message = message.replaceAll("<prefix>", getPrefix());
@@ -156,6 +166,7 @@ public class MessageManager {
         message = message.replaceAll("<prefix>", getPrefix());
         return translateHEX(message);
     }
+
 
     private String translateHEX(String message){
         final char colorChar = ChatColor.COLOR_CHAR;

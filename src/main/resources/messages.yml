@@ -62,6 +62,7 @@ player_already_joined: "<prefix> You are already in this arena."
 player_not_in_game: "<prefix> You are not in an arena."
 starting_game: "<prefix> &bGame starting in &d<time>&b seconds."
 game_start: "<prefix> &aGet ready for a swell battle, and &dBEGIN!!!"
+vault_message: "<prefix> &a<money> has been added to your account."
 
 # Signs
 main_sign:
