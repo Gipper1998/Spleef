@@ -23,7 +23,6 @@ public class PlayerStatManager {
         return psm;
     }
 
-    //Add point
     public void addWinPoint(UUID uuid){
         String path = "Players." + uuid + ".";
         int wins = 0;
