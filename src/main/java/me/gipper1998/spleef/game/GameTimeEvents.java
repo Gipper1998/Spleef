@@ -96,21 +96,21 @@ public class GameTimeEvents {
                     if (ConfigManager.getBoolean(path + "random")) {
                         for (Player p : gm.getPlayersInGame()){
                             if (rand.nextBoolean()){
-                                potion.addPotionEffect(p);
+                                potion.addPlayer(p);
                             }
                         }
                     }
                     else {
                         for (Player p : gm.getPlayersInGame()) {
                             if (rand.nextBoolean()) {
-                                potion.addPotionEffect(p);
+                                potion.addPlayer(p);
                             }
                         }
                     }
                 }
                 else {
                     for (Player p : gm.getPlayersInGame()) {
-                        potion.addPotionEffect(p);
+                        potion.addPlayer(p);
                     }
                 }
             }
@@ -120,21 +120,21 @@ public class GameTimeEvents {
                     if (ConfigManager.getBoolean(path + "random")) {
                         for (Player p : gm.getPlayersInGame()){
                             if (rand.nextBoolean()){
-                                potion.addPotionEffect(p);
+                                potion.addPlayer(p);
                             }
                         }
                     }
                     else {
                         for (Player p : gm.getPlayersInGame()) {
                             if (rand.nextBoolean()) {
-                                potion.addPotionEffect(p);
+                                potion.addPlayer(p);
                             }
                         }
                     }
                 }
                 else {
                     for (Player p : gm.getPlayersInGame()) {
-                        potion.addPotionEffect(p);
+                        potion.addPlayer(p);
                     }
                 }
             }
@@ -144,21 +144,21 @@ public class GameTimeEvents {
                     if (ConfigManager.getBoolean(path + "random")) {
                         for (Player p : gm.getPlayersInGame()){
                             if (rand.nextBoolean()){
-                                potion.addPotionEffect(p);
+                                potion.addPlayer(p);
                             }
                         }
                     }
                     else {
                         for (Player p : gm.getPlayersInGame()) {
                             if (rand.nextBoolean()) {
-                                potion.addPotionEffect(p);
+                                potion.addPlayer(p);
                             }
                         }
                     }
                 }
                 else {
                     for (Player p : gm.getPlayersInGame()) {
-                        potion.addPotionEffect(p);
+                        potion.addPlayer(p);
                     }
                 }
             }

@@ -16,7 +16,7 @@ public class PotionBuilder {
         this.amp = amp;
     }
 
-    public void addPotionEffect(Player p){
-        p.addPotionEffect(new PotionEffect(effect, duration, amp));
+    public void addPlayer(Player p){
+        p.addPotionEffect(new PotionEffect(effect, duration, amp, false, false));
     }
 }

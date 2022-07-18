@@ -8,6 +8,7 @@ import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.utils.FireworkBuilder;
 import me.gipper1998.spleef.utils.ItemBuilder;
+import me.gipper1998.spleef.utils.PotionBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -21,6 +22,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -62,6 +64,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     @Getter
     private List<Player> totalPlayers = new ArrayList<>();
 
+    private PotionBuilder invisiblePotion;
+
 
     public GameManager(Arena arena){
         Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
@@ -74,6 +78,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.SNOWBALL_ITEM = MessageManager.getInstance().getString("snowball");
         this.TNT = "TNT_SPLEEF";
         this.rand = new Random();
+        this.invisiblePotion = new PotionBuilder(PotionEffectType.INVISIBILITY, startDelay * 20, 5);
         GameTimeEvents.getInstance().loadEvents();
         this.runTaskTimer(Spleef.main, 20L, 20L);
     }
@@ -110,7 +115,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             if (currentTime <= 0){
                 for (Player p : playersInGame){
                     p.teleport(arena.getArena());
-                    p.hidePlayer(Spleef.main, p);
+                    invisiblePotion.addPlayer(p);
                 }
                 currentTime = startDelay;
                 status = Status.DELAYSTART;
@@ -118,6 +123,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             }
             if (currentTime % 10 == 0 || currentTime <= 5){
                 for (Player p : playersInGame) {
+                    p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                     MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
                 }
             }
@@ -136,6 +142,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             for (Player p : playersInGame){
                 giveItems(p);
                 p.showPlayer(Spleef.main, p);
+                p.playSound(p.getLocation(),Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1, 1);
                 MessageManager.getInstance().sendMessage("game_start", p);
                 p.setGameMode(GameMode.SURVIVAL);
             }
