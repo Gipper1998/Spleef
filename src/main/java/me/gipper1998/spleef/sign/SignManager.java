@@ -57,7 +57,7 @@ public class SignManager implements Listener {
     public void makeSignsBlank(){
         if (signs.contains("Signs")) {
             for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)) {
-                Arena arena = ArenaManager.findArena(arenaName);
+                Arena arena = ArenaManager.getInstance().findArena(arenaName);
                 if (arena != null) {
                     List<String> signLists = new ArrayList<>();
                     if (signs.contains("Signs." + arenaName)) {
@@ -92,8 +92,8 @@ public class SignManager implements Listener {
     private void updateSigns() {
         if (signs.contains("Signs")) {
             for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)) {
-                Arena arena = ArenaManager.findArena(arenaName);
-                GameManager gm = ArenaManager.findGame(arenaName);
+                Arena arena = ArenaManager.getInstance().findArena(arenaName);
+                GameManager gm = ArenaManager.getInstance().findGame(arenaName);
                 if (arena != null) {
                     List<String> signLists = new ArrayList<>();
                     if (signs.contains("Signs." + arenaName)) {
@@ -148,9 +148,9 @@ public class SignManager implements Listener {
     public void onSignCreation(SignChangeEvent event){
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){
             if (event.getLine(0).equals("[Spleef]")){
-                if (event.getLine(1) != null && ArenaManager.findArena(event.getLine(1)) != null){
+                if (event.getLine(1) != null && ArenaManager.getInstance().findArena(event.getLine(1)) != null){
                     String key = event.getLine(1).toUpperCase();
-                    GameManager gm = ArenaManager.findGame(event.getLine(1));
+                    GameManager gm = ArenaManager.getInstance().findGame(event.getLine(1));
                     String status = getSignStatus(gm);
                     List<String> signListMessages = MessageManager.getInstance().getSignStringList("main_sign");
                     for (int line = 0; line < signListMessages.size(); line++){
@@ -220,9 +220,9 @@ public class SignManager implements Listener {
             if (signs.contains("Signs")){
                 for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)){
                     if (signs.contains("Signs." + arenaName)){
-                        Arena arena = ArenaManager.findArena(arenaName);
+                        Arena arena = ArenaManager.getInstance().findArena(arenaName);
                         if (arena != null) {
-                            GameManager gm = ArenaManager.findGame(arenaName);
+                            GameManager gm = ArenaManager.getInstance().findGame(arenaName);
                             List<String> listedSigns = new ArrayList<>();
                             if (signs.contains("Signs." + arenaName)) {
                                 listedSigns = signs.getStringList("Signs." + arenaName);

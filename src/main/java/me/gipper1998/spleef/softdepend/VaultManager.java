@@ -6,9 +6,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultManager {
-    private static Economy economy;
 
-    public static boolean registerVault() {
+    public static VaultManager vm;
+
+    public static VaultManager getInstance(){
+        if (vm == null){
+            vm = new VaultManager();
+        }
+        return vm;
+    }
+    private Economy economy;
+
+    public boolean registerVault() {
         RegisteredServiceProvider<Economy> rsp = Spleef.main.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null)
             return false;
@@ -16,11 +25,8 @@ public class VaultManager {
         return economy != null;
     }
 
-    public static void deposit(Player p, int money){
+    public void deposit(Player p, int money){
         economy.depositPlayer(p, money);
     }
-    public static void withdraw(Player p, int money){
-
-        economy.withdrawPlayer(p, money);
-    }
+    public void withdraw(Player p, int money){ economy.withdrawPlayer(p, money); }
 }

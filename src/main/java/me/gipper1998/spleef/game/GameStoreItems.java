@@ -55,5 +55,6 @@ public class GameStoreItems {
         p.updateInventory();
         p.teleport(location);
         p.setLevel(levels);
+        p.setFireTicks(0);
     }
 }

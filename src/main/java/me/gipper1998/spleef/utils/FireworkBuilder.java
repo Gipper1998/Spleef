@@ -13,37 +13,6 @@ public class FireworkBuilder {
     @Getter
     private Firework fw;
 
-    public FireworkBuilder(Location location){
-        this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        FireworkMeta fwm = fw.getFireworkMeta();
-        fw.detonate();
-    }
-
-    public FireworkBuilder(Location location, int power){
-        this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        FireworkMeta fwm = fw.getFireworkMeta();
-        fwm.setPower(power);
-        fw.setFireworkMeta(fwm);
-    }
-
-    public FireworkBuilder(Location location, int power, String colorName){
-        this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        Color color = color(colorName);
-        FireworkMeta fwm = fw.getFireworkMeta();
-        fwm.setPower(power);
-        fwm.addEffect(FireworkEffect.builder().withColor(color).build());
-        fw.setFireworkMeta(fwm);
-    }
-
-    public FireworkBuilder(Location location, int power, String colorName, int effect){
-        this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        Color color = color(colorName);
-        FireworkMeta fwm = fw.getFireworkMeta();
-        fwm.setPower(power);
-        fwm = getEffect(fwm, effect, color);
-        fw.setFireworkMeta(fwm);
-    }
-
     public FireworkBuilder(Location location, int power, String colorName, int effect, int type){
         this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
         Color color = color(colorName);

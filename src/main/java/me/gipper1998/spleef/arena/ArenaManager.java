@@ -14,9 +14,17 @@ import java.util.*;
 
 public class ArenaManager {
 
-    private static HashMap<Arena, GameManager> activeArenas = new HashMap<>();
+    public static ArenaManager am;
 
-    public static void shutGamesDown(){
+    public static ArenaManager getInstance(){
+        if (am == null){
+            am = new ArenaManager();
+        }
+        return am;
+    }
+    private HashMap<Arena, GameManager> activeArenas = new HashMap<>();
+
+    public void shutGamesDown(){
         if (activeArenas.isEmpty()){
             return;
         }
@@ -26,7 +34,7 @@ public class ArenaManager {
         }
     }
 
-    public static List<String> getArenaNames(){
+    public List<String> getArenaNames(){
         if (activeArenas.isEmpty()){
             return null;
         }
@@ -38,7 +46,7 @@ public class ArenaManager {
         return arenaNames;
     }
 
-    public static GameManager findGame(String name){
+    public GameManager findGame(String name){
         name = name.toUpperCase();
         if (activeArenas.isEmpty()){
             return null;
@@ -52,7 +60,7 @@ public class ArenaManager {
         return null;
     }
 
-    public static GameManager findPlayerInGame(Player p){
+    public GameManager findPlayerInGame(Player p){
         if (activeArenas.isEmpty()){
             return null;
         }
@@ -65,7 +73,7 @@ public class ArenaManager {
         return null;
     }
 
-    public static Arena findArena(String name){
+    public Arena findArena(String name){
         name = name.toUpperCase();
         if (activeArenas.isEmpty()){
             return null;
@@ -79,7 +87,7 @@ public class ArenaManager {
         return null;
     }
 
-    public static boolean deleteArena(String name){
+    public boolean deleteArena(String name){
         name = name.toUpperCase();
         if (activeArenas.isEmpty()){
             return false;
@@ -96,14 +104,14 @@ public class ArenaManager {
         return false;
     }
 
-    public static void forceQuitArenas() {
+    public void forceQuitArenas() {
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             GameManager gm = set.getValue();
             gm.removeEverybody();
         }
     }
 
-    public static void createArena(ArenaSetupTemplate temp){
+    public void createArena(ArenaSetupTemplate temp){
         FileConfiguration arenas = Spleef.main.arenas.getConfig();
         arenas.set("Arenas." + temp.name, temp.name);
         arenas.set("Arenas." + temp.name + ".Minimum", temp.minimum);
@@ -117,7 +125,7 @@ public class ArenaManager {
         loadArenas();
     }
 
-    public static void saveEditedArena(ArenaEditTemplate temp, Arena prevArena) {
+    public void saveEditedArena(ArenaEditTemplate temp, Arena prevArena) {
         FileConfiguration arenas = Spleef.main.arenas.getConfig();
         String newName = temp.getName().toUpperCase();
         String prevName = prevArena.getName().toUpperCase();
@@ -140,7 +148,7 @@ public class ArenaManager {
         return;
     }
 
-    public static void loadArenas(){
+    public void loadArenas(){
         FileConfiguration arenas = Spleef.main.arenas.getConfig();
         activeArenas.clear();
         if (arenas.getConfigurationSection("Arenas") != null) {

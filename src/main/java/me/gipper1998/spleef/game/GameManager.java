@@ -41,6 +41,11 @@ public class GameManager extends BukkitRunnable implements Listener {
     @Getter
     private int currentTime = 0;
 
+    @Getter
+    private Status status = Status.WAIT;
+
+    private Player winner = null;
+
     private String EXIT_ITEM = "";
     private String GOLD_SPADE_ITEM = "";
     private String DIAMOND_SPADE_ITEM = "";
@@ -62,8 +67,6 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private List<Integer> events = new ArrayList<>();
 
-    @Getter
-    private Status status = Status.WAIT;
 
     public GameManager(Arena arena){
         Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
@@ -161,12 +164,17 @@ public class GameManager extends BukkitRunnable implements Listener {
             status = Status.WAIT;
             return;
         }
+        if (playersInGame.size() == 1) {
+            winner = playersInGame.get(0);
+            currentTime = winnerDelay;
+            status = Status.WINNER;
+            return;
+        }
         checkTime();
         currentTime--;
     }
 
     private void winnerShowOff(){
-        Player winner = playersInGame.get(0);
         if (currentTime == winnerDelay) {
             FireworkBuilder fb = new FireworkBuilder(arena.getArena(), 25, "aqua", 2, 5);
             fb.launch();
@@ -386,6 +394,12 @@ public class GameManager extends BukkitRunnable implements Listener {
                 }
                 totalPlayers.remove(p);
                 PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
+                if (playersInGame.size() == 1) {
+                    winner = playersInGame.get(0);
+                    currentTime = winnerDelay;
+                    status = Status.WINNER;
+                    return;
+                }
             }
         }
         else {
@@ -539,6 +553,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                     p.removePotionEffect(effect.getType());
                 }
                 if (playersInGame.size() == 1) {
+                    winner = playersInGame.get(0);
                     currentTime = winnerDelay;
                     status = Status.WINNER;
                     return;

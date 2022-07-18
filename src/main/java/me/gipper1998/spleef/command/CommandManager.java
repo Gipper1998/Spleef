@@ -62,14 +62,14 @@ public class CommandManager implements TabExecutor {
                 if (name.isEmpty()) {
                     return false;
                 }
-                arena = ArenaManager.findArena(name);
-                gm = ArenaManager.findGame(name);
+                arena = ArenaManager.getInstance().findArena(name);
+                gm = ArenaManager.getInstance().findGame(name);
                 if (arena == null){
                     MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm, p);
                     return false;
                 }
                 else {
-                    ArenaManager.deleteArena(name.toUpperCase());
+                    ArenaManager.getInstance().deleteArena(name.toUpperCase());
                     MessageManager.getInstance().sendMessage("Should be deleted", p);
                     return true;
                 }
@@ -86,8 +86,8 @@ public class CommandManager implements TabExecutor {
                     MessageManager.getInstance().sendMessage("no_name", p);
                     return false;
                 }
-                arena = ArenaManager.findArena(name);
-                gm = ArenaManager.findGame(name);
+                arena = ArenaManager.getInstance().findArena(name);
+                gm = ArenaManager.getInstance().findGame(name);
                 if (arena == null){
                     MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm, p);
                     return false;
@@ -145,8 +145,8 @@ public class CommandManager implements TabExecutor {
                 Spleef.main.messages.reloadConfig();
                 Spleef.main.signs.reloadConfig();
                 SignManager.getInstance().startUpdater();
-                ArenaManager.forceQuitArenas();
-                ArenaManager.loadArenas();
+                ArenaManager.getInstance().forceQuitArenas();
+                ArenaManager.getInstance().loadArenas();
                 MessageManager.getInstance().sendMessage("reloaded", p);
                 return true;
             }
@@ -162,20 +162,20 @@ public class CommandManager implements TabExecutor {
                     MessageManager.getInstance().sendMessage("no_name", p);
                     return false;
                 }
-                arena = ArenaManager.findArena(name);
-                gm = ArenaManager.findGame(name);
+                arena = ArenaManager.getInstance().findArena(name);
+                gm = ArenaManager.getInstance().findGame(name);
                 if (arena == null){
                     MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm, p);
                     return false;
                 }
-                gm = ArenaManager.findGame(name);
+                gm = ArenaManager.getInstance().findGame(name);
                 gm.addPlayer(p);
                 return true;
             }
 
             // Leave
             if (args[0].equalsIgnoreCase("leave")){
-                gm = ArenaManager.findPlayerInGame(p);
+                gm = ArenaManager.getInstance().findPlayerInGame(p);
                 if (gm != null) {
                     gm.removePlayer(p);
                     MessageManager.getInstance().sendMessage("player_success_quit", p);
@@ -239,7 +239,7 @@ public class CommandManager implements TabExecutor {
                 return null;
             }
             else {
-                return ArenaManager.getArenaNames();
+                return ArenaManager.getInstance().getArenaNames();
             }
         }
         return null;

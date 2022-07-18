@@ -1,5 +1,6 @@
 package me.gipper1998.spleef;
 
+import lombok.Getter;
 import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.command.CommandManager;
 import me.gipper1998.spleef.file.FileManager;
@@ -13,6 +14,7 @@ public class Spleef extends JavaPlugin {
 
     public static Spleef main;
 
+    @Getter
     public boolean vaultEnabled = false;
 
     public FileManager arenas;
@@ -26,7 +28,7 @@ public class Spleef extends JavaPlugin {
     public void onEnable() {
         this.main = this;
         setupFiles();
-        ArenaManager.loadArenas();
+        ArenaManager.getInstance().loadArenas();
         registerSoftDependencies();
         getCommand("spleef").setExecutor(new CommandManager());
         SignManager.getInstance().startUpdater();
@@ -35,7 +37,7 @@ public class Spleef extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        ArenaManager.shutGamesDown();
+        ArenaManager.getInstance().shutGamesDown();
         SignManager.getInstance().makeSignsBlank();
         MessageManager.getInstance().sendConsoleMessage("shut_down");
     }
@@ -50,7 +52,7 @@ public class Spleef extends JavaPlugin {
 
     private void registerSoftDependencies(){
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
-            if (VaultManager.registerVault()) {
+            if (VaultManager.getInstance().registerVault()) {
                 this.vaultEnabled = true;
                 MessageManager.getInstance().sendConsoleMessage("vault_enable");
             }

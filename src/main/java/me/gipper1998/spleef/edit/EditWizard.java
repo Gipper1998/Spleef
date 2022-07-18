@@ -178,7 +178,7 @@ public class EditWizard implements Listener {
         p.getInventory().clear();
         esi.giveBackItems();
         p.updateInventory();
-        ArenaManager.saveEditedArena(template, prevArena);
+        ArenaManager.getInstance().saveEditedArena(template, prevArena);
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Spleef.main, new Runnable() {
             @Override
             public void run() {

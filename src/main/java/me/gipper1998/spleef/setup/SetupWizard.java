@@ -175,7 +175,7 @@ public class SetupWizard implements Listener {
             if (template.lobby == null){
                 template.lobby = template.arena;
             }
-            ArenaManager.createArena(template);
+            ArenaManager.getInstance().createArena(template);
         }
         inSetupWizard.remove(p);
     }
