@@ -14,6 +14,7 @@ public class FireworkBuilder {
     private Firework fw;
 
     public FireworkBuilder(Location location, int power, String colorName, int effect, int type){
+        location.add(0,1,0);
         this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
         Color color = color(colorName);
         FireworkMeta fwm = fw.getFireworkMeta();

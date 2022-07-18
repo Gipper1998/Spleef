@@ -180,12 +180,14 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void winnerShowOff(){
+        FireworkBuilder fb = new FireworkBuilder(arena.getArena(), 20, "aqua", 2, 5);
         if (currentTime == winnerDelay) {
-            FireworkBuilder fb = new FireworkBuilder(arena.getArena(), 25, "aqua", 2, 5);
-            fb.launch();
             for (Player p : totalPlayers) {
                 MessageManager.getInstance().sendPlayerNameMessage("player_winner", winner, p);
             }
+        }
+        if (currentTime <= winnerDelay && currentTime > 2){
+            fb.launch();
         }
         if (currentTime <= 0){
             PlayerStatManager.getInstance().addWinPoint(winner.getUniqueId());
