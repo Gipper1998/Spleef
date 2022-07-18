@@ -172,8 +172,8 @@ public class SetupWizard implements Listener {
         ssi.giveBackItems();
         p.updateInventory();
         if (finished){
-            if (template.lobby == null){
-                template.lobby = template.arena;
+            if (template.getLobby() == null){
+                template.setLobby(template.getArena());
             }
             ArenaManager.getInstance().createArena(template);
         }
@@ -192,19 +192,19 @@ public class SetupWizard implements Listener {
     }
 
     private boolean isComplete(Player player){
-        if (template.arena == null){
+        if (template.getArena() == null){
             MessageManager.getInstance().sendMessage("wizard_arena_not_set", player);
             return false;
         }
-        else if (template.spectate == null){
+        else if (template.getSpectate() == null){
             MessageManager.getInstance().sendMessage("wizard_spectator_not_set", player);
             return false;
         }
-        else if (template.minimum == 0){
+        else if (template.getMinimum() == 0){
             MessageManager.getInstance().sendMessage("wizard_minimum_not_set", player);
             return false;
         }
-        else if (template.maximum == 0){
+        else if (template.getMaximum() == 0){
             MessageManager.getInstance().sendMessage("wizard_maximum_not_set", player);
             return false;
         }

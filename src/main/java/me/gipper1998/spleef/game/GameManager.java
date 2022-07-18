@@ -197,10 +197,9 @@ public class GameManager extends BukkitRunnable implements Listener {
             resetArena();
             currentTime = waitTime;
             status = Status.WAIT;
+            return;
         }
-        else {
-            currentTime--;
-        }
+        currentTime--;
     }
 
     private void resetArena(){

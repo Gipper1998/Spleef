@@ -16,6 +16,12 @@ public class ArenaManager {
 
     public static ArenaManager am;
 
+    private FileConfiguration arenas;
+
+    public ArenaManager(){
+        this.arenas = Spleef.main.arenas.getConfig();
+    }
+
     public static ArenaManager getInstance(){
         if (am == null){
             am = new ArenaManager();
@@ -112,21 +118,17 @@ public class ArenaManager {
     }
 
     public void createArena(ArenaSetupTemplate temp){
-        FileConfiguration arenas = Spleef.main.arenas.getConfig();
-        arenas.set("Arenas." + temp.name, temp.name);
-        arenas.set("Arenas." + temp.name + ".Minimum", temp.minimum);
-        arenas.set("Arenas." + temp.name + ".Maximum", temp.maximum);
+        arenas.set("Arenas." + temp.getName(), temp.getName());
+        arenas.set("Arenas." + temp.getName() + ".Minimum", temp.getMinimum());
+        arenas.set("Arenas." + temp.getName() + ".Maximum", temp.getMaximum());
         Spleef.main.arenas.saveConfig();
-        saveLocation("Arenas." + temp.getName() + ".Arena_Spawn.", temp.arena);
-        if (temp.lobby != null) {
-            saveLocation("Arenas." + temp.getName() + ".Lobby_Spawn.", temp.lobby);
-        }
-        saveLocation("Arenas." + temp.getName() + ".Spectate_Spawn.", temp.spectate);
+        saveLocation("Arenas." + temp.getName() + ".Arena_Spawn.", temp.getArena());
+        saveLocation("Arenas." + temp.getName() + ".Lobby_Spawn.", temp.getLobby());
+        saveLocation("Arenas." + temp.getName() + ".Spectate_Spawn.", temp.getSpectate());
         loadArenas();
     }
 
     public void saveEditedArena(ArenaEditTemplate temp, Arena prevArena) {
-        FileConfiguration arenas = Spleef.main.arenas.getConfig();
         String newName = temp.getName().toUpperCase();
         String prevName = prevArena.getName().toUpperCase();
         String name = prevName;
@@ -136,20 +138,17 @@ public class ArenaManager {
             arenas.set("Arenas." + name, name);
             Spleef.main.arenas.saveConfig();
         }
-        arenas.set("Arenas." + name + ".Minimum", temp.minimum);
-        arenas.set("Arenas." + name + ".Maximum", temp.maximum);
+        arenas.set("Arenas." + name + ".Minimum", temp.getMinimum());
+        arenas.set("Arenas." + name + ".Maximum", temp.getMaximum());
         Spleef.main.arenas.saveConfig();
-        saveLocation("Arenas." + name + ".Arena_Spawn.", temp.arena);
-        if (temp.lobby != null) {
-            saveLocation("Arenas." + name + ".Lobby_Spawn.", temp.lobby);
-        }
-        saveLocation("Arenas." + name + ".Spectate_Spawn.", temp.spectate);
+        saveLocation("Arenas." + name + ".Arena_Spawn.", temp.getArena());
+        saveLocation("Arenas." + name + ".Lobby_Spawn.", temp.getLobby());
+        saveLocation("Arenas." + name + ".Spectate_Spawn.", temp.getSpectate());
         loadArenas();
         return;
     }
 
     public void loadArenas(){
-        FileConfiguration arenas = Spleef.main.arenas.getConfig();
         activeArenas.clear();
         if (arenas.getConfigurationSection("Arenas") != null) {
             for (String name : arenas.getConfigurationSection("Arenas").getKeys(false)) {
@@ -166,8 +165,7 @@ public class ArenaManager {
         }
     }
 
-    private static void saveLocation(String path, Location location){
-        FileConfiguration arenas = Spleef.main.arenas.getConfig();
+    private void saveLocation(String path, Location location){
         arenas.set(path + "world", location.getWorld().getName());
         arenas.set(path + "x", location.getX());
         arenas.set(path + "y", location.getY());
@@ -177,8 +175,7 @@ public class ArenaManager {
         Spleef.main.arenas.saveConfig();
     }
 
-    private static Location loadLocation(String path){
-        FileConfiguration arenas = Spleef.main.arenas.getConfig();
+    private Location loadLocation(String path){
         String worldName = arenas.getString(path + "world");
         double x = arenas.getDouble(path + "x");
         double y = arenas.getDouble(path + "y");
