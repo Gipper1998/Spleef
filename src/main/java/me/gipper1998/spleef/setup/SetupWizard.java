@@ -177,12 +177,7 @@ public class SetupWizard implements Listener {
             }
             ArenaManager.createArena(template);
         }
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Spleef.main, new Runnable() {
-            @Override
-            public void run() {
-                inSetupWizard.remove(p);
-            }
-        }, 20L);
+        inSetupWizard.remove(p);
     }
 
     private boolean bothClicks(PlayerInteractEvent event){
