@@ -1,7 +1,6 @@
 package me.gipper1998.spleef.file;
 
 import me.gipper1998.spleef.Spleef;
-import me.gipper1998.spleef.game.GameManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -66,16 +65,6 @@ public class MessageManager {
         }
         message = message.replaceAll("<prefix>", getPrefix());
         message = message.replaceAll("<arenaname>", text);
-        p.sendMessage(translateHEX(message));
-    }
-
-    public void sendArenaNameMessage(String path, GameManager gm, Player p){
-        String message = messages.getString(path);
-        if (message.isEmpty()){
-            return;
-        }
-        message = message.replaceAll("<prefix>", getPrefix());
-        message = message.replaceAll("<arenaname>", gm.getArena().getName());
         p.sendMessage(translateHEX(message));
     }
 
