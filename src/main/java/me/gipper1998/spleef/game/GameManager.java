@@ -8,8 +8,6 @@ import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.utils.FireworkBuilder;
 import me.gipper1998.spleef.utils.ItemBuilder;
-import me.gipper1998.spleef.utils.PotionBuilder;
-import me.gipper1998.spleef.utils.TNTBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -23,7 +21,6 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -65,8 +62,6 @@ public class GameManager extends BukkitRunnable implements Listener {
     @Getter
     private List<Player> totalPlayers = new ArrayList<>();
 
-    private List<Integer> events = new ArrayList<>();
-
 
     public GameManager(Arena arena){
         Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
@@ -79,7 +74,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.SNOWBALL_ITEM = MessageManager.getInstance().getString("snowball");
         this.TNT = "TNT_SPLEEF";
         this.rand = new Random();
-        loadEvents();
+        GameTimeEvents.getInstance().loadEvents();
         this.runTaskTimer(Spleef.main, 20L, 20L);
     }
 
@@ -170,7 +165,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             status = Status.WINNER;
             return;
         }
-        checkTime();
+        GameTimeEvents.getInstance().checkTime(currentTime, this);
         currentTime--;
     }
 
@@ -213,132 +208,6 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private boolean bothClicks(PlayerInteractEvent event){
         return (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK);
-    }
-
-    private void checkTime() {
-        if (events.contains(currentTime)) {
-            String path = "time_events." + currentTime + ".";
-            if (ConfigManager.contains(path + "snowballs")) {
-                for (Player p : playersInGame) {
-                    if (ConfigManager.contains(path + "random")){
-                        if (ConfigManager.getBoolean(path + "random")){
-                            if (rand.nextBoolean()){
-                                p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt((path + "snowballs"))).getIs());
-                                p.updateInventory();
-                            }
-                        }
-                        else {
-                            p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt((path + "snowballs"))).getIs());
-                            p.updateInventory();
-                        }
-                    }
-                    else {
-                        p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInt((path + "snowballs"))).getIs());
-                        p.updateInventory();
-                    }
-                }
-            }
-            if (ConfigManager.contains(path + "tntfall")) {
-                int size = ConfigManager.getInt("tntfall");
-                if (size > playersInGame.size()) {
-                    for (Player p : playersInGame){
-                        TNTBuilder.getInstance().create(p.getLocation(), TNT);
-                    }
-                }
-                else {
-                    for (Player p : playersInGame){
-                        if (rand.nextBoolean()) {
-                            TNTBuilder.getInstance().create(p.getLocation(), TNT);
-                        }
-                    }
-                }
-            }
-            if (ConfigManager.contains(path + "speed")) {
-                PotionBuilder potion = new PotionBuilder(PotionEffectType.SPEED, ConfigManager.getInt(path + "speed") * 20, ConfigManager.getInt(path + "amp"));
-                if (ConfigManager.contains(path + "random")) {
-                    if (ConfigManager.getBoolean(path + "random")) {
-                        for (Player p : playersInGame){
-                            if (rand.nextBoolean()){
-                                potion.addPotionEffect(p);
-                            }
-                        }
-                    }
-                    else {
-                        for (Player p : playersInGame) {
-                            if (rand.nextBoolean()) {
-                                potion.addPotionEffect(p);
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (Player p : playersInGame) {
-                        potion.addPotionEffect(p);
-                    }
-                }
-            }
-            if (ConfigManager.contains(path + "slow")){
-                PotionBuilder potion = new PotionBuilder(PotionEffectType.SLOW,ConfigManager.getInt(path + "slow") * 20, ConfigManager.getInt(path + "amp"));
-                if (ConfigManager.contains(path + "random")) {
-                    if (ConfigManager.getBoolean(path + "random")) {
-                        for (Player p : playersInGame){
-                            if (rand.nextBoolean()){
-                                potion.addPotionEffect(p);
-                            }
-                        }
-                    }
-                    else {
-                        for (Player p : playersInGame) {
-                            if (rand.nextBoolean()) {
-                                potion.addPotionEffect(p);
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (Player p : playersInGame) {
-                        potion.addPotionEffect(p);
-                    }
-                }
-            }
-            if (ConfigManager.contains(path + "jump")){
-                PotionBuilder potion = new PotionBuilder(PotionEffectType.JUMP,ConfigManager.getInt(path + "jump") * 20, ConfigManager.getInt(path + "amp"));
-                if (ConfigManager.contains(path + "random")) {
-                    if (ConfigManager.getBoolean(path + "random")) {
-                        for (Player p : playersInGame){
-                            if (rand.nextBoolean()){
-                                potion.addPotionEffect(p);
-                            }
-                        }
-                    }
-                    else {
-                        for (Player p : playersInGame) {
-                            if (rand.nextBoolean()) {
-                                potion.addPotionEffect(p);
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (Player p : playersInGame) {
-                        potion.addPotionEffect(p);
-                    }
-                }
-            }
-        }
-    }
-
-    private void loadEvents(){
-        if (ConfigManager.getBoolean("enable_time_events")) {
-            for (String key : Spleef.main.config.getConfig().getConfigurationSection("time_events").getKeys(false)) {
-                try {
-                    events.add(Integer.parseInt(key));
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     public void addPlayer(Player p){
