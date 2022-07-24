@@ -147,7 +147,7 @@ public class MessageManager {
             return null;
         }
         List<String> temp = new ArrayList<>();
-        for (String line : players){
+        for (String line : messageList){
             if (line.contains("<playerlist>")){
                 line = line.replaceAll("<playerlist>", "");
                 int size = ConfigManager.getInstance().getInt("names_on_board_max");

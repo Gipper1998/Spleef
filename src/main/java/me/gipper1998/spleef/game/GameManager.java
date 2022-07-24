@@ -84,7 +84,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.SNOWBALL_ITEM = MessageManager.getInstance().getString("snowball");
         this.TNT = "TNT_SPLEEF";
         this.rand = new Random();
-        this.invisiblePotion = new PotionBuilder(PotionEffectType.INVISIBILITY, startDelay * 20, 5);
+        this.invisiblePotion = new PotionBuilder(PotionEffectType.INVISIBILITY, (startDelay + 1) * 20, 5);
         GameTimeEvents.getInstance().loadEvents();
         this.runTaskTimer(Spleef.main, 20L, 20L);
     }
@@ -154,6 +154,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 p.playSound(p.getLocation(),Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1, 1);
                 MessageManager.getInstance().sendMessage("game_start", p);
                 p.setGameMode(GameMode.SURVIVAL);
+                updateScoreboard();
             }
             currentTime = gameTime;
             status = Status.GAME;
