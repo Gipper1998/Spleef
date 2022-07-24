@@ -2,6 +2,7 @@ package me.gipper1998.spleef.game;
 
 import dev.jcsoftware.jscoreboards.JGlobalMethodBasedScoreboard;
 import lombok.Getter;
+import lombok.Setter;
 import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.file.ConfigManager;
@@ -11,6 +12,7 @@ import me.gipper1998.spleef.softdepend.VaultManager;
 import me.gipper1998.spleef.utils.FireworkBuilder;
 import me.gipper1998.spleef.utils.ItemBuilder;
 import me.gipper1998.spleef.utils.PotionBuilder;
+import me.gipper1998.spleef.utils.TNTBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
@@ -44,7 +46,7 @@ public class GameManager extends BukkitRunnable implements Listener {
     @Getter
     private int currentTime = 0;
 
-    @Getter
+    @Getter @Setter
     private Status status = Status.WAIT;
 
     private Player winner = null;
@@ -55,6 +57,10 @@ public class GameManager extends BukkitRunnable implements Listener {
     private String SNOWBALL_ITEM = "";
     private String TNT = "";
 
+    private int tntTime = 0;
+
+    private boolean tntEnabled = false;
+
     private JGlobalMethodBasedScoreboard scoreboard = new JGlobalMethodBasedScoreboard();
 
     private Random rand;
@@ -62,7 +68,6 @@ public class GameManager extends BukkitRunnable implements Listener {
     private HashMap<Player, GameStoreItems> playersStuff = new HashMap<Player, GameStoreItems>();
 
     private List<Location> blocksBroken = new ArrayList<>();
-
     @Getter
     private List<Player> playersInGame = new ArrayList<>();
     @Getter
@@ -70,11 +75,13 @@ public class GameManager extends BukkitRunnable implements Listener {
     @Getter
     private List<Player> totalPlayers = new ArrayList<>();
 
+    private List<Integer> events = new ArrayList<>();
+
+
     private PotionBuilder invisiblePotion;
 
 
     public GameManager(Arena arena){
-        Spleef.main.getServer().getPluginManager().registerEvents(this, Spleef.main);
         this.arena = arena;
         this.waitTime = ConfigManager.getInstance().getInt("waiting_time");
         this.gameTime = ConfigManager.getInstance().getInt("total_game_time");
@@ -85,7 +92,8 @@ public class GameManager extends BukkitRunnable implements Listener {
         this.TNT = "TNT_SPLEEF";
         this.rand = new Random();
         this.invisiblePotion = new PotionBuilder(PotionEffectType.INVISIBILITY, (startDelay + 1) * 20, 5);
-        GameTimeEvents.getInstance().loadEvents();
+        this.currentTime = waitTime;
+        loadEvents();
         this.runTaskTimer(Spleef.main, 20L, 20L);
     }
 
@@ -95,6 +103,17 @@ public class GameManager extends BukkitRunnable implements Listener {
             for (Player p : totalPlayers){
                 p.setLevel(currentTime);
             }
+        }
+        if (tntEnabled){
+            if (tntTime <= 0){
+                tntEnabled = false;
+            }
+            for (Player p : playersInGame){
+                if (rand.nextBoolean()){
+                    TNTBuilder.getInstance().create(p.getLocation(), TNT);
+                }
+            }
+            tntTime--;
         }
         switch (status){
             case WAIT: {
@@ -136,7 +155,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             currentTime--;
         }
         else {
-            if (currentTime != waitTime && playersInGame.size() != 1) {
+            if (currentTime != waitTime) {
                 for (Player p : playersInGame) {
                     MessageManager.getInstance().sendMessage("arena_not_enough_players", p);
                 }
@@ -182,7 +201,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             status = Status.WINNER;
             return;
         }
-        GameTimeEvents.getInstance().checkTime(currentTime, this);
+        checkTime();
         updateScoreboard();
         currentTime--;
     }
@@ -306,7 +325,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 if (spectators.contains(p)) {
                     spectators.remove(p);
                 }
-                if (spectators.contains(p)) {
+                if (playersInGame.contains(p)) {
                     playersInGame.remove(p);
                 }
                 scoreboard.removePlayer(p);
@@ -337,17 +356,115 @@ public class GameManager extends BukkitRunnable implements Listener {
         playersStuff.clear();
     }
 
+    public void loadEvents(){
+        if (ConfigManager.getInstance().getBoolean("enable_time_events")) {
+            for (String key : Spleef.main.config.getConfig().getConfigurationSection("time_events").getKeys(false)) {
+                try {
+                    events.add(Integer.parseInt(key));
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void checkTime() {
+        if (events.contains(currentTime)) {
+            String path = "time_events." + currentTime + ".";
+            if (ConfigManager.getInstance().contains(path + "snowballs")) {
+                for (Player p : playersInGame) {
+                    if (ConfigManager.getInstance().contains(path + "random")) {
+                        if (ConfigManager.getInstance().getBoolean(path + "random")) {
+                            if (rand.nextBoolean()) {
+                                p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt((path + "snowballs"))).getIs());
+                                p.updateInventory();
+                            }
+                        } else {
+                            p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt((path + "snowballs"))).getIs());
+                            p.updateInventory();
+                        }
+                    } else {
+                        p.getInventory().addItem(new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt((path + "snowballs"))).getIs());
+                        p.updateInventory();
+                    }
+                }
+            }
+            if (ConfigManager.getInstance().contains(path + "tntfall")) {
+                tntEnabled = true;
+                tntTime = ConfigManager.getInstance().getInt(path + "tntfall");
+            }
+            if (ConfigManager.getInstance().contains(path + "message")){
+                for (Player p : playersInGame) {
+                    MessageManager.getInstance().sendCustomPlayerMessage(ConfigManager.getInstance().getString(path + "message"), p);
+                }
+            }
+            if (ConfigManager.getInstance().contains(path + "speed")) {
+                PotionBuilder potion = new PotionBuilder(PotionEffectType.SPEED, ConfigManager.getInstance().getInt(path + "speed") * 20, ConfigManager.getInstance().getInt(path + "speed_amp"));
+                if (ConfigManager.getInstance().contains(path + "random")) {
+                    if (ConfigManager.getInstance().getBoolean(path + "random")) {
+                        for (Player p : playersInGame) {
+                            int random = rand.nextInt(100);
+                            if (random < (ConfigManager.getInstance().getInt(path + "random"))) {
+                                potion.addPlayer(p);
+                            }
+                        }
+                    } else {
+                        for (Player p : playersInGame) {
+                            potion.addPlayer(p);
+                        }
+                    }
+                }
+            }
+            if (ConfigManager.getInstance().contains(path + "slow")) {
+                PotionBuilder potion = new PotionBuilder(PotionEffectType.SLOW, ConfigManager.getInstance().getInt(path + "slow") * 20, ConfigManager.getInstance().getInt(path + "slow_amp"));
+                if (ConfigManager.getInstance().contains(path + "random")) {
+                    for (Player p : playersInGame) {
+                        int random = rand.nextInt(100);
+                        if (random < (ConfigManager.getInstance().getInt(path + "random"))) {
+                            potion.addPlayer(p);
+                        }
+                    }
+                } else {
+                    for (Player p : playersInGame) {
+                        potion.addPlayer(p);
+                    }
+                }
+            }
+            if (ConfigManager.getInstance().contains(path + "jump")) {
+                PotionBuilder potion = new PotionBuilder(PotionEffectType.JUMP, ConfigManager.getInstance().getInt(path + "jump") * 20, ConfigManager.getInstance().getInt(path + "jump_amp"));
+                if (ConfigManager.getInstance().contains(path + "random")) {
+                    if (ConfigManager.getInstance().getBoolean(path + "random")) {
+                        for (Player p : playersInGame) {
+                            int random = rand.nextInt(100);
+                            if (random < (ConfigManager.getInstance().getInt(path + "random"))) {
+                                potion.addPlayer(p);
+                            }
+                        }
+                    } else {
+                        for (Player p : playersInGame) {
+                            potion.addPlayer(p);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
-        if (status == Status.GAME && event.getEntity().getCustomName().equals(TNT)) {
+        if (status == Status.GAME) {
             if (event.getEntity().getType() == EntityType.PRIMED_TNT) {
-                List destroyed = event.blockList();
-                Iterator it = destroyed.iterator();
-                while (it.hasNext()) {
-                    Block b = (Block) it.next();
-                    if (!(b.getType() == Material.SNOW_BLOCK)) {
-                        blocksBroken.add(b.getLocation());
-                        b.setType(Material.AIR);
+                if (event.getEntity().getCustomName().equals(TNT)) {
+                    Iterator<Block> inter = event.blockList().iterator();
+                    while (inter.hasNext()) {
+                        Block b = inter.next();
+                        if (b.getType() != Material.SNOW_BLOCK) {
+                            inter.remove();
+                        } else {
+                            blocksBroken.add(b.getLocation());
+                            b.setType(Material.AIR);
+                        }
                     }
                 }
             }

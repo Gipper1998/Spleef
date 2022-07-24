@@ -54,4 +54,7 @@ public class ConfigManager {
         return config.getStringList(path);
     }
 
+    public String getString(String path) {
+        return config.getString(path);
+    }
 }

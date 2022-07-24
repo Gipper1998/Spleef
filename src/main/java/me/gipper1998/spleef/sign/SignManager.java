@@ -100,47 +100,15 @@ public class SignManager implements Listener {
         }
     }
 
-    public void makeSignsBlank(){
-        if (signs.contains("Signs")) {
-            for (String arenaName : signs.getConfigurationSection("Signs").getKeys(false)) {
-                Arena arena = ArenaManager.getInstance().findArena(arenaName);
-                if (arena != null) {
-                    List<String> signLists = new ArrayList<>();
-                    if (signs.contains("Signs." + arenaName)) {
-                        signLists = signs.getStringList("Signs." + arenaName);
-                    }
-                    for (int i = 0; i < signLists.size(); i++) {
-                        String[] location = signLists.get(i).split(";");
-                        int x = Integer.valueOf(location[0]);
-                        int y = Integer.valueOf(location[1]);
-                        int z = Integer.valueOf(location[2]);
-                        World world = Bukkit.getWorld(location[3]);
-                        if (world != null) {
-                            if (!world.isChunkLoaded(x >> 4, z >> 4)) {
-                                continue;
-                            }
-                            Block block = world.getBlockAt(x, y, z);
-                            if (block.getType().name().contains("SIGN")) {
-                                Sign sign = (Sign) block.getState();
-                                for (int line = 0; line < sign.getLines().length; line++){
-                                    sign.setLine(line, "");
-                                }
-                                sign.update();
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
     private String getSignStatus(GameManager gameManager){
         if (gameManager.getStatus() == Status.GAME || gameManager.getStatus() == Status.DELAYSTART){
             return MessageManager.getInstance().getString("sign_status.in-game");
         }
         else if (gameManager.getStatus() == Status.WINNER){
             return MessageManager.getInstance().getString("sign_status.reset");
+        }
+        else if (gameManager.getStatus() == Status.STOP){
+            return MessageManager.getInstance().translateColor("&c&l[PAUSED]");
         }
         else {
             return MessageManager.getInstance().getString("sign_status.wait");

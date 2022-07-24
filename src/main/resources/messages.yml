@@ -93,9 +93,10 @@ stats:
   - "&f---------------------------------"
   - "Wins:   <wins>"
   - "Losses: <losses>"
-no_number_entry: "<prefix> No player entered, please try again."
+no_number_entry: "<prefix> No number entered, please try again."
 no_player_entry: "<prefix> No player entered, please try again."
 player_does_not_exist: "<prefix> That player did not play yet."
+stat_set: "<prefix> Stat has been changed."
 
 # Modify the command page here
 commands_page_player:

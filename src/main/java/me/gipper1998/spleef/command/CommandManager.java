@@ -11,6 +11,7 @@ import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.setup.SetupWizard;
 import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -101,50 +102,6 @@ public class CommandManager implements TabExecutor {
                 return true;
             }
 
-            // Set Wins
-            if (args[0].equalsIgnoreCase("setWins")){
-                if (!p.hasPermission("spleef.admin")){
-                    MessageManager.getInstance().sendMessage("no_perms", p);
-                    return false;
-                }
-                else {
-                    if (args.length < 2) {
-                        MessageManager.getInstance().sendMessage("no_player_entry", p);
-                        return false;
-                    } else {
-                        Player temp = Bukkit.getPlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
-                        if (args.length < 3){
-                            MessageManager.getInstance().sendMessage("no_number_entry", p);
-                            return false;
-                        }
-                        PlayerStatManager.getInstance().setWinPoint(temp.getUniqueId(), Integer.parseInt(args[2]));
-                        return true;
-                    }
-                }
-            }
-
-            // Set Losses
-            if (args[0].equalsIgnoreCase("setLoses")){
-                if (!p.hasPermission("spleef.admin")){
-                    MessageManager.getInstance().sendMessage("no_perms", p);
-                    return false;
-                }
-                else {
-                    if (args.length < 2) {
-                        MessageManager.getInstance().sendMessage("no_player_entry", p);
-                        return false;
-                    } else {
-                        Player temp = Bukkit.getPlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
-                        if (args.length < 3){
-                            MessageManager.getInstance().sendMessage("no_number_entry", p);
-                            return false;
-                        }
-                        PlayerStatManager.getInstance().setLosePoint(temp.getUniqueId(), Integer.parseInt(args[2]));
-                        return true;
-                    }
-                }
-            }
-
             // Reload Plugin
             if (args[0].equalsIgnoreCase("reload")){
                 if (!p.hasPermission("spleef.admin")){
@@ -155,6 +112,7 @@ public class CommandManager implements TabExecutor {
                 PlayerStatManager.getInstance().reloadStats();
                 SignManager.getInstance().reloadSigns();
                 MessageManager.getInstance().reloadMessages();
+                ArenaManager.getInstance().reloadArenas();
                 MessageManager.getInstance().sendMessage("reloaded", p);
                 return true;
             }
@@ -194,6 +152,70 @@ public class CommandManager implements TabExecutor {
                 }
             }
 
+            // Set Wins
+            if (args[0].equalsIgnoreCase("setWins")){
+                if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
+                    return false;
+                }
+                else {
+                    if (args.length < 2) {
+                        MessageManager.getInstance().sendMessage("no_player_entry", p);
+                        return false;
+                    }
+                    if (args.length < 3){
+                        MessageManager.getInstance().sendMessage("no_number_entry", p);
+                        return false;
+                    }
+                    if (!isNumeric(args[2])){
+                        MessageManager.getInstance().sendMessage("no_number_entry", p);
+                        return false;
+                    }
+                    try {
+                        OfflinePlayer temp = Bukkit.getOfflinePlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
+                        PlayerStatManager.getInstance().setWinPoint(temp.getUniqueId(), Integer.parseInt(args[2]));
+                        MessageManager.getInstance().sendMessage("stat_set", p);
+                        return true;
+                    }
+                    catch (Exception e){
+                        MessageManager.getInstance().sendMessage("player_does_not_exist", p);
+                        return false;
+                    }
+                }
+            }
+
+            // Set Losses
+            if (args[0].equalsIgnoreCase("setLosses")){
+                if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
+                    return false;
+                }
+                else {
+                    if (args.length < 2) {
+                        MessageManager.getInstance().sendMessage("no_player_entry", p);
+                        return false;
+                    }
+                    if (args.length < 3){
+                        MessageManager.getInstance().sendMessage("no_number_entry", p);
+                        return false;
+                    }
+                    if (!isNumeric(args[2])){
+                        MessageManager.getInstance().sendMessage("no_number_entry", p);
+                        return false;
+                    }
+                    try {
+                        OfflinePlayer temp = Bukkit.getOfflinePlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
+                        PlayerStatManager.getInstance().setLosePoint(temp.getUniqueId(), Integer.parseInt(args[2]));
+                        MessageManager.getInstance().sendMessage("stat_set", p);
+                        return true;
+                    }
+                    catch (Exception e){
+                        MessageManager.getInstance().sendMessage("player_does_not_exist", p);
+                        return false;
+                    }
+                }
+            }
+
             // See Player Stats
             if (args[0].equalsIgnoreCase("stats")) {
                 if (args.length < 2) {
@@ -204,7 +226,7 @@ public class CommandManager implements TabExecutor {
                 } else {
                     if (p.hasPermission("spleef.otherstats") || p.hasPermission("spleef.admin")) {
                         try {
-                            Player temp = Bukkit.getPlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
+                            OfflinePlayer temp = Bukkit.getOfflinePlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
                             int wins = PlayerStatManager.getInstance().getWins(temp.getUniqueId());
                             int losses = PlayerStatManager.getInstance().getLosses(temp.getUniqueId());
                             statBoard(p, wins, losses, temp);
@@ -229,26 +251,33 @@ public class CommandManager implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> arguments = new ArrayList<>();
         if (args.length == 1){
-            List<String> firstArguments = new ArrayList<>();
             if (sender.hasPermission("spleef.admin")) {
-                firstArguments.add("create");
-                firstArguments.add("delete");
-                firstArguments.add("edit");
+                arguments.add("create");
+                arguments.add("delete");
+                arguments.add("edit");
+                arguments.add("setWins");
+                arguments.add("setLosses");
             }
-            firstArguments.add("join");
-            firstArguments.add("leave");
-            firstArguments.add("stats");
-            return firstArguments;
+            arguments.add("join");
+            arguments.add("leave");
+            arguments.add("stats");
+            return arguments;
         }
-        else if (args.length == 2) {
+        else if (args.length >= 2) {
             if (args[0].equalsIgnoreCase("create")) {
-                List<String> secondArguments = new ArrayList<>();
-                secondArguments.add("<type_name>");
-                return secondArguments;
+                arguments.add("<type_name>");
+                return arguments;
             }
-            else if (args[0].equalsIgnoreCase("leave")) {
+            else if (args[0].equalsIgnoreCase("leave") || args[0].equalsIgnoreCase("stats")){
                 return null;
+            }
+            else if (args[0].equalsIgnoreCase("setWins") || args[0].equalsIgnoreCase("setLosses")){
+                if (args.length > 2){
+                    arguments.add("<number>");
+                    return arguments;
+                }
             }
             else {
                 return ArenaManager.getInstance().getArenaNames();
@@ -257,7 +286,7 @@ public class CommandManager implements TabExecutor {
         return null;
     }
 
-    private void statBoard(Player sender, int wins, int losses, Player target){
+    private void statBoard(Player sender, int wins, int losses, OfflinePlayer target){
         MessageManager.getInstance().sendLeaderboardStringList(sender, Integer.toString(wins), Integer.toString(losses), target);
     }
 
@@ -269,6 +298,13 @@ public class CommandManager implements TabExecutor {
             MessageManager.getInstance().sendStringList("commands_page_player", p);
         }
         return;
+    }
+
+    private boolean isNumeric(String temp){
+        try {
+            Double.parseDouble(temp);
+            return true;
+        } catch (NumberFormatException e) {return false;}
     }
 
 }

@@ -16,29 +16,34 @@ give_snowballs_on_start:
 # speed: make them go very fast for a duration of time (in seconds)
 # slow: Slow them down a little bit of time (in seconds).
 # jump: Make them jump a little higher for a duration of time (in seconds)
-# tntfall: Make tnt rain upon the players (only drops once for
-# the amount of players already in the arena, for best results, type 2.
+# tntfall: Make tnt rain upon the players for a duration in seconds
+
 # Amplification (amp) is only for potion effects.
-# If you want to make it random for a player, type random: true after the effect (except for tnt).
+# If you want to make it random, give a percentage that each player will get it.
+# NOTE: random only works for that time interval.
 enable_time_events: true
 time_events:
+  100:
+    tntfall: 5
+    message: "<prefix> &cMAY IT RAIN TNT"
   90:
     jump: 8
-    amp: 8
-    random: true
+    jump_amp: 8
+    random: 75
   60:
     snowballs: 20
   45:
     slow: 3
-    amp: 5
-    random: true
+    slow_amp: 5
+    random: 50
   30:
     snowballs: 30
   10:
     tntfall: 2
+    message: "<prefix> &cMAY IT RAIN TNT"
   5:
     speed: 4
-    amp: 5
+    speed_amp: 5
 
 # Winner rewards
 vault_reward: 100

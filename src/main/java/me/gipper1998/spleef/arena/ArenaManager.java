@@ -3,6 +3,7 @@ package me.gipper1998.spleef.arena;
 import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.edit.ArenaEditTemplate;
 import me.gipper1998.spleef.game.GameManager;
+import me.gipper1998.spleef.game.Status;
 import me.gipper1998.spleef.setup.ArenaSetupTemplate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -43,6 +44,7 @@ public class ArenaManager {
         }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             GameManager gm = set.getValue();
+            gm.setStatus(Status.STOP);
             gm.removeEverybody();
         }
     }
@@ -167,7 +169,8 @@ public class ArenaManager {
                 Arena am = new Arena(minimum, maximum, name, arena, lobby, spectate);
                 GameManager gm = new GameManager(am);
                 activeArenas.put(am, gm);
-                Bukkit.getPluginManager().registerEvents(gm, Spleef.main);
+                gm.setStatus(Status.WAIT);
+                Spleef.main.getServer().getPluginManager().registerEvents(gm, Spleef.main);
             }
         }
     }

@@ -3,6 +3,7 @@ package me.gipper1998.spleef.file;
 import me.gipper1998.spleef.Spleef;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -25,6 +26,14 @@ public class MessageManager {
             mm = new MessageManager();
         }
         return mm;
+    }
+
+    public void sendCustomPlayerMessage(String message, Player p){
+        if (message.isEmpty()){
+            return;
+        }
+        message = message.replaceAll("<prefix>", getPrefix());
+        p.sendMessage(translateHEX(message));
     }
 
     public void reloadMessages(){
@@ -93,7 +102,7 @@ public class MessageManager {
         Bukkit.getConsoleSender().sendMessage(translateHEX(message));
     }
 
-    public void sendLeaderboardStringList(Player sender, String wins, String losses, Player target){
+    public void sendLeaderboardStringList(Player sender, String wins, String losses, OfflinePlayer target){
         List<String> messageList = messages.getStringList("stats");
         for (String message : messageList){
             if (!message.isEmpty()) {
@@ -143,6 +152,10 @@ public class MessageManager {
             return "";
         }
         message = message.replaceAll("<prefix>", getPrefix());
+        return translateHEX(message);
+    }
+
+    public String translateColor(String message){
         return translateHEX(message);
     }
 

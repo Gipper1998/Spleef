@@ -26,7 +26,6 @@ public class ItemBuilder {
         this.im = is.getItemMeta();
         im.setDisplayName(name);
         is.setItemMeta(im);
-        MessageManager.getInstance().sendCustomConsoleMessage("Should be given");
     }
 
 }

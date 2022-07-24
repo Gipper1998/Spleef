@@ -5,7 +5,7 @@ import org.bukkit.entity.TNTPrimed;
 
 public class TNTBuilder {
     public static TNTBuilder tnt;
-    private int delayFuse = 5;
+    private int delayFuse = 3;
     private int yAbove = 5;
 
     public static TNTBuilder getInstance(){
