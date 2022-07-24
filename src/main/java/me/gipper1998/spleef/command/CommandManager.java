@@ -4,6 +4,7 @@ import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.edit.EditWizard;
+import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.file.MessageManager;
@@ -35,23 +36,28 @@ public class CommandManager implements TabExecutor {
 
             // Create
             if (args[0].equalsIgnoreCase("create")) {
-                if (!p.hasPermission("spleef.admin")){
+                if (!p.hasPermission("spleef.admin")) {
+                    MessageManager.getInstance().sendMessage("no_perms", p);
                     return false;
                 }
-                String name = args[1].toUpperCase();
                 if (args.length < 2) {
                     MessageManager.getInstance().sendMessage("no_name_wizard", p);
                     return false;
-                } else {
-                    MessageManager.getInstance().sendMessage("in_wizard", p);
-                    new SetupWizard(p, name);
-                    return true;
                 }
+                String name = args[1].toUpperCase();
+                if (ArenaManager.getInstance().getArenaNames().contains(name)){
+                    MessageManager.getInstance().sendMessage("wizard_arena_exists", p);
+                    return false;
+                }
+                MessageManager.getInstance().sendMessage("in_wizard", p);
+                new SetupWizard(p, name);
+                return true;
             }
 
             // Delete
             if (args[0].equalsIgnoreCase("delete")){
                 if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
                     return false;
                 }
                 String name = args[1].toUpperCase();
@@ -77,21 +83,20 @@ public class CommandManager implements TabExecutor {
 
             // Edit
             if (args[0].equalsIgnoreCase("edit")){
+                if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
+                    return false;
+                }
                 if (args.length < 2){
                     MessageManager.getInstance().sendMessage("no_name", p);
                     return false;
                 }
                 String name = args[1].toUpperCase();
-                if (name.isEmpty()){
-                    MessageManager.getInstance().sendMessage("no_name", p);
-                    return false;
-                }
-                arena = ArenaManager.getInstance().findArena(name);
-                gm = ArenaManager.getInstance().findGame(name);
-                if (arena == null){
+                if (!(ArenaManager.getInstance().getArenaNames().contains(name))){
                     MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm.getArena().getName(), p);
                     return false;
                 }
+                gm = ArenaManager.getInstance().findGame(name);
                 new EditWizard(p, arena);
                 return true;
             }
@@ -99,14 +104,17 @@ public class CommandManager implements TabExecutor {
             // Set Wins
             if (args[0].equalsIgnoreCase("setWins")){
                 if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
                     return false;
                 }
                 else {
-                    if (args[1].isEmpty()) {
+                    if (args.length < 2) {
+                        MessageManager.getInstance().sendMessage("no_player_entry", p);
                         return false;
                     } else {
                         Player temp = Bukkit.getPlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
-                        if (args[2].isEmpty()){
+                        if (args.length < 3){
+                            MessageManager.getInstance().sendMessage("no_number_entry", p);
                             return false;
                         }
                         PlayerStatManager.getInstance().setWinPoint(temp.getUniqueId(), Integer.parseInt(args[2]));
@@ -118,14 +126,17 @@ public class CommandManager implements TabExecutor {
             // Set Losses
             if (args[0].equalsIgnoreCase("setLoses")){
                 if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
                     return false;
                 }
                 else {
-                    if (args[1].isEmpty()) {
+                    if (args.length < 2) {
+                        MessageManager.getInstance().sendMessage("no_player_entry", p);
                         return false;
                     } else {
                         Player temp = Bukkit.getPlayer(PlayerStatManager.getInstance().findPlayer(args[1]));
-                        if (args[2].isEmpty()){
+                        if (args.length < 3){
+                            MessageManager.getInstance().sendMessage("no_number_entry", p);
                             return false;
                         }
                         PlayerStatManager.getInstance().setLosePoint(temp.getUniqueId(), Integer.parseInt(args[2]));
@@ -137,16 +148,13 @@ public class CommandManager implements TabExecutor {
             // Reload Plugin
             if (args[0].equalsIgnoreCase("reload")){
                 if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
                     return false;
                 }
-                Spleef.main.config.reloadConfig();
-                Spleef.main.arenas.reloadConfig();
-                Spleef.main.playerStats.reloadConfig();
-                Spleef.main.messages.reloadConfig();
-                Spleef.main.signs.reloadConfig();
-                SignManager.getInstance().startUpdater();
-                ArenaManager.getInstance().forceQuitArenas();
-                ArenaManager.getInstance().loadArenas();
+                ConfigManager.getInstance().reloadConfig();
+                PlayerStatManager.getInstance().reloadStats();
+                SignManager.getInstance().reloadSigns();
+                MessageManager.getInstance().reloadMessages();
                 MessageManager.getInstance().sendMessage("reloaded", p);
                 return true;
             }
@@ -178,7 +186,6 @@ public class CommandManager implements TabExecutor {
                 gm = ArenaManager.getInstance().findPlayerInGame(p);
                 if (gm != null) {
                     gm.removePlayer(p);
-                    MessageManager.getInstance().sendMessage("player_success_quit", p);
                     return true;
                 }
                 else {
@@ -189,7 +196,7 @@ public class CommandManager implements TabExecutor {
 
             // See Player Stats
             if (args[0].equalsIgnoreCase("stats")) {
-                if (args[1].isEmpty()) {
+                if (args.length < 2) {
                     int wins = PlayerStatManager.getInstance().getWins(p.getUniqueId());
                     int losses = PlayerStatManager.getInstance().getLosses(p.getUniqueId());
                     statBoard(p, wins, losses, p);
@@ -203,8 +210,12 @@ public class CommandManager implements TabExecutor {
                             statBoard(p, wins, losses, temp);
                             return true;
                         } catch (Exception e) {
-                            return false;
+                            MessageManager.getInstance().sendMessage("player_does_not_exist", p);
                         }
+                    }
+                    else {
+                        MessageManager.getInstance().sendMessage("no_perms", p);
+                        return false;
                     }
                 }
             }
@@ -227,6 +238,7 @@ public class CommandManager implements TabExecutor {
             }
             firstArguments.add("join");
             firstArguments.add("leave");
+            firstArguments.add("stats");
             return firstArguments;
         }
         else if (args.length == 2) {

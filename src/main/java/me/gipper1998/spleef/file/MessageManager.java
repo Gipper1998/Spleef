@@ -27,6 +27,11 @@ public class MessageManager {
         return mm;
     }
 
+    public void reloadMessages(){
+        Spleef.main.messages.reloadConfig();
+        messages = Spleef.main.messages.getConfig();
+    }
+
     public void sendMessage(String path, Player p){
         String message = messages.getString(path);
         if (message.isEmpty()){

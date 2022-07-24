@@ -7,6 +7,7 @@ shut_down: "<prefix> &cPlugin disabled "
 vault_enable: "<prefix> &bVault is enabled and hooked!"
 papi_enable: "<prefix> &dPlaceholderAPI enabled and hooked!"
 reloaded: "<prefix> &aSuccessfully reloaded!"
+no_perms: "<prefix> &cYou do not have permission to use this command."
 
 # Modify the wizard setup messages
 no_name_wizard: "<prefix> &cNo name was designated, please type in a name to start the wizard."
@@ -26,6 +27,7 @@ wizard_arena_not_set: "<prefix> &cArena not set."
 wizard_spectator_not_set: "<prefix> &cSpectator not set."
 wizard_minimum_not_set: "<prefix> &cMinimum not set."
 wizard_maximum_not_set: "<prefix> &cMaximum not set."
+wizard_arena_exists: "<preifx> This arena already exists, wizard cancelled."
 
 # Wizard items
 cancel_wizard_item: "&cCancel_Wizard"
@@ -81,15 +83,19 @@ sign_deletion: "<prefix> &cSign removed."
 leaderboard_title: "<prefix>"
 leaderboard:
   - ""
-  - "<playerlist>"
+  - "&b<playerlist>"
   - ""
-  - "Time: <currenttime>"
+  - "&aTime&d: &c<currenttime>"
 
+# Stats messages
 stats:
   - "<prefix> <playername> &b&lStats"
   - "&f---------------------------------"
   - "Wins:   <wins>"
   - "Losses: <losses>"
+no_number_entry: "<prefix> No player entered, please try again."
+no_player_entry: "<prefix> No player entered, please try again."
+player_does_not_exist: "<prefix> That player did not play yet."
 
 # Modify the command page here
 commands_page_player:

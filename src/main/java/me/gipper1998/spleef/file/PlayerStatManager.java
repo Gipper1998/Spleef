@@ -23,6 +23,11 @@ public class PlayerStatManager {
         return psm;
     }
 
+    public void reloadStats(){
+        Spleef.main.playerStats.reloadConfig();
+        players = Spleef.main.playerStats.getConfig();
+    }
+
     public void addWinPoint(UUID uuid){
         String path = "Players." + uuid + ".";
         int wins = 0;

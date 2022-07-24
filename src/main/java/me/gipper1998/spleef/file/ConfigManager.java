@@ -23,6 +23,11 @@ public class ConfigManager {
         return cm;
     }
 
+    public void reloadConfig() {
+        Spleef.main.config.reloadConfig();
+        config = Spleef.main.config.getConfig();
+    }
+
     public Material getBlock(String path){
         String block = config.getString(path);
         try {
@@ -48,4 +53,5 @@ public class ConfigManager {
     public List<String> getStringList(String path){
         return config.getStringList(path);
     }
+
 }

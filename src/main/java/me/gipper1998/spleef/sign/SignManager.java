@@ -41,6 +41,12 @@ public class SignManager implements Listener {
         return sm;
     }
 
+    public void reloadSigns(){
+        Spleef.main.signs.reloadConfig();
+        signs = Spleef.main.signs.getConfig();
+        startUpdater();
+    }
+
     public void startUpdater(){
         if (taskID != 0) {
             Bukkit.getScheduler().cancelTask(taskID);

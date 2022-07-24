@@ -31,7 +31,7 @@ public class LeaderboardManager {
     public String winsPositionPoints(int position){
         sortWins();
         if (winsLeaderboard.size() == 0 || position == 0 || position > winsLeaderboard.size()){
-            return null;
+            return "";
         }
         int index = 0;
         for (Map.Entry<UUID, Integer> entry : winsLeaderboard.entrySet()){
@@ -40,13 +40,13 @@ public class LeaderboardManager {
             }
             index++;
         }
-        return null;
+        return "";
     }
 
     public String lossesPositionPoints(int position){
         sortLoses();
         if (lossesLeaderboard.size() == 0 || position == 0 || position > lossesLeaderboard.size()){
-            return null;
+            return "";
         }
         int index = 0;
         for (Map.Entry<UUID, Integer> entry : lossesLeaderboard.entrySet()){
@@ -55,13 +55,13 @@ public class LeaderboardManager {
             }
             index++;
         }
-        return null;
+        return "";
     }
 
     public String winsPositionName(int position){
         sortWins();
         if (winsLeaderboard.size() == 0 || position == 0 || position > winsLeaderboard.size()){
-            return null;
+            return "";
         }
         int index = 0;
         for (Map.Entry<UUID, Integer> entry : winsLeaderboard.entrySet()){
@@ -71,13 +71,13 @@ public class LeaderboardManager {
             }
             index++;
         }
-        return null;
+        return "";
     }
 
     public String lossesPositionName(int position){
         sortLoses();
         if (lossesLeaderboard.size() == 0 || position == 0 || position > lossesLeaderboard.size()){
-            return null;
+            return "";
         }
         int index = 0;
         for (Map.Entry<UUID, Integer> entry : lossesLeaderboard.entrySet()){
@@ -87,7 +87,7 @@ public class LeaderboardManager {
             }
             index++;
         }
-        return null;
+        return "";
     }
 
     private void sortWins(){

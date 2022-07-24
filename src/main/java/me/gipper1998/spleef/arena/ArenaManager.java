@@ -16,6 +16,8 @@ public class ArenaManager {
 
     public static ArenaManager am;
 
+    private HashMap<Arena, GameManager> activeArenas = new HashMap<>();
+
     private FileConfiguration arenas;
 
     public ArenaManager(){
@@ -28,8 +30,13 @@ public class ArenaManager {
         }
         return am;
     }
-    private HashMap<Arena, GameManager> activeArenas = new HashMap<>();
 
+    public void reloadArenas(){
+        Spleef.main.arenas.reloadConfig();
+        forceQuitArenas();
+        loadArenas();
+        arenas = Spleef.main.arenas.getConfig();
+    }
     public void shutGamesDown(){
         if (activeArenas.isEmpty()){
             return;
