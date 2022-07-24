@@ -27,7 +27,10 @@ public class VaultManager {
     }
 
     public void deposit(Player p, int money){
-        if (economy != null || money != 0) {
+        if (economy != null) {
+            if (money == 0){
+                return;
+            }
             economy.depositPlayer(p, money);
             MessageManager.getInstance().sendVaultPlayerMessage("vault_message", p, money);
         }

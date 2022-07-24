@@ -287,7 +287,9 @@ public class GameManager extends BukkitRunnable implements Listener {
                 MessageManager.getInstance().sendMessage("arena_full", p);
                 return;
             }
+            p.playSound(p.getLocation(),Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
             for (Player player : playersInGame) {
+                p.playSound(p.getLocation(),Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 MessageManager.getInstance().sendPlayerNameMessage("player_join", p, player);
             }
             for (PotionEffect effect : p.getActivePotionEffects()){
@@ -453,18 +455,16 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
-        if (status == Status.GAME) {
-            if (event.getEntity().getType() == EntityType.PRIMED_TNT) {
-                if (event.getEntity().getCustomName().equals(TNT)) {
-                    Iterator<Block> inter = event.blockList().iterator();
-                    while (inter.hasNext()) {
-                        Block b = inter.next();
-                        if (b.getType() != Material.SNOW_BLOCK) {
-                            inter.remove();
-                        } else {
-                            blocksBroken.add(b.getLocation());
-                            b.setType(Material.AIR);
-                        }
+        if (event.getEntity().getType() == EntityType.PRIMED_TNT) {
+            if (event.getEntity().getCustomName().equals(TNT)) {
+                Iterator<Block> inter = event.blockList().iterator();
+                while (inter.hasNext()) {
+                    Block b = inter.next();
+                    if (b.getType() != Material.SNOW_BLOCK) {
+                        inter.remove();
+                    } else {
+                        blocksBroken.add(b.getLocation());
+                        b.setType(Material.AIR);
                     }
                 }
             }
