@@ -58,7 +58,7 @@ public class MessageManager {
         p.sendMessage(translateHEX(message));
     }
 
-    public void sendStringMessage(String path, String text, Player p) {
+    public void sendArenaNameMessage(String path, String text, Player p) {
         String message = messages.getString(path);
         if (message.isEmpty()){
             return;
@@ -127,21 +127,6 @@ public class MessageManager {
             }
             else {
                 continue;
-            }
-        }
-        return sendMessages;
-    }
-
-    public List<String> getScoreboardStringList(String path){
-        List<String> messageList = messages.getStringList(path);
-        List<String> sendMessages = new ArrayList<>();
-        for (String message : messageList){
-            if (!message.isEmpty()){
-                message = message.replaceAll("<prefix>", getPrefix());
-                sendMessages.add(translateHEX(message));
-            }
-            else {
-                sendMessages.add("");
             }
         }
         return sendMessages;

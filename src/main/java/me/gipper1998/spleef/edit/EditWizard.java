@@ -154,7 +154,7 @@ public class EditWizard implements Listener {
                 }
                 if (findNewName){
                     template.setName(event.getMessage().toUpperCase());
-                    MessageManager.getInstance().sendStringMessage("wizard_name_set", event.getMessage(), event.getPlayer());
+                    MessageManager.getInstance().sendArenaNameMessage("wizard_name_set", event.getMessage(), event.getPlayer());
                 }
             }
         }

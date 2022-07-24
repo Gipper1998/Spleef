@@ -257,7 +257,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             for (PotionEffect effect : p.getActivePotionEffects()){
                 p.removePotionEffect(effect.getType());
             }
-            MessageManager.getInstance().sendArenaNameMessage("player_success_join", this, p);
+            MessageManager.getInstance().sendArenaNameMessage("player_success_join", arena.getName(), p);
             playersInGame.add(p);
             totalPlayers.add(p);
             GameStoreItems gmi = new GameStoreItems(p);
@@ -283,9 +283,9 @@ public class GameManager extends BukkitRunnable implements Listener {
                 for (Player player : playersInGame) {
                     MessageManager.getInstance().sendPlayerNameMessage("player_quit", p, player);
                 }
-                MessageManager.getInstance().sendArenaNameMessage("player_success_quit", this, p);
+                MessageManager.getInstance().sendArenaNameMessage("player_success_quit", arena.getName(), p);
             } else {
-                MessageManager.getInstance().sendArenaNameMessage("player_success_quit", this, p);
+                MessageManager.getInstance().sendArenaNameMessage("player_success_quit", arena.getName(), p);
                 if (spectators.contains(p)) {
                     spectators.remove(p);
                 }
