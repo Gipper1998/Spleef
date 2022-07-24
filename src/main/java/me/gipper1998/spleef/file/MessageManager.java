@@ -141,6 +141,33 @@ public class MessageManager {
         return translateHEX(message);
     }
 
+    public List<String> setPlayersInLeaderboard(String path, List<String> players, int currentTime) {
+        List<String> messageList = messages.getStringList(path);
+        if (messageList.isEmpty()){
+            return null;
+        }
+        List<String> temp = new ArrayList<>();
+        for (String line : players){
+            if (line.contains("<playerlist>")){
+                line = line.replaceAll("<playerlist>", "");
+                int size = ConfigManager.getInstance().getInt("names_on_board_max");
+                if (size > players.size()){
+                    size = players.size();
+                }
+                for (int i = 0; i < size; i++){
+                    temp.add(line + players.get(i));
+                }
+            }
+            else if (line.contains("<currenttime>")){
+                line = line.replaceAll("<currenttime>", Integer.toString(currentTime));
+                temp.add(translateHEX(line));
+            }
+            else {
+                temp.add(translateHEX(line));
+            }
+        }
+        return temp;
+    }
 
     private String translateHEX(String message){
         final char colorChar = ChatColor.COLOR_CHAR;

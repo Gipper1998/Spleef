@@ -77,6 +77,14 @@ sign_status:
 sign_creation: "<prefix> &aSign created."
 sign_deletion: "<prefix> &cSign removed."
 
+# Leaderboards
+leaderboard_title: "<prefix>"
+leaderboard:
+  - ""
+  - "<playerlist>"
+  - ""
+  - "Time: <currenttime>"
+
 stats:
   - "<prefix> <playername> &b&lStats"
   - "&f---------------------------------"

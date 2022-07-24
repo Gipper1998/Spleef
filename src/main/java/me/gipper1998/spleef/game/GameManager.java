@@ -1,5 +1,6 @@
 package me.gipper1998.spleef.game;
 
+import dev.jcsoftware.jscoreboards.JGlobalMethodBasedScoreboard;
 import lombok.Getter;
 import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.arena.Arena;
@@ -53,6 +54,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     private String DIAMOND_SPADE_ITEM = "";
     private String SNOWBALL_ITEM = "";
     private String TNT = "";
+
+    private JGlobalMethodBasedScoreboard scoreboard = new JGlobalMethodBasedScoreboard();
 
     private Random rand;
 
@@ -133,8 +136,10 @@ public class GameManager extends BukkitRunnable implements Listener {
             currentTime--;
         }
         else {
-            for (Player p : playersInGame) {
-                MessageManager.getInstance().sendMessage("arena_not_enough_players", p);
+            if (currentTime != waitTime && playersInGame.size() != 1) {
+                for (Player p : playersInGame) {
+                    MessageManager.getInstance().sendMessage("arena_not_enough_players", p);
+                }
             }
             currentTime = waitTime;
         }
@@ -143,6 +148,7 @@ public class GameManager extends BukkitRunnable implements Listener {
     private void delayStart(){
         if (currentTime <= 0){
             for (Player p : playersInGame){
+                scoreboard.addPlayer(p);
                 giveItems(p);
                 p.showPlayer(Spleef.main, p);
                 p.playSound(p.getLocation(),Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1, 1);
@@ -176,6 +182,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             return;
         }
         GameTimeEvents.getInstance().checkTime(currentTime, this);
+        updateScoreboard();
         currentTime--;
     }
 
@@ -205,6 +212,15 @@ public class GameManager extends BukkitRunnable implements Listener {
     private void resetArena(){
         blocksBroken.forEach(location -> location.getBlock().setType(Material.SNOW_BLOCK));
         blocksBroken.clear();
+    }
+
+    private void updateScoreboard(){
+        scoreboard.setTitle(MessageManager.getInstance().getString("leaderboard_title"));
+        List<String> active = new ArrayList<>();
+        for (Player p : playersInGame){
+            active.add(p.getName());
+        }
+        scoreboard.setLines(MessageManager.getInstance().setPlayersInLeaderboard("leaderboard",active, currentTime));
     }
 
     private void giveItems(Player p){
@@ -292,6 +308,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 if (spectators.contains(p)) {
                     playersInGame.remove(p);
                 }
+                scoreboard.removePlayer(p);
                 totalPlayers.remove(p);
                 PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
                 if (playersInGame.size() == 1) {
@@ -311,6 +328,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         for (Player p : totalPlayers){
             GameStoreItems gmi = playersStuff.get(p);
             gmi.giveBackItems();
+            scoreboard.removePlayer(p);
         }
         playersInGame.clear();
         spectators.clear();

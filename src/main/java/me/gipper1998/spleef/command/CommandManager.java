@@ -65,7 +65,7 @@ public class CommandManager implements TabExecutor {
                 arena = ArenaManager.getInstance().findArena(name);
                 gm = ArenaManager.getInstance().findGame(name);
                 if (arena == null){
-                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm, p);
+                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm.getArena().getName(), p);
                     return false;
                 }
                 else {
@@ -89,7 +89,7 @@ public class CommandManager implements TabExecutor {
                 arena = ArenaManager.getInstance().findArena(name);
                 gm = ArenaManager.getInstance().findGame(name);
                 if (arena == null){
-                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm, p);
+                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm.getArena().getName(), p);
                     return false;
                 }
                 new EditWizard(p, arena);
@@ -165,7 +165,7 @@ public class CommandManager implements TabExecutor {
                 arena = ArenaManager.getInstance().findArena(name);
                 gm = ArenaManager.getInstance().findGame(name);
                 if (arena == null){
-                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm, p);
+                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm.getArena().getName(), p);
                     return false;
                 }
                 gm = ArenaManager.getInstance().findGame(name);
