@@ -27,7 +27,7 @@ wizard_arena_not_set: "<prefix> &cArena not set."
 wizard_spectator_not_set: "<prefix> &cSpectator not set."
 wizard_minimum_not_set: "<prefix> &cMinimum not set."
 wizard_maximum_not_set: "<prefix> &cMaximum not set."
-wizard_arena_exists: "<preifx> This arena already exists, wizard cancelled."
+wizard_arena_exists: "<prefix> This arena already exists, wizard cancelled."
 
 # Wizard items
 cancel_wizard_item: "&cCancel_Wizard"
