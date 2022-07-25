@@ -99,10 +99,33 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @Override
     public void run(){
-        if (ConfigManager.getInstance().getBoolean("exp_time_enable")){
+        if (xpBarEnabled()){
             for (Player p : totalPlayers){
-                p.setLevel(currentTime);
+                float xp = 0;
+                switch (status){
+                    case WAIT: {
+                        xp = (float) currentTime / waitTime;
+                        p.setLevel(currentTime);
+                        p.setExp(xp);
+                        break;
+                    }
+                    case DELAYSTART: {
+                        xp = (float) currentTime / startDelay;
+                        p.setLevel(currentTime);
+                        p.setExp(xp);
+                        break;
+                    }
+                    case GAME: {
+                        xp = (float) currentTime / gameTime;
+                        p.setLevel(currentTime);
+                        p.setExp(xp);
+                        break;
+                    }
+                }
             }
+        }
+        if (scoreboardEnabled()){
+            updateScoreboard();
         }
         if (tntEnabled){
             if (tntTime <= 0){
@@ -167,13 +190,11 @@ public class GameManager extends BukkitRunnable implements Listener {
     private void delayStart(){
         if (currentTime <= 0){
             for (Player p : playersInGame){
-                scoreboard.addPlayer(p);
                 giveItems(p);
                 p.showPlayer(Spleef.main, p);
                 p.playSound(p.getLocation(),Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1, 1);
                 MessageManager.getInstance().sendMessage("game_start", p);
                 p.setGameMode(GameMode.SURVIVAL);
-                updateScoreboard();
             }
             currentTime = gameTime;
             status = Status.GAME;
@@ -202,7 +223,6 @@ public class GameManager extends BukkitRunnable implements Listener {
             return;
         }
         checkTime();
-        updateScoreboard();
         currentTime--;
     }
 
@@ -236,11 +256,20 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private void updateScoreboard(){
         scoreboard.setTitle(MessageManager.getInstance().getString("leaderboard_title"));
-        List<String> active = new ArrayList<>();
-        for (Player p : playersInGame){
-            active.add(p.getName());
+        if (status == Status.GAME) {
+            List<String> active = new ArrayList<>();
+            for (Player p : playersInGame) {
+                active.add(p.getName());
+            }
+            scoreboard.setLines(MessageManager.getInstance().setPlayersInLeaderboard("leaderboard_game", active, currentTime));
         }
-        scoreboard.setLines(MessageManager.getInstance().setPlayersInLeaderboard("leaderboard",active, currentTime));
+        if (status == Status.WAIT){
+            List<String> active = new ArrayList<>();
+            for (Player p : playersInGame) {
+                active.add(p.getName());
+            }
+            scoreboard.setLines(MessageManager.getInstance().setPlayersInLeaderboard("leaderboard_wait", active, currentTime));
+        }
     }
 
     private void giveItems(Player p){
@@ -257,6 +286,14 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private boolean bothClicks(PlayerInteractEvent event){
         return (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK);
+    }
+
+    private boolean xpBarEnabled(){
+        return ConfigManager.getInstance().getBoolean("exp_time_enable");
+    }
+
+    private boolean scoreboardEnabled(){
+        return ConfigManager.getInstance().getBoolean("scoreboard_enable");
     }
 
     private void winnerRewards(){
@@ -295,6 +332,9 @@ public class GameManager extends BukkitRunnable implements Listener {
             for (PotionEffect effect : p.getActivePotionEffects()){
                 p.removePotionEffect(effect.getType());
             }
+            if (scoreboardEnabled()) {
+                scoreboard.addPlayer(p);
+            }
             MessageManager.getInstance().sendArenaNameMessage("player_success_join", arena.getName(), p);
             playersInGame.add(p);
             totalPlayers.add(p);
@@ -314,6 +354,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         GameStoreItems gmi = playersStuff.get(p);
         gmi.giveBackItems();
         playersStuff.remove(p);
+        scoreboard.removePlayer(p);
         if (totalPlayers.contains(p)) {
             if (status == Status.WAIT) {
                 playersInGame.remove(p);
@@ -330,8 +371,10 @@ public class GameManager extends BukkitRunnable implements Listener {
                 if (playersInGame.contains(p)) {
                     playersInGame.remove(p);
                 }
-                scoreboard.removePlayer(p);
                 totalPlayers.remove(p);
+                for (PotionEffect effect : p.getActivePotionEffects()){
+                    p.removePotionEffect(effect.getType());
+                }
                 PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
                 if (playersInGame.size() == 1) {
                     winner = playersInGame.get(0);
@@ -371,7 +414,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         }
     }
 
-    public void checkTime() {
+    private void checkTime() {
         if (events.contains(currentTime)) {
             String path = "time_events." + currentTime + ".";
             if (ConfigManager.getInstance().contains(path + "snowballs")) {

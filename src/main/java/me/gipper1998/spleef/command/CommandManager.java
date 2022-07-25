@@ -1,6 +1,5 @@
 package me.gipper1998.spleef.command;
 
-import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.edit.EditWizard;

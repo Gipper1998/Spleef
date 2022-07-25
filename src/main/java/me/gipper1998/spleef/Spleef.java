@@ -1,6 +1,5 @@
 package me.gipper1998.spleef;
 
-import lombok.Getter;
 import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.command.CommandManager;
 import me.gipper1998.spleef.file.FileManager;

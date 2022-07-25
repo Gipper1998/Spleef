@@ -81,11 +81,17 @@ sign_deletion: "<prefix> &cSign removed."
 
 # Leaderboards
 leaderboard_title: "<prefix>"
-leaderboard:
+leaderboard_game:
   - ""
   - "&b<playerlist>"
   - ""
   - "&aTime&d: &c<currenttime>"
+  - "&cGippersWorld"
+
+leaderboard_wait:
+  - ""
+  - "&aWaiting time&d: &c<currenttime>"
+  - "&aGippersWorld"
 
 # Stats messages
 stats:

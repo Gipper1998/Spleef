@@ -39,6 +39,7 @@ public class GameStoreItems {
         p.getInventory().setHeldItemSlot(0);
         p.updateInventory();
         p.setLevel(0);
+        p.setExp(0);
         for (PotionEffect effect : p.getActivePotionEffects()){
             p.removePotionEffect(effect.getType());
         }

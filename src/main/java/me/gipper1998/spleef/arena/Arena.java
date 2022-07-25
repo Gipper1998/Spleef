@@ -6,22 +6,22 @@ import org.bukkit.Location;
 
 public class Arena {
 
-    @Setter @Getter
+    @Getter
     private String name;
 
-    @Setter @Getter
+    @Getter
     private Location arena = null;
 
-    @Setter @Getter
+    @Getter
     private Location lobby = null;
 
-    @Setter @Getter
+    @Getter
     private Location spectate = null;
 
-    @Setter @Getter
+    @Getter
     private int minimum = 0;
 
-    @Setter @Getter
+    @Getter
     private int maximum = 0;
 
     public Arena(int minimum, int maximum, String name, Location arena, Location lobby, Location spectate){
