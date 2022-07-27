@@ -1,7 +1,6 @@
 package me.gipper1998.spleef.arena;
 
 import me.gipper1998.spleef.Spleef;
-import me.gipper1998.spleef.edit.ArenaEditTemplate;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.game.Status;
 import me.gipper1998.spleef.setup.ArenaSetupTemplate;
@@ -135,26 +134,6 @@ public class ArenaManager {
         saveLocation("Arenas." + temp.getName() + ".Lobby_Spawn.", temp.getLobby());
         saveLocation("Arenas." + temp.getName() + ".Spectate_Spawn.", temp.getSpectate());
         loadArenas();
-    }
-
-    public void saveEditedArena(ArenaEditTemplate temp, Arena prevArena) {
-        String newName = temp.getName().toUpperCase();
-        String prevName = prevArena.getName().toUpperCase();
-        String name = prevName;
-        if (!(newName.equalsIgnoreCase(prevName))) {
-            deleteArena(prevName);
-            name = newName;
-            arenas.set("Arenas." + name, name);
-            Spleef.main.arenas.saveConfig();
-        }
-        arenas.set("Arenas." + name + ".Minimum", temp.getMinimum());
-        arenas.set("Arenas." + name + ".Maximum", temp.getMaximum());
-        Spleef.main.arenas.saveConfig();
-        saveLocation("Arenas." + name + ".Arena_Spawn.", temp.getArena());
-        saveLocation("Arenas." + name + ".Lobby_Spawn.", temp.getLobby());
-        saveLocation("Arenas." + name + ".Spectate_Spawn.", temp.getSpectate());
-        loadArenas();
-        return;
     }
 
     public void loadArenas(){

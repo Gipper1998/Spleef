@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class PlayerStatManager {
 
-    public static PlayerStatManager psm;
+    private static PlayerStatManager psm;
 
     private FileConfiguration players;
 

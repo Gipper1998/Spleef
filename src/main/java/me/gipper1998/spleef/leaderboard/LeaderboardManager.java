@@ -11,7 +11,7 @@ import java.util.*;
 
 public class LeaderboardManager {
 
-    public static LeaderboardManager lm;
+    private static LeaderboardManager lm;
 
     private HashMap<UUID, Integer> winsLeaderboard = new HashMap<>();
     private HashMap<UUID, Integer> lossesLeaderboard = new HashMap<>();

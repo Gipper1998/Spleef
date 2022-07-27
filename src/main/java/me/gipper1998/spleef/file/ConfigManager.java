@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ConfigManager {
 
-    public static ConfigManager cm;
+    private static ConfigManager cm;
 
     private FileConfiguration config;
 

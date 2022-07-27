@@ -8,7 +8,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class VaultManager {
 
-    public static VaultManager vm;
+    private static VaultManager vm;
 
     public static VaultManager getInstance(){
         if (vm == null){

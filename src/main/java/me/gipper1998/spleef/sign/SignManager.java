@@ -25,7 +25,7 @@ import java.util.List;
 
 public class SignManager implements Listener {
 
-    public static SignManager sm;
+    private static SignManager sm;
     private int taskID = 0;
     private FileConfiguration signs;
 
@@ -115,7 +115,7 @@ public class SignManager implements Listener {
         }
     }
 
-    private void updateSign(Sign sign, String type){
+    private void updateSignType(Sign sign, String type){
 
     }
 

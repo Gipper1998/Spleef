@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class MessageManager {
 
-    public static MessageManager mm;
+    private static MessageManager mm;
 
     private FileConfiguration messages;
 

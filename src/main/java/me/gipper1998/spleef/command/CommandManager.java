@@ -2,7 +2,6 @@ package me.gipper1998.spleef.command;
 
 import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.arena.ArenaManager;
-import me.gipper1998.spleef.edit.EditWizard;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.game.GameManager;
@@ -79,26 +78,6 @@ public class CommandManager implements TabExecutor {
                     MessageManager.getInstance().sendMessage("Should be deleted", p);
                     return true;
                 }
-            }
-
-            // Edit
-            if (args[0].equalsIgnoreCase("edit")){
-                if (!p.hasPermission("spleef.admin")){
-                    MessageManager.getInstance().sendMessage("no_perms", p);
-                    return false;
-                }
-                if (args.length < 2){
-                    MessageManager.getInstance().sendMessage("no_name", p);
-                    return false;
-                }
-                String name = args[1].toUpperCase();
-                if (!(ArenaManager.getInstance().getArenaNames().contains(name))){
-                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm.getArena().getName(), p);
-                    return false;
-                }
-                gm = ArenaManager.getInstance().findGame(name);
-                new EditWizard(p, arena);
-                return true;
             }
 
             // Reload Plugin
