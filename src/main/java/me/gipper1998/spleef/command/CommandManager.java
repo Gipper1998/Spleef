@@ -234,7 +234,6 @@ public class CommandManager implements TabExecutor {
             if (sender.hasPermission("spleef.admin")) {
                 arguments.add("create");
                 arguments.add("delete");
-                arguments.add("edit");
                 arguments.add("setWins");
                 arguments.add("setLosses");
             }

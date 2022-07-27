@@ -67,11 +67,18 @@ game_start: "<prefix> &aGet ready for a swell battle, and &dBEGIN!!!"
 vault_message: "<prefix> &a<money> has been added to your account."
 
 # Signs
-main_sign:
+sign_join:
   - "<prefix>"
   - "&f<arenaname>"
   - "&3<in_game> &e/ &3<maximum>"
   - "<status>"
+
+sign_leave:
+  - "<prefix>"
+  - "&b[&9Leave&b]"
+  - ""
+  - ""
+
 sign_status:
   wait: "&a[Join]"
   in-game: "&e[In-Progress]"
@@ -116,7 +123,6 @@ commands_page_admin:
   - "<prefix> &cCommands:"
   - "/spleef create <name>"
   - "/spleef delete <name>"
-  - "/spleef edit <name>"
   - "/spleef <setwins/setlosses> <name>"
   - "/spleef join <name>"
   - "/spleef leave"
