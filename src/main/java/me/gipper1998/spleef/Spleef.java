@@ -22,7 +22,7 @@ public class Spleef extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.main = this;
+        main = this;
         setupFiles();
         ArenaManager.getInstance().loadArenas();
         registerSoftDependencies();

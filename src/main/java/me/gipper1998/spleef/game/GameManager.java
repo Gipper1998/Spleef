@@ -9,10 +9,7 @@ import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.softdepend.VaultManager;
-import me.gipper1998.spleef.utils.FireworkBuilder;
-import me.gipper1998.spleef.utils.ItemBuilder;
-import me.gipper1998.spleef.utils.PotionBuilder;
-import me.gipper1998.spleef.utils.TNTBuilder;
+import me.gipper1998.spleef.utils.*;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
@@ -65,7 +62,7 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private Random rand;
 
-    private HashMap<Player, GameStoreItems> playersStuff = new HashMap<Player, GameStoreItems>();
+    private HashMap<Player, ItemStoreManager> playersStuff = new HashMap<Player, ItemStoreManager>();
 
     private List<Location> blocksBroken = new ArrayList<>();
     @Getter
@@ -338,8 +335,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             MessageManager.getInstance().sendArenaNameMessage("player_success_join", arena.getName(), p);
             playersInGame.add(p);
             totalPlayers.add(p);
-            GameStoreItems gmi = new GameStoreItems(p);
-            playersStuff.put(p, gmi);
+            playersStuff.put(p, new ItemStoreManager(p));
             p.teleport(arena.getLobby());
             p.setGameMode(GameMode.ADVENTURE);
             p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getInstance().getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
@@ -351,8 +347,8 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     public void removePlayer(Player p) {
-        GameStoreItems gmi = playersStuff.get(p);
-        gmi.giveBackItems();
+        ItemStoreManager ism = playersStuff.get(p);
+        ism.giveBackItems();
         playersStuff.remove(p);
         scoreboard.removePlayer(p);
         if (totalPlayers.contains(p)) {
@@ -391,8 +387,8 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     public void removeEverybody(){
         for (Player p : totalPlayers){
-            GameStoreItems gmi = playersStuff.get(p);
-            gmi.giveBackItems();
+            ItemStoreManager ism = playersStuff.get(p);
+            ism.giveBackItems();
             scoreboard.removePlayer(p);
         }
         playersInGame.clear();

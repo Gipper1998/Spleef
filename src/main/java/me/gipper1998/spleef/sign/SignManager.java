@@ -115,6 +115,10 @@ public class SignManager implements Listener {
         }
     }
 
+    private void updateSign(Sign sign, String type){
+
+    }
+
     @EventHandler
     public void onSignCreation(SignChangeEvent event){
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){

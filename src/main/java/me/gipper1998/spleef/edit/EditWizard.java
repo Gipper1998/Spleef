@@ -8,7 +8,9 @@ import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.utils.ItemBuilder;
+import me.gipper1998.spleef.utils.ItemStoreManager;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,7 +38,7 @@ public class EditWizard implements Listener {
 
     private Arena prevArena;
 
-    private EditStoreItems esi;
+    private ItemStoreManager ism;
 
     private String EDIT_NAME = "";
     private String SET_MINIMUM = "";
@@ -61,9 +63,10 @@ public class EditWizard implements Listener {
         this.SET_LOBBY_SPAWN = MessageManager.getInstance().getString("set_lobby_spawn_item");
         this.SET_SPECTATOR_SPAWN = MessageManager.getInstance().getString("set_spectator_spawn_item");
         this.COMPLETE_WIZARD = MessageManager.getInstance().getString("complete_wizard_item");
-        this.esi = new EditStoreItems(p);
+        this.ism = new ItemStoreManager(p);
         inEditWizard.add(p);
         giveItems(p, p.getInventory());
+        p.setGameMode(GameMode.CREATIVE);
     }
 
     private void giveItems(Player player, Inventory inventory){
@@ -176,7 +179,7 @@ public class EditWizard implements Listener {
 
     private void exitWizard(Player p){
         p.getInventory().clear();
-        esi.giveBackItems();
+        ism.giveBackItems();
         p.updateInventory();
         ArenaManager.getInstance().saveEditedArena(template, prevArena);
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Spleef.main, new Runnable() {

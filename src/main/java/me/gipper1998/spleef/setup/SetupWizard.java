@@ -7,7 +7,9 @@ import me.gipper1998.spleef.arena.ArenaManager;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.utils.ItemBuilder;
 import me.gipper1998.spleef.file.MessageManager;
+import me.gipper1998.spleef.utils.ItemStoreManager;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,7 +35,7 @@ public class SetupWizard implements Listener {
 
     private ArenaSetupTemplate template;
 
-    private SetupStoreItems ssi;
+    private ItemStoreManager ism;
 
     private String CANCEL_WIZARD = "";
     private String SET_MINIMUM = "";
@@ -56,9 +58,10 @@ public class SetupWizard implements Listener {
         this.SET_LOBBY_SPAWN = MessageManager.getInstance().getString("set_lobby_spawn_item");
         this.SET_SPECTATOR_SPAWN = MessageManager.getInstance().getString("set_spectator_spawn_item");
         this.COMPLETE_WIZARD = MessageManager.getInstance().getString("complete_wizard_item");
-        this.ssi = new SetupStoreItems(p);
+        this.ism = new ItemStoreManager(p);
         inSetupWizard.add(p);
         giveItems(p, p.getInventory());
+        p.setGameMode(GameMode.CREATIVE);
     }
 
     private void giveItems(Player player, Inventory inventory){
@@ -169,7 +172,7 @@ public class SetupWizard implements Listener {
 
     private void exitWizard(Player p, boolean finished){
         p.getInventory().clear();
-        ssi.giveBackItems();
+        ism.giveBackItems();
         p.updateInventory();
         if (finished){
             if (template.getLobby() == null){
