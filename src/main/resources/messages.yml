@@ -8,6 +8,7 @@ vault_enable: "<prefix> &bVault is enabled and hooked!"
 papi_enable: "<prefix> &dPlaceholderAPI enabled and hooked!"
 reloaded: "<prefix> &aSuccessfully reloaded!"
 no_perms: "<prefix> &cYou do not have permission to use this command."
+no_console: "<prefix> &cOnly players can access spleef commands."
 
 # Modify the wizard setup messages
 no_name_wizard: "<prefix> &cNo name was designated, please type in a name to start the wizard."
@@ -44,14 +45,6 @@ no_name: "<prefix> &cNo name was designated, please type the name before continu
 arena_does_not_exist: "<prefix> &cThe arena with the name &d<arenaname> &cdoes not exist."
 player_success_join: "<prefix> &aSuccessfully joined arena &d<arenaname>&a."
 player_success_quit: "<prefix> &cYou have left arena &d<arenaname>&c."
-
-# In-Game Items
-gold_shovel: "&6&lSpleefer_Spade"
-diamond_shovel: "&b&lSpleefer_Spade"
-leave_item: "&c&lExit_Arena"
-snowball: "&f&lFIRE_THEM_SNOWBALLS"
-
-# Arena messages
 player_join: "<prefix> &b<playername> &ahas joined the game!"
 player_quit: "<prefix> &b<playername> &chas left the game."
 player_died: "<prefix> <playername> has been eliminated."
@@ -65,6 +58,13 @@ player_not_in_game: "<prefix> You are not in an arena."
 starting_game: "<prefix> &bGame starting in &d<time>&b seconds."
 game_start: "<prefix> &aGet ready for a swell battle, and &dBEGIN!!!"
 vault_message: "<prefix> &a<money> has been added to your account."
+arena_deleted: "<prefix> Arena Deleted."
+
+# In-Game Items
+gold_shovel: "&6&lSpleefer_Spade"
+diamond_shovel: "&b&lSpleefer_Spade"
+leave_item: "&c&lExit_Arena"
+snowball: "&f&lFIRE_THEM_SNOWBALLS"
 
 # Signs
 sign_join:

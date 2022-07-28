@@ -107,35 +107,24 @@ public class SignManager implements Listener {
     }
 
     private void updateSignType(Sign sign, String type, GameManager gm){
-        List<String> signListMessages;
+        List<String> signListMessages = new ArrayList<>();
         String status = getSignStatus(gm);
         if (type.equalsIgnoreCase("join")) {
             signListMessages = MessageManager.getInstance().getSignStringList("sign_join");
-            for (int i = 0; i < signListMessages.size(); i++) {
-                for (int line = 0; line < signListMessages.size(); line++) {
-                    String currentLine = signListMessages.get(line);
-                    currentLine = currentLine.replaceAll("<arenaname>", gm.getArena().getName());
-                    currentLine = currentLine.replaceAll("<status>", status);
-                    currentLine = currentLine.replaceAll("<in_game>", Integer.toString(gm.getTotalPlayers().size()));
-                    currentLine = currentLine.replaceAll("<maximum>", Integer.toString(gm.getArena().getMaximum()));
-                    sign.setLine(line, currentLine);
-                }
-                sign.update();
-            }
         }
-        if (type.equalsIgnoreCase("leave")){
+        if (type.equalsIgnoreCase("leave")) {
             signListMessages = MessageManager.getInstance().getSignStringList("sign_leave");
-            for (int i = 0; i < signListMessages.size(); i++) {
-                for (int line = 0; line < signListMessages.size(); line++) {
-                    String currentLine = signListMessages.get(line);
-                    currentLine = currentLine.replaceAll("<arenaname>", gm.getArena().getName());
-                    currentLine = currentLine.replaceAll("<status>", status);
-                    currentLine = currentLine.replaceAll("<in_game>", Integer.toString(gm.getTotalPlayers().size()));
-                    currentLine = currentLine.replaceAll("<maximum>", Integer.toString(gm.getArena().getMaximum()));
-                    sign.setLine(line, currentLine);
-                }
-                sign.update();
+        }
+        for (int i = 0; i < signListMessages.size(); i++) {
+            for (int line = 0; line < signListMessages.size(); line++) {
+                String currentLine = signListMessages.get(line);
+                currentLine = currentLine.replaceAll("<arenaname>", gm.getArena().getName());
+                currentLine = currentLine.replaceAll("<status>", status);
+                currentLine = currentLine.replaceAll("<in_game>", Integer.toString(gm.getTotalPlayers().size()));
+                currentLine = currentLine.replaceAll("<maximum>", Integer.toString(gm.getArena().getMaximum()));
+                sign.setLine(line, currentLine);
             }
+            sign.update();
         }
     }
 
@@ -156,6 +145,9 @@ public class SignManager implements Listener {
                         listedSigns.add(type + ";" + event.getBlock().getX() + ";" + event.getBlock().getY() + ";" + event.getBlock().getZ() + ";" + event.getBlock().getWorld().getName());
                         signs.set("Signs." + key, listedSigns);
                         MessageManager.getInstance().sendMessage("sign_creation", event.getPlayer());
+                        for (int i = 0; i < 4; i++){
+                            event.setLine(i, "");
+                        }
                         Spleef.main.signs.saveConfig();
                     }
                 }
@@ -226,15 +218,28 @@ public class SignManager implements Listener {
                                 if (world != null) {
                                     if (block.getX() == x && block.getY() == y && block.getZ() == z && world.getName().equals(block.getWorld().getName())) {
                                         if (type.equalsIgnoreCase("join")) {
-                                            gm.addPlayer(p);
+                                            if (!gm.getTotalPlayers().contains(p)) {
+                                                gm.addPlayer(p);
+                                            }
                                         }
-                                        if (type.equalsIgnoreCase("leave")){
-                                            gm.removePlayer(p);
+                                        else if (type.equalsIgnoreCase("leave")) {
+                                            if (gm.getTotalPlayers().contains(p)) {
+                                                gm.removePlayer(p);
+                                            }
+                                        }
+                                        else {
+                                            continue;
                                         }
                                     }
-                                    return;
+                                    else {
+                                        continue;
+                                    }
+                                }
+                                else {
+                                    continue;
                                 }
                             }
+                            return;
                         }
                     }
                 }
@@ -242,4 +247,10 @@ public class SignManager implements Listener {
         }
     }
 
+    public void deleteSigns(GameManager gm) {
+        if (signs.contains("Signs")) {
+            signs.set("Signs." + gm.getArena().getName(), null);
+            Spleef.main.signs.saveConfig();
+        }
+    }
 }

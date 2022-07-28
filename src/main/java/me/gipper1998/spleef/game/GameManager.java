@@ -8,6 +8,7 @@ import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
+import me.gipper1998.spleef.sign.SignManager;
 import me.gipper1998.spleef.softdepend.VaultManager;
 import me.gipper1998.spleef.utils.*;
 import org.bukkit.*;

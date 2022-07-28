@@ -4,6 +4,7 @@ import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.game.Status;
 import me.gipper1998.spleef.setup.ArenaSetupTemplate;
+import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -32,19 +33,19 @@ public class ArenaManager {
     }
 
     public void reloadArenas(){
-        Spleef.main.arenas.reloadConfig();
         forceQuitArenas();
-        loadArenas();
+        activeArenas.clear();
+        Spleef.main.arenas.reloadConfig();
         arenas = Spleef.main.arenas.getConfig();
+        loadArenas();
     }
     public void shutGamesDown(){
         if (activeArenas.isEmpty()){
             return;
         }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            GameManager gm = set.getValue();
-            gm.setStatus(Status.STOP);
-            gm.removeEverybody();
+            set.getValue().setStatus(Status.STOP);
+            set.getValue().removeEverybody();
         }
     }
 
@@ -54,8 +55,7 @@ public class ArenaManager {
         }
         List<String> arenaNames = new ArrayList<>();
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            Arena am = set.getKey();
-            arenaNames.add(am.getName());
+            arenaNames.add(set.getKey().getName());
         }
         return arenaNames;
     }
@@ -66,8 +66,7 @@ public class ArenaManager {
             return null;
         }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            Arena am = set.getKey();
-            if (am.getName().equalsIgnoreCase(name)){
+            if (set.getKey().getName().equalsIgnoreCase(name)){
                 return set.getValue();
             }
         }
@@ -79,9 +78,8 @@ public class ArenaManager {
             return null;
         }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            GameManager gm = set.getValue();
-            if (gm.getTotalPlayers().contains(p)){
-                return gm;
+            if (set.getValue().getTotalPlayers().contains(p)){
+                return set.getValue();
             }
         }
         return null;
@@ -93,9 +91,8 @@ public class ArenaManager {
             return null;
         }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            Arena am = set.getKey();
-            if (am.getName().equalsIgnoreCase(name)){
-                return am;
+            if (set.getKey().getName().equalsIgnoreCase(name)){
+                return set.getKey();
             }
         }
         return null;
@@ -107,9 +104,9 @@ public class ArenaManager {
             return false;
         }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            Arena am = set.getKey();
-            if (am.getName().equalsIgnoreCase(name)){
+            if (set.getKey().getName().equalsIgnoreCase(name)){
                 Spleef.main.arenas.getConfig().set("Arenas." + name, null);
+                SignManager.getInstance().deleteSigns(set.getValue());
                 Spleef.main.arenas.saveConfig();
                 loadArenas();
                 return true;
@@ -120,8 +117,7 @@ public class ArenaManager {
 
     public void forceQuitArenas() {
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            GameManager gm = set.getValue();
-            gm.removeEverybody();
+            set.getValue().removeEverybody();
         }
     }
 

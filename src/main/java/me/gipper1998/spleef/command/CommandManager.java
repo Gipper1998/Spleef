@@ -6,12 +6,14 @@ import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.file.MessageManager;
+import me.gipper1998.spleef.leaderboard.LeaderboardManager;
 import me.gipper1998.spleef.setup.SetupWizard;
 import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
@@ -26,7 +28,11 @@ public class CommandManager implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
+        if (sender instanceof ConsoleCommandSender) {
+            MessageManager.getInstance().sendConsoleMessage("no_console");
+            return true;
+        }
+        else {
             Player p = (Player) sender;
             if (args.length == 0) {
                 viewCommands(p);
@@ -44,9 +50,11 @@ public class CommandManager implements TabExecutor {
                     return false;
                 }
                 String name = args[1].toUpperCase();
-                if (ArenaManager.getInstance().getArenaNames().contains(name)){
-                    MessageManager.getInstance().sendMessage("wizard_arena_exists", p);
-                    return false;
+                if (ArenaManager.getInstance().getArenaNames() != null) {
+                    if (ArenaManager.getInstance().getArenaNames().contains(name)) {
+                        MessageManager.getInstance().sendMessage("wizard_arena_exists", p);
+                        return false;
+                    }
                 }
                 MessageManager.getInstance().sendMessage("in_wizard", p);
                 new SetupWizard(p, name);
@@ -75,7 +83,7 @@ public class CommandManager implements TabExecutor {
                 }
                 else {
                     ArenaManager.getInstance().deleteArena(name.toUpperCase());
-                    MessageManager.getInstance().sendMessage("Should be deleted", p);
+                    MessageManager.getInstance().sendMessage("arena_deleted", p);
                     return true;
                 }
             }
@@ -86,11 +94,11 @@ public class CommandManager implements TabExecutor {
                     MessageManager.getInstance().sendMessage("no_perms", p);
                     return false;
                 }
+                ArenaManager.getInstance().reloadArenas();
                 ConfigManager.getInstance().reloadConfig();
                 PlayerStatManager.getInstance().reloadStats();
                 SignManager.getInstance().reloadSigns();
                 MessageManager.getInstance().reloadMessages();
-                ArenaManager.getInstance().reloadArenas();
                 MessageManager.getInstance().sendMessage("reloaded", p);
                 return true;
             }
@@ -221,10 +229,6 @@ public class CommandManager implements TabExecutor {
             }
             return false;
         }
-        else {
-            MessageManager.getInstance().sendCustomConsoleMessage("<prefix> &cOnly players can use these commands.");
-        }
-        return false;
     }
 
     @Override
@@ -247,16 +251,22 @@ public class CommandManager implements TabExecutor {
                 arguments.add("<type_name>");
                 return arguments;
             }
-            else if (args[0].equalsIgnoreCase("leave") || args[0].equalsIgnoreCase("stats")){
+            if (args[0].equalsIgnoreCase("leave") || args[0].equalsIgnoreCase("stats")){
+                if (args[0].equalsIgnoreCase("stats") && sender.hasPermission("spleef.otherstats")){
+                    return LeaderboardManager.getInstance().getPlayerNames();
+                }
                 return null;
             }
-            else if (args[0].equalsIgnoreCase("setWins") || args[0].equalsIgnoreCase("setLosses")){
+            if (args[0].equalsIgnoreCase("setWins") || args[0].equalsIgnoreCase("setLosses")){
                 if (args.length > 2){
                     arguments.add("<number>");
                     return arguments;
                 }
+                else {
+                    return LeaderboardManager.getInstance().getPlayerNames();
+                }
             }
-            else {
+            if (args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("join")) {
                 return ArenaManager.getInstance().getArenaNames();
             }
         }

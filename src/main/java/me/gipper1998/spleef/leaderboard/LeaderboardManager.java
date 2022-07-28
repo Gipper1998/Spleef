@@ -28,6 +28,22 @@ public class LeaderboardManager {
         return lm;
     }
 
+    public List<String> getPlayerNames(){
+        List<String> temp = new ArrayList<>();
+        if (players.getConfigurationSection("Players") != null){
+            for (String key : players.getConfigurationSection("Players").getKeys(false)){
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    temp.add(Bukkit.getOfflinePlayer(uuid).getName());
+                }
+                catch (Exception e){
+                    return null;
+                }
+            }
+        }
+        return temp;
+    }
+
     public String winsPositionPoints(int position){
         sortWins();
         if (winsLeaderboard.size() == 0 || position == 0 || position > winsLeaderboard.size()){
@@ -92,18 +108,15 @@ public class LeaderboardManager {
 
     private void sortWins(){
         HashMap<UUID, Integer> temp = new HashMap<>();
-        ConfigurationSection playerDataBoard = players.getConfigurationSection("Players");
-        if (playerDataBoard == null) {
-            return;
-        }
-        Set<String> keys = playerDataBoard.getKeys(false);
-        for (String key : keys) {
-            try {
-                UUID uuid = UUID.fromString(key);
-                temp.put(uuid, PlayerStatManager.getInstance().getWins(uuid));
-            }
-            catch (Exception e){
-                return;
+        if (players.getConfigurationSection("Players") != null){
+            for (String key : players.getConfigurationSection("Players").getKeys(false)){
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    temp.put(uuid, PlayerStatManager.getInstance().getWins(uuid));
+                }
+                catch (Exception e){
+                    return;
+                }
             }
         }
         winsLeaderboard = sort(temp);
@@ -111,17 +124,15 @@ public class LeaderboardManager {
 
     private void sortLoses() {
         HashMap<UUID, Integer> temp = new HashMap<>();
-        ConfigurationSection playerDataBoard = players.getConfigurationSection("Players");
-        if (playerDataBoard == null) {
-            return;
-        }
-        Set<String> keys = playerDataBoard.getKeys(false);
-        for (String key : keys) {
-            try {
-                UUID uuid = UUID.fromString(key);
-                temp.put(uuid, PlayerStatManager.getInstance().getLosses(uuid));
-            } catch (Exception e) {
-                return;
+        if (players.getConfigurationSection("Players") != null){
+            for (String key : players.getConfigurationSection("Players").getKeys(false)){
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    temp.put(uuid, PlayerStatManager.getInstance().getLosses(uuid));
+                }
+                catch (Exception e){
+                    return;
+                }
             }
         }
         lossesLeaderboard = sort(temp);
