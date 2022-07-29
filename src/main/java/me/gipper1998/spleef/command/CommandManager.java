@@ -78,12 +78,62 @@ public class CommandManager implements TabExecutor {
                 arena = ArenaManager.getInstance().findArena(name);
                 gm = ArenaManager.getInstance().findGame(name);
                 if (arena == null){
-                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm.getArena().getName(), p);
+                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", name, p);
                     return false;
                 }
                 else {
                     ArenaManager.getInstance().deleteArena(name.toUpperCase());
                     MessageManager.getInstance().sendMessage("arena_deleted", p);
+                    return true;
+                }
+            }
+
+            // Disable Arena
+            if (args[0].equalsIgnoreCase("disable")){
+                if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
+                    return false;
+                }
+                String name = args[1].toUpperCase();
+                if (args.length < 2){
+                    MessageManager.getInstance().sendMessage("no_name", p);
+                    return false;
+                }
+                if (name.isEmpty()) {
+                    return false;
+                }
+                arena = ArenaManager.getInstance().findArena(name);
+                if (arena == null){
+                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", name, p);
+                    return false;
+                }
+                else {
+                    ArenaManager.getInstance().disableArena(p, arena);
+                    return true;
+                }
+            }
+
+            // Enable Arena
+            if (args[0].equalsIgnoreCase("enable")){
+                if (!p.hasPermission("spleef.admin")){
+                    MessageManager.getInstance().sendMessage("no_perms", p);
+                    return false;
+                }
+                String name = args[1].toUpperCase();
+                if (args.length < 2){
+                    MessageManager.getInstance().sendMessage("no_name", p);
+                    return false;
+                }
+                if (name.isEmpty()) {
+                    return false;
+                }
+                arena = ArenaManager.getInstance().findArena(name);
+                if (arena == null){
+                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", name, p);
+                    return false;
+                }
+                else {
+                    ArenaManager.getInstance().enableArena(p, arena);
                     return true;
                 }
             }
@@ -94,11 +144,11 @@ public class CommandManager implements TabExecutor {
                     MessageManager.getInstance().sendMessage("no_perms", p);
                     return false;
                 }
+                MessageManager.getInstance().reloadMessages();
                 ArenaManager.getInstance().reloadArenas();
                 ConfigManager.getInstance().reloadConfig();
                 PlayerStatManager.getInstance().reloadStats();
                 SignManager.getInstance().reloadSigns();
-                MessageManager.getInstance().reloadMessages();
                 MessageManager.getInstance().sendMessage("reloaded", p);
                 return true;
             }
@@ -117,7 +167,7 @@ public class CommandManager implements TabExecutor {
                 arena = ArenaManager.getInstance().findArena(name);
                 gm = ArenaManager.getInstance().findGame(name);
                 if (arena == null){
-                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", gm.getArena().getName(), p);
+                    MessageManager.getInstance().sendArenaNameMessage("arena_does_not_exist", name, p);
                     return false;
                 }
                 gm = ArenaManager.getInstance().findGame(name);
@@ -240,6 +290,8 @@ public class CommandManager implements TabExecutor {
                 arguments.add("delete");
                 arguments.add("setWins");
                 arguments.add("setLosses");
+                arguments.add("enable");
+                arguments.add("disable");
             }
             arguments.add("join");
             arguments.add("leave");
@@ -266,7 +318,7 @@ public class CommandManager implements TabExecutor {
                     return LeaderboardManager.getInstance().getPlayerNames();
                 }
             }
-            if (args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("join")) {
+            if (args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("join") || args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("disable")) {
                 return ArenaManager.getInstance().getArenaNames();
             }
         }

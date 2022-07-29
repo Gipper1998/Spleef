@@ -8,7 +8,6 @@ import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
-import me.gipper1998.spleef.sign.SignManager;
 import me.gipper1998.spleef.softdepend.VaultManager;
 import me.gipper1998.spleef.utils.*;
 import org.bukkit.*;
@@ -231,7 +230,7 @@ public class GameManager extends BukkitRunnable implements Listener {
                 MessageManager.getInstance().sendPlayerNameMessage("player_winner", winner, p);
             }
         }
-        if (currentTime <= winnerDelay && currentTime > 2){
+        if (currentTime > 2){
             fb.launch();
         }
         if (currentTime <= 0){
@@ -278,7 +277,12 @@ public class GameManager extends BukkitRunnable implements Listener {
             p.getInventory().setItem(0, new ItemBuilder(Material.GOLDEN_SHOVEL, GOLD_SPADE_ITEM).getIs());
         }
         if (ConfigManager.getInstance().getBoolean("give_snowballs_on_start.enable")) {
-            p.getInventory().setItem(1, new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt("give_snowballs_on_start.amount")).getIs());
+            if (p.hasPermission("Spleef.diamond")) {
+                p.getInventory().setItem(1, new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt("give_snowballs_on_start.diamond_shovel_amount")).getIs());
+            }
+            else {
+                p.getInventory().setItem(1, new ItemBuilder(Material.SNOWBALL, SNOWBALL_ITEM, ConfigManager.getInstance().getInt("give_snowballs_on_start.gold_shovel_amount")).getIs());
+            }
         }
     }
 
@@ -341,6 +345,9 @@ public class GameManager extends BukkitRunnable implements Listener {
             p.setGameMode(GameMode.ADVENTURE);
             p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getInstance().getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
             p.updateInventory();
+        }
+        else if (status == Status.STOP){
+            MessageManager.getInstance().sendMessage("arena_is_disabled", p);
         }
         else {
             MessageManager.getInstance().sendMessage("arena_in-game", p);

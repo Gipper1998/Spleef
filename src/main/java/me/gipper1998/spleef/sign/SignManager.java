@@ -50,6 +50,8 @@ public class SignManager implements Listener {
     public void startUpdater(){
         if (taskID != 0) {
             Bukkit.getScheduler().cancelTask(taskID);
+            taskID = 0;
+            startUpdater();
         }
         else {
             taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Spleef.main, new Runnable() {
@@ -99,14 +101,14 @@ public class SignManager implements Listener {
             return MessageManager.getInstance().getString("sign_status.reset");
         }
         else if (gameManager.getStatus() == Status.STOP){
-            return MessageManager.getInstance().translateColor("&c&l[PAUSED]");
+            return MessageManager.getInstance().getString("sign_status.disabled");
         }
         else {
             return MessageManager.getInstance().getString("sign_status.wait");
         }
     }
 
-    private void updateSignType(Sign sign, String type, GameManager gm){
+    private void updateSignType(Sign sign, String type, GameManager gm) {
         List<String> signListMessages = new ArrayList<>();
         String status = getSignStatus(gm);
         if (type.equalsIgnoreCase("join")) {
@@ -125,6 +127,7 @@ public class SignManager implements Listener {
                 sign.setLine(line, currentLine);
             }
             sign.update();
+
         }
     }
 

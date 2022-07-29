@@ -8,7 +8,7 @@ vault_enable: "<prefix> &bVault is enabled and hooked!"
 papi_enable: "<prefix> &dPlaceholderAPI enabled and hooked!"
 reloaded: "<prefix> &aSuccessfully reloaded!"
 no_perms: "<prefix> &cYou do not have permission to use this command."
-no_console: "<prefix> &cOnly players can access spleef commands."
+no_console: "<prefix> &cOnly players can access this command"
 
 # Modify the wizard setup messages
 no_name_wizard: "<prefix> &cNo name was designated, please type in a name to start the wizard."
@@ -38,7 +38,6 @@ set_arena_spawn_item: "&bSet_Arena_Spawn"
 set_lobby_spawn_item: "&bSet_Lobby_Spawn"
 set_spectator_spawn_item: "&bSet_Spectator_Spawn"
 complete_wizard_item: "&eComplete_Wizard"
-set_name_item: "&fChange_Name"
 
 # Modify arena messages
 no_name: "<prefix> &cNo name was designated, please type the name before continuing."
@@ -53,12 +52,17 @@ arena_not_enough_players: "<prefix> &cNot enough players have joined, currently 
 arena_no_winner: "<prefix> The match took too long, arena resetting."
 arena_full: "<prefix> The arena is full, please try again later."
 arena_in-game: "<prefix> The arena is already in progress, please try again later."
+arena_is_disabled: "<prefix> The arena is disbaled, please try again later."
 player_already_joined: "<prefix> You are already in this arena."
 player_not_in_game: "<prefix> You are not in an arena."
 starting_game: "<prefix> &bGame starting in &d<time>&b seconds."
 game_start: "<prefix> &aGet ready for a swell battle, and &dBEGIN!!!"
 vault_message: "<prefix> &a<money> has been added to your account."
-arena_deleted: "<prefix> Arena Deleted."
+arena_deleted: "<prefix> &cArena Deleted."
+arena_disabled: "<prefix> &cArena disable."
+arena_already_disabled: "<prefix> &bArena already disabled."
+arena_enabled: "<prefix> &aArena enabled."
+arena_already_enabled: "<prefix> &bArena already enabled."
 
 # In-Game Items
 gold_shovel: "&6&lSpleefer_Spade"
@@ -83,6 +87,8 @@ sign_status:
   wait: "&a[Join]"
   in-game: "&e[In-Progress]"
   reset: "&c[RESETTING]"
+  disabled: "&e&l[&c&lDISABLED&e&l]"
+
 sign_creation: "<prefix> &aSign created."
 sign_deletion: "<prefix> &cSign removed."
 

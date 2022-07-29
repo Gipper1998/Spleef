@@ -8,7 +8,8 @@ names_on_board_max: 5
 exp_time_enable: true
 give_snowballs_on_start:
   enable: true
-  amount: 10
+  gold_shovel_amount: 10
+  diamond_shovel_amount: 16
 
 # If it hits a certain time, an event will happen in seconds.
 # Info on what you can do:
@@ -20,6 +21,7 @@ give_snowballs_on_start:
 
 # Amplification (amp) is only for potion effects.
 # If you want to make it random, give a percentage that each player will get it.
+# If you don't want it to be random, just remove the random line.
 # NOTE: random only works for that time interval.
 enable_time_events: true
 time_events:
@@ -53,14 +55,6 @@ commands:
 # Blocks given to players (Not the display name, but the actual block).
 setup_wizard_blocks:
   cancel: "barrier"
-  maximum: "magenta_wool"
-  minimum: "lime_wool"
-  spectator: "white_wool"
-  lobby: "red_wool"
-  arena: "light_blue_wool"
-  complete: "sunflower"
-edit_wizard_blocks:
-  name: "paper"
   maximum: "magenta_wool"
   minimum: "lime_wool"
   spectator: "white_wool"

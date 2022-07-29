@@ -1,6 +1,7 @@
 package me.gipper1998.spleef.arena;
 
 import me.gipper1998.spleef.Spleef;
+import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.game.Status;
 import me.gipper1998.spleef.setup.ArenaSetupTemplate;
@@ -33,8 +34,7 @@ public class ArenaManager {
     }
 
     public void reloadArenas(){
-        forceQuitArenas();
-        activeArenas.clear();
+        shutGamesDown();
         Spleef.main.arenas.reloadConfig();
         arenas = Spleef.main.arenas.getConfig();
         loadArenas();
@@ -44,8 +44,8 @@ public class ArenaManager {
             return;
         }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            set.getValue().setStatus(Status.STOP);
             set.getValue().removeEverybody();
+            set.getValue().setStatus(Status.STOP);
         }
     }
 
@@ -98,6 +98,40 @@ public class ArenaManager {
         return null;
     }
 
+    public boolean disableArena(Player p, Arena arena){
+        if (activeArenas.isEmpty()){
+            return false;
+        }
+        for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
+            if (set.getKey().equals(arena)) {
+                if (set.getValue().getStatus() == Status.WAIT) {
+                    set.getValue().setStatus(Status.STOP);
+                    MessageManager.getInstance().sendMessage("arena_disabled", p);
+                    return true;
+                }
+            }
+        }
+        MessageManager.getInstance().sendMessage("arena_already_disabled", p);
+        return false;
+    }
+
+    public boolean enableArena(Player p, Arena arena){
+        if (activeArenas.isEmpty()){
+            return false;
+        }
+        for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
+            if (set.getKey().equals(arena)){
+                if (set.getValue().getStatus() == Status.STOP) {
+                    set.getValue().setStatus(Status.WAIT);
+                    MessageManager.getInstance().sendMessage("arena_enabled", p);
+                    return true;
+                }
+            }
+        }
+        MessageManager.getInstance().sendMessage("arena_already_enabled", p);
+        return false;
+    }
+
     public boolean deleteArena(String name){
         name = name.toUpperCase();
         if (activeArenas.isEmpty()){
@@ -113,12 +147,6 @@ public class ArenaManager {
             }
         }
         return false;
-    }
-
-    public void forceQuitArenas() {
-        for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
-            set.getValue().removeEverybody();
-        }
     }
 
     public void createArena(ArenaSetupTemplate temp){
