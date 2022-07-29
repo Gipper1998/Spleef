@@ -105,6 +105,7 @@ public class ArenaManager {
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             if (set.getKey().equals(arena)) {
                 if (set.getValue().getStatus() == Status.WAIT) {
+                    set.getValue().removeEverybody();
                     set.getValue().setStatus(Status.STOP);
                     MessageManager.getInstance().sendMessage("arena_disabled", p);
                     return true;
