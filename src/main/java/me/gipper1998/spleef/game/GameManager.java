@@ -36,6 +36,7 @@ public class GameManager extends BukkitRunnable implements Listener {
     private Arena arena;
 
     private int waitTime = 10;
+    @Getter
     private int gameTime = 120;
     private int startDelay = 5;
     private int winnerDelay = 5;
@@ -258,14 +259,14 @@ public class GameManager extends BukkitRunnable implements Listener {
             for (Player p : playersInGame) {
                 active.add(p.getName());
             }
-            scoreboard.setLines(MessageManager.getInstance().setPlayersInLeaderboard("leaderboard_game", active, currentTime));
+            scoreboard.setLines(MessageManager.getInstance().setPlayersInScoreboard("leaderboard_game", active, currentTime, this));
         }
         if (status == Status.WAIT){
             List<String> active = new ArrayList<>();
             for (Player p : playersInGame) {
                 active.add(p.getName());
             }
-            scoreboard.setLines(MessageManager.getInstance().setPlayersInLeaderboard("leaderboard_wait", active, currentTime));
+            scoreboard.setLines(MessageManager.getInstance().setPlayersInScoreboard("leaderboard_wait", active, currentTime, this));
         }
     }
 

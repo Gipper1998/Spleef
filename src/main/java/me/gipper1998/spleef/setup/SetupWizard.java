@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -24,8 +23,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class SetupWizard implements Listener {
 
-
     private ArenaSetupTemplate template;
+
+    private Player p;
 
     private String CANCEL_WIZARD = "";
     private String SET_MINIMUM = "";
@@ -40,6 +40,7 @@ public class SetupWizard implements Listener {
 
     public SetupWizard(Player p, String name){
         Bukkit.getPluginManager().registerEvents(this, Spleef.main);
+        this.p = p;
         this.template = new ArenaSetupTemplate(name);
         this.CANCEL_WIZARD = MessageManager.getInstance().getString("cancel_wizard_item");
         this.SET_MINIMUM = MessageManager.getInstance().getString("set_minimum_item");
@@ -48,46 +49,46 @@ public class SetupWizard implements Listener {
         this.SET_LOBBY_SPAWN = MessageManager.getInstance().getString("set_lobby_spawn_item");
         this.SET_SPECTATOR_SPAWN = MessageManager.getInstance().getString("set_spectator_spawn_item");
         this.COMPLETE_WIZARD = MessageManager.getInstance().getString("complete_wizard_item");
-        giveItems(p, p.getInventory());
+        giveItems();
         p.setGameMode(GameMode.CREATIVE);
     }
 
-    private void giveItems(Player player, Inventory inventory){
-        inventory.setItem(0, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.cancel"), CANCEL_WIZARD).getIs());
-        inventory.setItem(6, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.maximum"), SET_MAXIMUM).getIs());
-        inventory.setItem(5, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.minimum"), SET_MINIMUM).getIs());
-        inventory.setItem(4, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.spectator"), SET_SPECTATOR_SPAWN).getIs());
-        inventory.setItem(3, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.lobby"), SET_LOBBY_SPAWN).getIs());
-        inventory.setItem(2, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.arena"), SET_ARENA_SPAWN).getIs());
-        inventory.setItem(8, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.complete"), COMPLETE_WIZARD).getIs());
-        player.updateInventory();
+    private void giveItems(){
+        p.getInventory().setItem(0, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.cancel"), CANCEL_WIZARD).getIs());
+        p.getInventory().setItem(6, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.maximum"), SET_MAXIMUM).getIs());
+        p.getInventory().setItem(5, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.minimum"), SET_MINIMUM).getIs());
+        p.getInventory().setItem(4, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.spectator"), SET_SPECTATOR_SPAWN).getIs());
+        p.getInventory().setItem(3, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.lobby"), SET_LOBBY_SPAWN).getIs());
+        p.getInventory().setItem(2, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.arena"), SET_ARENA_SPAWN).getIs());
+        p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getInstance().getBlock("setup_wizard_blocks.complete"), COMPLETE_WIZARD).getIs());
+        p.updateInventory();
     }
 
     private boolean containsPlayer(Player p){
         return InSetupWizard.getInstance().getInWizard().containsKey(p);
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
+    @EventHandler
     public void onBlockPlace(BlockPlaceEvent event){
         if (containsPlayer(event.getPlayer())){
             event.setCancelled(true);
         }
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
         if (containsPlayer(event.getPlayer())){
             event.setCancelled(true);
         }
     }
 
-    @EventHandler (priority = EventPriority.LOW)
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event){
         if (containsPlayer(event.getPlayer())) {
             ItemStack item = event.getItem();
             ItemMeta im = event.getItem().getItemMeta();
             if ((item.getType() == ConfigManager.getInstance().getBlock("setup_wizard_blocks.cancel")) && (im.getDisplayName().equals(CANCEL_WIZARD)) && bothClicks(event)) {
-                exitWizard(event.getPlayer(), false);
+                exitWizard(false);
                 MessageManager.getInstance().sendMessage("exit_wizard", event.getPlayer());
                 return;
             }
@@ -118,7 +119,7 @@ public class SetupWizard implements Listener {
             }
             else if ((item.getType() == ConfigManager.getInstance().getBlock("setup_wizard_blocks.complete")) && (im.getDisplayName().equals(COMPLETE_WIZARD)) && bothClicks(event)) {
                 if (isComplete(event.getPlayer())) {
-                    exitWizard(event.getPlayer(), true);
+                    exitWizard(true);
                     MessageManager.getInstance().sendMessage("wizard_arena_saved", event.getPlayer());
                 }
                 return;
@@ -151,18 +152,18 @@ public class SetupWizard implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         if (containsPlayer(event.getPlayer())){
-            exitWizard(event.getPlayer(), false);
+            exitWizard(false);
         }
     }
 
-    @EventHandler (priority = EventPriority.HIGH)
+    @EventHandler
     public void onItemDrop(PlayerDropItemEvent event){
         if (containsPlayer(event.getPlayer())){
             event.setCancelled(true);
         }
     }
 
-    private void exitWizard(Player p, boolean finished){
+    private void exitWizard(boolean finished){
         p.getInventory().clear();
         p.updateInventory();
         if (finished){
