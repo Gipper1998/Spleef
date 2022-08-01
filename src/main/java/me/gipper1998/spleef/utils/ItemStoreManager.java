@@ -9,6 +9,8 @@ import org.bukkit.potion.PotionEffect;
 public class ItemStoreManager {
     private ItemStack[] inventory;
     private ItemStack[] armor;
+
+    private ItemStack offHandSlot;
     private Player p;
     private double health;
     private double hunger;
@@ -31,6 +33,7 @@ public class ItemStoreManager {
         this.location = p.getLocation();
         this.selectedItemSlot = player.getInventory().getHeldItemSlot();
         this.levels = p.getLevel();
+        this.offHandSlot = p.getInventory().getItemInOffHand();
         if (selectedItemSlot == 8){
             selectedItemSlot = 7;
         }
@@ -48,6 +51,7 @@ public class ItemStoreManager {
     public void giveBackItems(){
         p.getInventory().setContents(inventory);
         p.getInventory().setArmorContents(armor);
+        p.getInventory().setItemInOffHand(offHandSlot);
         p.setGameMode(gamemode);
         p.setExp(xp);
         p.setHealth(health);
