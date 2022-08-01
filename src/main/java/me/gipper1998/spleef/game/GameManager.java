@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.arena.Arena;
+import me.gipper1998.spleef.file.ArenaManager;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
@@ -322,6 +323,10 @@ public class GameManager extends BukkitRunnable implements Listener {
             return;
         }
         if (status == Status.WAIT) {
+            if (!ArenaManager.getInstance().isInAnotherArena(p)){
+                MessageManager.getInstance().sendMessage("player_in_another_arena", p);
+                return;
+            }
             if (playersInGame.size() >= arena.getMaximum()) {
                 MessageManager.getInstance().sendMessage("arena_full", p);
                 return;

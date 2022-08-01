@@ -86,6 +86,14 @@ public class ArenaManager {
         return null;
     }
 
+    public boolean isInAnotherArena(Player p) {
+        GameManager gm = findPlayerInGame(p);
+        if (gm != null){
+            return false;
+        }
+        return true;
+    }
+
     public Arena findArena(String name){
         name = name.toUpperCase();
         if (activeArenas.isEmpty()){
