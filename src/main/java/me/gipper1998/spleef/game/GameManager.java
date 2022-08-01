@@ -645,7 +645,19 @@ public class GameManager extends BukkitRunnable implements Listener {
                 }
             }
             if (status == Status.DELAYSTART){
-                event.getPlayer().teleport(arena.getArena());
+                if (event.getPlayer().getLocation().getBlock().getType() == Material.WATER || event.getPlayer().getLocation().getBlock().getType() == Material.LAVA) {
+                    event.getPlayer().teleport(arena.getArena());
+                }
+            }
+            if (status == Status.WINNER){
+                if (event.getPlayer().getLocation().getBlock().getType() == Material.WATER || event.getPlayer().getLocation().getBlock().getType() == Material.LAVA) {
+                    event.getPlayer().teleport(arena.getArena());
+                }
+            }
+            if (status == Status.WAIT){
+                if (event.getPlayer().getLocation().getBlock().getType() == Material.WATER || event.getPlayer().getLocation().getBlock().getType() == Material.LAVA) {
+                    event.getPlayer().teleport(arena.getLobby());
+                }
             }
         }
     }

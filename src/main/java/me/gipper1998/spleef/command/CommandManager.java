@@ -56,8 +56,8 @@ public class CommandManager implements TabExecutor {
                         return false;
                     }
                 }
-                MessageManager.getInstance().sendMessage("in_wizard", p);
                 if (InSetupWizard.getInstance().addPlayer(p)){
+                    MessageManager.getInstance().sendMessage("in_wizard", p);
                     new SetupWizard(p, name);
                 }
                 return true;
