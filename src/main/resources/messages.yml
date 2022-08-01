@@ -63,6 +63,7 @@ arena_disabled: "<prefix> &cArena disable."
 arena_already_disabled: "<prefix> &bArena already disabled."
 arena_enabled: "<prefix> &aArena enabled."
 arena_already_enabled: "<prefix> &bArena already enabled."
+wizard_already_in: "<prefix> &cAlready in wizard?"
 
 # In-Game Items
 gold_shovel: "&6&lSpleefer_Spade"

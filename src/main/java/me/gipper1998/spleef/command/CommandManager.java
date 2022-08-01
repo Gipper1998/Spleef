@@ -60,6 +60,10 @@ public class CommandManager implements TabExecutor {
                     MessageManager.getInstance().sendMessage("in_wizard", p);
                     new SetupWizard(p, name);
                 }
+                else {
+                    MessageManager.getInstance().sendMessage("wizard_already_in", p);
+                    return false;
+                }
                 return true;
             }
 
