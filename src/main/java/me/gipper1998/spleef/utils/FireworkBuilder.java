@@ -1,23 +1,18 @@
 package me.gipper1998.spleef.utils;
 
-import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 public class FireworkBuilder {
 
-    @Getter
-    private Firework fw;
-
     public FireworkBuilder(Location location, int power, String colorName, int effect, int type){
         location.add(0,1,0);
-        this.fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        Color color = color(colorName);
+        Firework fw = location.getWorld().spawn(location, Firework.class);
         FireworkMeta fwm = fw.getFireworkMeta();
+        Color color = color(colorName);
         fwm.setPower(power);
         FireworkEffect.Type ft = getType(type);
         if (ft != null) {
@@ -27,16 +22,6 @@ public class FireworkBuilder {
             fwm = getEffect(fwm, effect, color);
         }
         fw.setFireworkMeta(fwm);
-    }
-
-    public void addColor(Color color){
-        FireworkMeta fwm = fw.getFireworkMeta();
-        fwm.addEffect(FireworkEffect.builder().withColor(color).build());
-        fw.setFireworkMeta(fwm);
-    }
-
-    public void launch(){
-        fw.detonate();
     }
 
     private FireworkEffect.Type getType(int num){

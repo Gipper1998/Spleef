@@ -25,12 +25,4 @@ public class Arena {
     @Getter
     private int maximum = 0;
 
-    public Arena(int minimum, int maximum, String name, Location arena, Location lobby, Location spectate){
-        this.spectate = spectate;
-        this.arena = arena;
-        this.lobby = lobby;
-        this.name = name;
-        this.maximum = maximum;
-        this.minimum = minimum;
-    }
 }

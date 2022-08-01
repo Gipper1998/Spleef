@@ -241,7 +241,6 @@ public class SignManager implements Listener {
                                     continue;
                                 }
                             }
-                            return;
                         }
                     }
                 }

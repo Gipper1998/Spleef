@@ -225,14 +225,13 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void winnerShowOff(){
-        FireworkBuilder fb = new FireworkBuilder(arena.getArena(), 20, "aqua", 2, 5);
         if (currentTime == winnerDelay) {
             for (Player p : totalPlayers) {
                 MessageManager.getInstance().sendPlayerNameMessage("player_winner", winner, p);
             }
         }
-        if (currentTime > 2){
-            fb.launch();
+        if (currentTime % 2 != 0){
+            new FireworkBuilder(arena.getArena(), 1, "aqua", 2, 5);
         }
         if (currentTime <= 0){
             PlayerStatManager.getInstance().addWinPoint(winner.getUniqueId());
@@ -259,14 +258,14 @@ public class GameManager extends BukkitRunnable implements Listener {
             for (Player p : playersInGame) {
                 active.add(p.getName());
             }
-            scoreboard.setLines(MessageManager.getInstance().setPlayersInScoreboard("leaderboard_game", active, currentTime, this));
+            scoreboard.setLines(MessageManager.getInstance().setPlayersInLeaderboard("leaderboard_game", active, currentTime));
         }
         if (status == Status.WAIT){
             List<String> active = new ArrayList<>();
             for (Player p : playersInGame) {
                 active.add(p.getName());
             }
-            scoreboard.setLines(MessageManager.getInstance().setPlayersInScoreboard("leaderboard_wait", active, currentTime, this));
+            scoreboard.setLines(MessageManager.getInstance().setPlayersInLeaderboard("leaderboard_wait", active, currentTime));
         }
     }
 
@@ -622,26 +621,31 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     @EventHandler
     public void playerMoveEvent(PlayerMoveEvent event){
-        if (playersInGame.contains(event.getPlayer()) && status == Status.GAME){
-            Player p = event.getPlayer();
-            if (p.getLocation().getBlock().getType() == Material.WATER || p.getLocation().getBlock().getType() == Material.LAVA){
-                for (Player player : totalPlayers){
-                    MessageManager.getInstance().sendPlayerNameMessage("player_died", p, player);
+        if (playersInGame.contains(event.getPlayer())){
+            if (status == Status.GAME) {
+                Player p = event.getPlayer();
+                if (p.getLocation().getBlock().getType() == Material.WATER || p.getLocation().getBlock().getType() == Material.LAVA) {
+                    for (Player player : totalPlayers) {
+                        MessageManager.getInstance().sendPlayerNameMessage("player_died", p, player);
+                    }
+                    playersInGame.remove(p);
+                    spectators.add(p);
+                    p.teleport(arena.getSpectate());
+                    p.setGameMode(GameMode.SPECTATOR);
+                    PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
+                    for (PotionEffect effect : p.getActivePotionEffects()) {
+                        p.removePotionEffect(effect.getType());
+                    }
+                    if (playersInGame.size() == 1) {
+                        winner = playersInGame.get(0);
+                        currentTime = winnerDelay;
+                        status = Status.WINNER;
+                        return;
+                    }
                 }
-                playersInGame.remove(p);
-                spectators.add(p);
-                p.teleport(arena.getSpectate());
-                p.setGameMode(GameMode.SPECTATOR);
-                PlayerStatManager.getInstance().addLosePoint(p.getUniqueId());
-                for (PotionEffect effect : p.getActivePotionEffects()){
-                    p.removePotionEffect(effect.getType());
-                }
-                if (playersInGame.size() == 1) {
-                    winner = playersInGame.get(0);
-                    currentTime = winnerDelay;
-                    status = Status.WINNER;
-                    return;
-                }
+            }
+            if (status == Status.DELAYSTART){
+                event.getPlayer().teleport(arena.getArena());
             }
         }
     }

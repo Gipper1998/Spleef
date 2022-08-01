@@ -168,7 +168,7 @@ public class ArenaManager {
                 Location arena = loadLocation("Arenas." + name + ".Arena_Spawn.");
                 Location lobby = loadLocation("Arenas." + name + ".Lobby_Spawn.");
                 Location spectate = loadLocation("Arenas." + name + ".Spectate_Spawn.");
-                Arena am = new Arena(minimum, maximum, name, arena, lobby, spectate);
+                Arena am = new Arena(name, arena, lobby, spectate, minimum, maximum);
                 GameManager gm = new GameManager(am);
                 activeArenas.put(am, gm);
                 gm.setStatus(Status.WAIT);

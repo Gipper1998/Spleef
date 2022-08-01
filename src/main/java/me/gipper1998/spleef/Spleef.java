@@ -5,6 +5,7 @@ import me.gipper1998.spleef.command.CommandManager;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.MessageManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
+import me.gipper1998.spleef.setup.InSetupWizard;
 import me.gipper1998.spleef.sign.SignManager;
 import me.gipper1998.spleef.softdepend.PAPIManager;
 import me.gipper1998.spleef.softdepend.VaultManager;
@@ -30,6 +31,7 @@ public class Spleef extends JavaPlugin {
     public void onDisable() {
         ArenaManager.getInstance().shutGamesDown();
         MessageManager.getInstance().sendConsoleMessage("shut_down");
+        InSetupWizard.getInstance().removeAllPlayers();
     }
     private void registerSoftDependencies(){
         if (getServer().getPluginManager().getPlugin("Vault") != null) {

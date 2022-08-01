@@ -5,6 +5,7 @@ import me.gipper1998.spleef.utils.ItemStoreManager;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class InSetupWizard {
 
@@ -36,5 +37,11 @@ public class InSetupWizard {
             return true;
         }
         return false;
+    }
+
+    public void removeAllPlayers(){
+        for (Map.Entry<Player, ItemStoreManager> entry : inWizard.entrySet()){
+            removePlayer(entry.getKey());
+        }
     }
 }

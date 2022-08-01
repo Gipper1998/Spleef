@@ -6,6 +6,7 @@ import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.file.MessageManager;
+import me.gipper1998.spleef.setup.InSetupWizard;
 import me.gipper1998.spleef.setup.SetupWizard;
 import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.Bukkit;
@@ -56,7 +57,9 @@ public class CommandManager implements TabExecutor {
                     }
                 }
                 MessageManager.getInstance().sendMessage("in_wizard", p);
-                new SetupWizard(p, name);
+                if (InSetupWizard.getInstance().addPlayer(p)){
+                    new SetupWizard(p, name);
+                }
                 return true;
             }
 
@@ -145,6 +148,7 @@ public class CommandManager implements TabExecutor {
                 }
                 MessageManager.getInstance().reloadMessages();
                 ArenaManager.getInstance().reloadArenas();
+                InSetupWizard.getInstance().removeAllPlayers();
                 ConfigManager.getInstance().reloadConfig();
                 PlayerStatManager.getInstance().reloadStats();
                 SignManager.getInstance().reloadSigns();
