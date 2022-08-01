@@ -1,10 +1,8 @@
 package me.gipper1998.spleef.file;
 
-import me.gipper1998.spleef.Spleef;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -16,10 +14,10 @@ public class MessageManager {
 
     private static MessageManager mm;
 
-    private FileConfiguration messages;
+    private FileManager messages;
 
     public MessageManager(){
-        messages = Spleef.main.messages.getConfig();
+        messages = new FileManager("messages.yml");
     }
     public static MessageManager getInstance(){
         if (mm == null){
@@ -37,12 +35,11 @@ public class MessageManager {
     }
 
     public void reloadMessages(){
-        Spleef.main.messages.reloadConfig();
-        messages = Spleef.main.messages.getConfig();
+        messages.reloadConfig();
     }
 
     public void sendMessage(String path, Player p){
-        String message = messages.getString(path);
+        String message = messages.getConfig().getString(path);
         if (message.isEmpty()){
             return;
         }
@@ -51,7 +48,7 @@ public class MessageManager {
     }
 
     public void sendNumberMessage(String path, int num, Player p){
-        String message = messages.getString(path);
+        String message = messages.getConfig().getString(path);
         message = message.replaceAll("<prefix>", getPrefix());
         message = message.replaceAll("<minimum>", Integer.toString(num));
         message = message.replaceAll("<maximum>", Integer.toString(num));
@@ -63,7 +60,7 @@ public class MessageManager {
     }
 
     public void sendPlayerNameMessage(String path, Player target, Player p){
-        String message = messages.getString(path);
+        String message = messages.getConfig().getString(path);
         if (message.isEmpty()){
             return;
         }
@@ -73,7 +70,7 @@ public class MessageManager {
     }
 
     public void sendArenaNameMessage(String path, String text, Player p) {
-        String message = messages.getString(path);
+        String message = messages.getConfig().getString(path);
         if (message.isEmpty()){
             return;
         }
@@ -83,7 +80,7 @@ public class MessageManager {
     }
 
     public void sendVaultPlayerMessage(String path, Player p, int amount) {
-        String message = messages.getString(path);
+        String message = messages.getConfig().getString(path);
         if (message.isEmpty()){
             return;
         }
@@ -93,7 +90,7 @@ public class MessageManager {
     }
 
     public void sendConsoleMessage(String path){
-        String message = messages.getString(path);
+        String message = messages.getConfig().getString(path);
         message = message.replaceAll("<prefix>", getPrefix());
         Bukkit.getConsoleSender().sendMessage(translateHEX(message));
     }
@@ -103,7 +100,7 @@ public class MessageManager {
     }
 
     public void sendLeaderboardStringList(Player sender, String wins, String losses, OfflinePlayer target){
-        List<String> messageList = messages.getStringList("stats");
+        List<String> messageList = messages.getConfig().getStringList("stats");
         for (String message : messageList){
             if (!message.isEmpty()) {
                 message = message.replaceAll("<prefix>", getPrefix());
@@ -119,7 +116,7 @@ public class MessageManager {
     }
 
     public void sendStringList(String path, Player p){
-        List<String> messageList = messages.getStringList(path);
+        List<String> messageList = messages.getConfig().getStringList(path);
         for (String message : messageList){
             if (!message.isEmpty()) {
                 message = message.replaceAll("<prefix>", getPrefix());
@@ -132,7 +129,7 @@ public class MessageManager {
     }
 
     public List<String> getSignStringList(String path){
-        List<String> messageList = messages.getStringList(path);
+        List<String> messageList = messages.getConfig().getStringList(path);
         List<String> sendMessages = new ArrayList<>();
         for (String message : messageList){
             if (!message.isEmpty()) {
@@ -147,7 +144,7 @@ public class MessageManager {
     }
 
     public String getString(String path){
-        String message = messages.getString(path);
+        String message = messages.getConfig().getString(path);
         if (message.isEmpty()){
             return "";
         }
@@ -160,7 +157,7 @@ public class MessageManager {
     }
 
     public List<String> setPlayersInLeaderboard(String path, List<String> players, int currentTime) {
-        List<String> messageList = messages.getStringList(path);
+        List<String> messageList = messages.getConfig().getStringList(path);
         if (messageList.isEmpty()){
             return null;
         }
@@ -203,7 +200,7 @@ public class MessageManager {
     }
 
     private String getPrefix(){
-        return messages.getString("prefix");
+        return messages.getConfig().getString("prefix");
     }
 
 }

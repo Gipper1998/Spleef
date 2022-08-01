@@ -1,19 +1,18 @@
 package me.gipper1998.spleef.file;
 
-import me.gipper1998.spleef.Spleef;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
+import java.util.Set;
 
 public class ConfigManager {
 
     private static ConfigManager cm;
 
-    private FileConfiguration config;
+    private FileManager config;
 
     public ConfigManager(){
-        this.config = Spleef.main.config.getConfig();
+        this.config = new FileManager("config.yml");
     }
 
     public static ConfigManager getInstance(){
@@ -24,12 +23,11 @@ public class ConfigManager {
     }
 
     public void reloadConfig() {
-        Spleef.main.config.reloadConfig();
-        config = Spleef.main.config.getConfig();
+        config.reloadConfig();
     }
 
     public Material getBlock(String path){
-        String block = config.getString(path);
+        String block = config.getConfig().getString(path);
         try {
             return Material.matchMaterial(block.toUpperCase());
         }
@@ -39,22 +37,26 @@ public class ConfigManager {
     }
 
     public int getInt(String path) {
-        return config.getInt(path);
+        return config.getConfig().getInt(path);
     }
 
     public boolean getBoolean(String path){
-        return config.getBoolean(path);
+        return config.getConfig().getBoolean(path);
     }
 
     public boolean contains(String path){
-        return config.contains(path);
+        return config.getConfig().contains(path);
     }
 
     public List<String> getStringList(String path){
-        return config.getStringList(path);
+        return config.getConfig().getStringList(path);
     }
 
     public String getString(String path) {
-        return config.getString(path);
+        return config.getConfig().getString(path);
+    }
+
+    public Set<String> getConfigurationSection(String path){
+        return config.getConfig().getConfigurationSection(path).getKeys(false);
     }
 }

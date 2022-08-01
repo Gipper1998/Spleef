@@ -1,12 +1,11 @@
 package me.gipper1998.spleef.command;
 
 import me.gipper1998.spleef.arena.Arena;
-import me.gipper1998.spleef.arena.ArenaManager;
+import me.gipper1998.spleef.file.ArenaManager;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.file.MessageManager;
-import me.gipper1998.spleef.leaderboard.LeaderboardManager;
 import me.gipper1998.spleef.setup.SetupWizard;
 import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.Bukkit;
@@ -305,7 +304,7 @@ public class CommandManager implements TabExecutor {
             }
             if (args[0].equalsIgnoreCase("leave") || args[0].equalsIgnoreCase("stats")){
                 if (args[0].equalsIgnoreCase("stats") && sender.hasPermission("spleef.otherstats")){
-                    return LeaderboardManager.getInstance().getPlayerNames();
+                    return PlayerStatManager.getInstance().getPlayerNames();
                 }
                 return null;
             }
@@ -315,7 +314,7 @@ public class CommandManager implements TabExecutor {
                     return arguments;
                 }
                 else {
-                    return LeaderboardManager.getInstance().getPlayerNames();
+                    return PlayerStatManager.getInstance().getPlayerNames();
                 }
             }
             if (args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("join") || args[0].equalsIgnoreCase("enable") || args[0].equalsIgnoreCase("disable")) {

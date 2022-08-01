@@ -1,13 +1,10 @@
 package me.gipper1998.spleef.setup;
 
-import lombok.Getter;
-import lombok.Setter;
 import me.gipper1998.spleef.Spleef;
-import me.gipper1998.spleef.arena.ArenaManager;
+import me.gipper1998.spleef.file.ArenaManager;
 import me.gipper1998.spleef.file.ConfigManager;
 import me.gipper1998.spleef.utils.ItemBuilder;
 import me.gipper1998.spleef.file.MessageManager;
-import me.gipper1998.spleef.utils.ItemStoreManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -25,17 +22,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SetupWizard implements Listener {
 
-    @Setter @Getter
-    private List<Player> inSetupWizard = new ArrayList<>();
 
     private ArenaSetupTemplate template;
-
-    private ItemStoreManager ism;
 
     private String CANCEL_WIZARD = "";
     private String SET_MINIMUM = "";
@@ -58,8 +48,6 @@ public class SetupWizard implements Listener {
         this.SET_LOBBY_SPAWN = MessageManager.getInstance().getString("set_lobby_spawn_item");
         this.SET_SPECTATOR_SPAWN = MessageManager.getInstance().getString("set_spectator_spawn_item");
         this.COMPLETE_WIZARD = MessageManager.getInstance().getString("complete_wizard_item");
-        this.ism = new ItemStoreManager(p);
-        inSetupWizard.add(p);
         giveItems(p, p.getInventory());
         p.setGameMode(GameMode.CREATIVE);
     }
@@ -75,23 +63,27 @@ public class SetupWizard implements Listener {
         player.updateInventory();
     }
 
+    private boolean containsPlayer(Player p){
+        return InSetupWizard.getInstance().getInWizard().containsKey(p);
+    }
+
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event){
-        if (inSetupWizard.contains(event.getPlayer())){
+        if (containsPlayer(event.getPlayer())){
             event.setCancelled(true);
         }
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event){
-        if (inSetupWizard.contains(event.getPlayer())){
+        if (containsPlayer(event.getPlayer())){
             event.setCancelled(true);
         }
     }
 
     @EventHandler (priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event){
-        if (inSetupWizard.contains(event.getPlayer())) {
+        if (containsPlayer(event.getPlayer())) {
             ItemStack item = event.getItem();
             ItemMeta im = event.getItem().getItemMeta();
             if ((item.getType() == ConfigManager.getInstance().getBlock("setup_wizard_blocks.cancel")) && (im.getDisplayName().equals(CANCEL_WIZARD)) && bothClicks(event)) {
@@ -136,7 +128,7 @@ public class SetupWizard implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event){
-        if (inSetupWizard.contains(event.getPlayer())) {
+        if (containsPlayer(event.getPlayer())) {
             if (isNumeric(event.getMessage())) {
                 if (findMin) {
                     template.setMinimum(Integer.parseInt(event.getMessage()));
@@ -158,21 +150,20 @@ public class SetupWizard implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
-        if (inSetupWizard.contains(event.getPlayer())){
+        if (containsPlayer(event.getPlayer())){
             exitWizard(event.getPlayer(), false);
         }
     }
 
     @EventHandler (priority = EventPriority.HIGH)
     public void onItemDrop(PlayerDropItemEvent event){
-        if (inSetupWizard.contains(event.getPlayer())){
+        if (containsPlayer(event.getPlayer())){
             event.setCancelled(true);
         }
     }
 
     private void exitWizard(Player p, boolean finished){
         p.getInventory().clear();
-        ism.giveBackItems();
         p.updateInventory();
         if (finished){
             if (template.getLobby() == null){
@@ -180,7 +171,7 @@ public class SetupWizard implements Listener {
             }
             ArenaManager.getInstance().createArena(template);
         }
-        inSetupWizard.remove(p);
+        InSetupWizard.getInstance().removePlayer(p);
     }
 
     private boolean bothClicks(PlayerInteractEvent event){

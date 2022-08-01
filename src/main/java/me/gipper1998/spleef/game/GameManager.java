@@ -407,7 +407,7 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     public void loadEvents(){
         if (ConfigManager.getInstance().getBoolean("enable_time_events")) {
-            for (String key : Spleef.main.config.getConfig().getConfigurationSection("time_events").getKeys(false)) {
+            for (String key : ConfigManager.getInstance().getConfigurationSection("time_events")) {
                 try {
                     events.add(Integer.parseInt(key));
                 }

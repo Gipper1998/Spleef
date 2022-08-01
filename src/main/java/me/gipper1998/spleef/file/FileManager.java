@@ -10,24 +10,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class FileManager {
-
-    private Spleef main;
     private FileConfiguration dataConfig = null;
     private File dataConfigFile = null;
     private String name;
 
-    public FileManager(Spleef main, String name) {
-        this.main = main;
+    public FileManager(String name) {
         this.name = name;
         saveDefaultConfig();
     }
 
     public void reloadConfig() {
         if (dataConfigFile == null) {
-            dataConfigFile = new File(main.getDataFolder(), name);
+            dataConfigFile = new File(Spleef.main.getDataFolder(), name);
         }
         this.dataConfig = YamlConfiguration.loadConfiguration(dataConfigFile);
-        InputStream defConfigStream = main.getResource(name);
+        InputStream defConfigStream = Spleef.main.getResource(name);
         if (defConfigStream != null) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
             dataConfig.setDefaults(defConfig);
@@ -54,10 +51,10 @@ public class FileManager {
 
     public void saveDefaultConfig() {
         if (dataConfigFile == null) {
-            dataConfigFile = new File(this.main.getDataFolder(), name);
+            dataConfigFile = new File(Spleef.main.getDataFolder(), name);
         }
         if (!dataConfigFile.exists()) {
-            main.saveResource(name, false);
+            Spleef.main.saveResource(name, false);
         }
     }
 

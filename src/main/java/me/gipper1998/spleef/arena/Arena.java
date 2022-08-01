@@ -1,9 +1,10 @@
 package me.gipper1998.spleef.arena;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Location;
 
+@AllArgsConstructor
 public class Arena {
 
     @Getter

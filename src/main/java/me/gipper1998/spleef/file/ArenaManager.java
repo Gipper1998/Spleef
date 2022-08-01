@@ -1,7 +1,7 @@
-package me.gipper1998.spleef.arena;
+package me.gipper1998.spleef.file;
 
 import me.gipper1998.spleef.Spleef;
-import me.gipper1998.spleef.file.MessageManager;
+import me.gipper1998.spleef.arena.Arena;
 import me.gipper1998.spleef.game.GameManager;
 import me.gipper1998.spleef.game.Status;
 import me.gipper1998.spleef.setup.ArenaSetupTemplate;
@@ -9,7 +9,6 @@ import me.gipper1998.spleef.sign.SignManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -20,10 +19,10 @@ public class ArenaManager {
 
     private HashMap<Arena, GameManager> activeArenas = new HashMap<>();
 
-    private FileConfiguration arenas;
+    private FileManager arenas;
 
     public ArenaManager(){
-        this.arenas = Spleef.main.arenas.getConfig();
+        this.arenas = new FileManager("arenas.yml");
     }
 
     public static ArenaManager getInstance(){
@@ -35,8 +34,7 @@ public class ArenaManager {
 
     public void reloadArenas(){
         shutGamesDown();
-        Spleef.main.arenas.reloadConfig();
-        arenas = Spleef.main.arenas.getConfig();
+        arenas.reloadConfig();
         loadArenas();
     }
     public void shutGamesDown(){
@@ -140,9 +138,9 @@ public class ArenaManager {
         }
         for (Map.Entry<Arena, GameManager> set : activeArenas.entrySet()){
             if (set.getKey().getName().equalsIgnoreCase(name)){
-                Spleef.main.arenas.getConfig().set("Arenas." + name, null);
+                arenas.getConfig().set("Arenas." + name, null);
                 SignManager.getInstance().deleteSigns(set.getValue());
-                Spleef.main.arenas.saveConfig();
+                arenas.saveConfig();
                 loadArenas();
                 return true;
             }
@@ -151,10 +149,10 @@ public class ArenaManager {
     }
 
     public void createArena(ArenaSetupTemplate temp){
-        arenas.set("Arenas." + temp.getName(), temp.getName());
-        arenas.set("Arenas." + temp.getName() + ".Minimum", temp.getMinimum());
-        arenas.set("Arenas." + temp.getName() + ".Maximum", temp.getMaximum());
-        Spleef.main.arenas.saveConfig();
+        arenas.getConfig().set("Arenas." + temp.getName(), temp.getName());
+        arenas.getConfig().set("Arenas." + temp.getName() + ".Minimum", temp.getMinimum());
+        arenas.getConfig().set("Arenas." + temp.getName() + ".Maximum", temp.getMaximum());
+        arenas.saveConfig();
         saveLocation("Arenas." + temp.getName() + ".Arena_Spawn.", temp.getArena());
         saveLocation("Arenas." + temp.getName() + ".Lobby_Spawn.", temp.getLobby());
         saveLocation("Arenas." + temp.getName() + ".Spectate_Spawn.", temp.getSpectate());
@@ -163,10 +161,10 @@ public class ArenaManager {
 
     public void loadArenas(){
         activeArenas.clear();
-        if (arenas.getConfigurationSection("Arenas") != null) {
-            for (String name : arenas.getConfigurationSection("Arenas").getKeys(false)) {
-                int minimum = arenas.getInt("Arenas." + name + ".Minimum");
-                int maximum = arenas.getInt("Arenas." + name + ".Maximum");
+        if (arenas.getConfig().getConfigurationSection("Arenas") != null) {
+            for (String name : arenas.getConfig().getConfigurationSection("Arenas").getKeys(false)) {
+                int minimum = arenas.getConfig().getInt("Arenas." + name + ".Minimum");
+                int maximum = arenas.getConfig().getInt("Arenas." + name + ".Maximum");
                 Location arena = loadLocation("Arenas." + name + ".Arena_Spawn.");
                 Location lobby = loadLocation("Arenas." + name + ".Lobby_Spawn.");
                 Location spectate = loadLocation("Arenas." + name + ".Spectate_Spawn.");
@@ -180,22 +178,22 @@ public class ArenaManager {
     }
 
     private void saveLocation(String path, Location location){
-        arenas.set(path + "world", location.getWorld().getName());
-        arenas.set(path + "x", location.getX());
-        arenas.set(path + "y", location.getY());
-        arenas.set(path + "z", location.getZ());
-        arenas.set(path + "pitch", location.getPitch());
-        arenas.set(path + "yaw", location.getYaw());
-        Spleef.main.arenas.saveConfig();
+        arenas.getConfig().set(path + "world", location.getWorld().getName());
+        arenas.getConfig().set(path + "x", location.getX());
+        arenas.getConfig().set(path + "y", location.getY());
+        arenas.getConfig().set(path + "z", location.getZ());
+        arenas.getConfig().set(path + "pitch", location.getPitch());
+        arenas.getConfig().set(path + "yaw", location.getYaw());
+        arenas.saveConfig();
     }
 
     private Location loadLocation(String path){
-        String worldName = arenas.getString(path + "world");
-        double x = arenas.getDouble(path + "x");
-        double y = arenas.getDouble(path + "y");
-        double z = arenas.getDouble(path + "z");
-        float pitch = (float) arenas.getDouble(path + "pitch");
-        float yaw = (float) arenas.getDouble(path + "yaw");
+        String worldName = arenas.getConfig().getString(path + "world");
+        double x = arenas.getConfig().getDouble(path + "x");
+        double y = arenas.getConfig().getDouble(path + "y");
+        double z = arenas.getConfig().getDouble(path + "z");
+        float pitch = (float) arenas.getConfig().getDouble(path + "pitch");
+        float yaw = (float) arenas.getConfig().getDouble(path + "yaw");
         World world = Bukkit.getWorld(worldName);
         return new Location(world, x, y, z, yaw, pitch);
     }

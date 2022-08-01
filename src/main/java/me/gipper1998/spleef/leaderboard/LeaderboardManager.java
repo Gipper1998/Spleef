@@ -1,11 +1,8 @@
 package me.gipper1998.spleef.leaderboard;
 
-import me.gipper1998.spleef.Spleef;
 import me.gipper1998.spleef.file.PlayerStatManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
 
@@ -15,33 +12,12 @@ public class LeaderboardManager {
 
     private HashMap<UUID, Integer> winsLeaderboard = new HashMap<>();
     private HashMap<UUID, Integer> lossesLeaderboard = new HashMap<>();
-    private FileConfiguration players;
-
-    public LeaderboardManager(){
-        this.players = Spleef.main.playerStats.getConfig();
-    }
 
     public static LeaderboardManager getInstance(){
         if (lm == null){
             lm = new LeaderboardManager();
         }
         return lm;
-    }
-
-    public List<String> getPlayerNames(){
-        List<String> temp = new ArrayList<>();
-        if (players.getConfigurationSection("Players") != null){
-            for (String key : players.getConfigurationSection("Players").getKeys(false)){
-                try {
-                    UUID uuid = UUID.fromString(key);
-                    temp.add(Bukkit.getOfflinePlayer(uuid).getName());
-                }
-                catch (Exception e){
-                    return null;
-                }
-            }
-        }
-        return temp;
     }
 
     public String winsPositionPoints(int position){
@@ -107,34 +83,12 @@ public class LeaderboardManager {
     }
 
     private void sortWins(){
-        HashMap<UUID, Integer> temp = new HashMap<>();
-        if (players.getConfigurationSection("Players") != null){
-            for (String key : players.getConfigurationSection("Players").getKeys(false)){
-                try {
-                    UUID uuid = UUID.fromString(key);
-                    temp.put(uuid, PlayerStatManager.getInstance().getWins(uuid));
-                }
-                catch (Exception e){
-                    return;
-                }
-            }
-        }
+        HashMap<UUID, Integer> temp = PlayerStatManager.getInstance().getData();
         winsLeaderboard = sort(temp);
     }
 
     private void sortLoses() {
-        HashMap<UUID, Integer> temp = new HashMap<>();
-        if (players.getConfigurationSection("Players") != null){
-            for (String key : players.getConfigurationSection("Players").getKeys(false)){
-                try {
-                    UUID uuid = UUID.fromString(key);
-                    temp.put(uuid, PlayerStatManager.getInstance().getLosses(uuid));
-                }
-                catch (Exception e){
-                    return;
-                }
-            }
-        }
+        HashMap<UUID, Integer> temp = PlayerStatManager.getInstance().getData();
         lossesLeaderboard = sort(temp);
     }
 
