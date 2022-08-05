@@ -22,6 +22,7 @@ public class Spleef extends JavaPlugin {
         ConfigManager.getInstance().reloadConfig();
         PlayerStatManager.getInstance().reloadStats();
         registerSoftDependencies();
+        getServer().getPluginManager().registerEvents(InSetupWizard.getInstance(), this);
         getCommand("spleef").setExecutor(new CommandManager());
         SignManager.getInstance().startUpdater();
         MessageManager.getInstance().sendConsoleMessage("start_up");
@@ -31,7 +32,7 @@ public class Spleef extends JavaPlugin {
     public void onDisable() {
         ArenaManager.getInstance().shutGamesDown();
         MessageManager.getInstance().sendConsoleMessage("shut_down");
-        InSetupWizard.getInstance().removeAllPlayers();
+        InSetupWizard.getInstance().removeEverybody();
     }
     private void registerSoftDependencies(){
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
