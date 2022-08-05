@@ -56,9 +56,8 @@ public class CommandManager implements TabExecutor {
                         return false;
                     }
                 }
-                if (InSetupWizard.getInstance().addPlayer(p)){
+                if (InSetupWizard.getInstance().addPlayer(p, name)){
                     MessageManager.getInstance().sendMessage("in_wizard", p);
-                    new SetupWizard(p, name);
                 }
                 else {
                     MessageManager.getInstance().sendMessage("wizard_already_in", p);
@@ -152,7 +151,7 @@ public class CommandManager implements TabExecutor {
                 }
                 MessageManager.getInstance().reloadMessages();
                 ArenaManager.getInstance().reloadArenas();
-                InSetupWizard.getInstance().removeAllPlayers();
+                InSetupWizard.getInstance().removeEverybody();
                 ConfigManager.getInstance().reloadConfig();
                 PlayerStatManager.getInstance().reloadStats();
                 SignManager.getInstance().reloadSigns();
