@@ -85,6 +85,13 @@ sign_leave:
   - ""
   - ""
 
+sign_cheat:
+  "<prefix>"
+  - "&b[&9Cheat&b]"
+  - ""
+  - ""
+
+
 sign_status:
   wait: "&a[Join]"
   in-game: "&e[In-Progress]"

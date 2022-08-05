@@ -76,7 +76,6 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private List<Integer> events = new ArrayList<>();
 
-
     private PotionBuilder invisiblePotion;
 
 
@@ -159,6 +158,13 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private void waitTask(){
         if (playersInGame.size() >= arena.getMinimum()){
+            if (currentTime % 10 == 0 || currentTime <= 5){
+                for (Player p : playersInGame) {
+                    p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+                    MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
+                }
+            }
+            currentTime--;
             if (currentTime <= 0){
                 for (Player p : playersInGame){
                     p.teleport(arena.getArena());
@@ -168,13 +174,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                 status = Status.DELAYSTART;
                 return;
             }
-            if (currentTime % 10 == 0 || currentTime <= 5){
-                for (Player p : playersInGame) {
-                    p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-                    MessageManager.getInstance().sendNumberMessage("starting_game", currentTime, p);
-                }
-            }
-            currentTime--;
         }
         else {
             if (currentTime != waitTime) {
@@ -187,6 +186,7 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     private void delayStart(){
+        currentTime--;
         if (currentTime <= 0){
             for (Player p : playersInGame){
                 giveItems(p);
@@ -199,12 +199,17 @@ public class GameManager extends BukkitRunnable implements Listener {
             status = Status.GAME;
             return;
         }
-        else {
-            currentTime--;
-        }
     }
 
     private void playGame(){
+        if (playersInGame.size() == 1) {
+            winner = playersInGame.get(0);
+            currentTime = winnerDelay;
+            status = Status.WINNER;
+            return;
+        }
+        checkTime();
+        currentTime--;
         if (currentTime <= 0){
             for (Player p : totalPlayers){
                 MessageManager.getInstance().sendMessage("arena_no_winner", p);
@@ -215,14 +220,6 @@ public class GameManager extends BukkitRunnable implements Listener {
             status = Status.WAIT;
             return;
         }
-        if (playersInGame.size() == 1) {
-            winner = playersInGame.get(0);
-            currentTime = winnerDelay;
-            status = Status.WINNER;
-            return;
-        }
-        checkTime();
-        currentTime--;
     }
 
     private void winnerShowOff(){
@@ -234,6 +231,7 @@ public class GameManager extends BukkitRunnable implements Listener {
         if (currentTime % 2 != 0){
             new FireworkBuilder(arena.getArena(), 1, "aqua", 2, 5);
         }
+        currentTime--;
         if (currentTime <= 0){
             PlayerStatManager.getInstance().addWinPoint(winner.getUniqueId());
             winnerRewards();
@@ -244,7 +242,6 @@ public class GameManager extends BukkitRunnable implements Listener {
             status = Status.WAIT;
             return;
         }
-        currentTime--;
     }
 
     private void resetArena(){

@@ -116,6 +116,9 @@ public class SignManager implements Listener {
         if (type.equalsIgnoreCase("leave")) {
             signListMessages = MessageManager.getInstance().getSignStringList("sign_leave");
         }
+        if (type.equalsIgnoreCase("cheat")){
+
+        }
         for (int i = 0; i < signListMessages.size(); i++) {
             for (int line = 0; line < signListMessages.size(); line++) {
                 String currentLine = signListMessages.get(line);
@@ -135,7 +138,7 @@ public class SignManager implements Listener {
         if (event.getPlayer().isOp() || event.getPlayer().hasPermission("spleef.admin")){
             if (event.getLine(0).equals("[Spleef]")){
                 if (event.getLine(1) != null && ArenaManager.getInstance().findArena(event.getLine(1)) != null) {
-                    if (event.getLine(3).equalsIgnoreCase("[leave]") || event.getLine(3).equalsIgnoreCase("[join]")) {
+                    if (event.getLine(3).equalsIgnoreCase("[leave]") || event.getLine(3).equalsIgnoreCase("[join]") || event.getLine(3).equalsIgnoreCase("[cheat]")) {
                         String type = event.getLine(3).toUpperCase();
                         type = type.replaceAll("[\\[\\](){}]","");
                         String key = event.getLine(1).toUpperCase();
