@@ -33,7 +33,9 @@ public class InSetupWizard implements Listener {
 
     public boolean addPlayer(Player p, String name){
         if (!playersInWizard.contains(p)){
-            inWizard.put(new SetupWizard(p, name), new ItemStoreManager(p));
+            ItemStoreManager ism = new ItemStoreManager(p);
+            SetupWizard sm = new SetupWizard(p, name);
+            inWizard.put(sm, ism);
             playersInWizard.add(p);
             return true;
         }

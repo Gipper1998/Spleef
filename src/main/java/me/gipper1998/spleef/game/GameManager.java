@@ -328,7 +328,6 @@ public class GameManager extends BukkitRunnable implements Listener {
                 MessageManager.getInstance().sendMessage("arena_full", p);
                 return;
             }
-            p.playSound(p.getLocation(),Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
             for (Player player : playersInGame) {
                 p.playSound(p.getLocation(),Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
                 MessageManager.getInstance().sendPlayerNameMessage("player_join", p, player);
@@ -344,6 +343,7 @@ public class GameManager extends BukkitRunnable implements Listener {
             totalPlayers.add(p);
             playersStuff.put(p, new ItemStoreManager(p));
             p.teleport(arena.getLobby());
+            p.playSound(p.getLocation(),Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
             p.setGameMode(GameMode.ADVENTURE);
             p.getInventory().setItem(8, new ItemBuilder(ConfigManager.getInstance().getBlock("in_lobby.leave"), EXIT_ITEM).getIs());
             p.updateInventory();

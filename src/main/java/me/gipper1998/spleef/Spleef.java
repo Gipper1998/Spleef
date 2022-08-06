@@ -31,6 +31,7 @@ public class Spleef extends JavaPlugin {
     @Override
     public void onDisable() {
         ArenaManager.getInstance().shutGamesDown();
+        SignManager.getInstance().updateSigns();
         MessageManager.getInstance().sendConsoleMessage("shut_down");
         InSetupWizard.getInstance().removeEverybody();
     }

@@ -56,39 +56,43 @@ public class SignManager implements Listener {
             taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Spleef.main, new Runnable() {
                 @Override
                 public void run() {
-                    if (signs.getConfig().contains("Signs")) {
-                        for (String arenaName : signs.getConfig().getConfigurationSection("Signs").getKeys(false)) {
-                            Arena arena = ArenaManager.getInstance().findArena(arenaName);
-                            GameManager gm = ArenaManager.getInstance().findGame(arenaName);
-                            if (arena != null) {
-                                List<String> signLists = new ArrayList<>();
-                                if (signs.getConfig().contains("Signs." + arenaName)) {
-                                    signLists = signs.getConfig().getStringList("Signs." + arenaName);
-                                }
-                                for (int i = 0; i < signLists.size(); i++) {
-                                    String[] location = signLists.get(i).split(";");
-                                    String type = location[0];
-                                    int x = Integer.valueOf(location[1]);
-                                    int y = Integer.valueOf(location[2]);
-                                    int z = Integer.valueOf(location[3]);
-                                    World world = Bukkit.getWorld(location[4]);
-                                    if (world != null) {
-                                        if (!world.isChunkLoaded(x >> 4, z >> 4)) {
-                                            continue;
-                                        }
-                                        Block block = world.getBlockAt(x, y, z);
-                                        if (block.getType().name().contains("SIGN")) {
-                                            Sign sign = (Sign) block.getState();
-                                            updateSignType(sign, type, gm);
-                                        }
-                                    }
-                                }
+                    updateSigns();
+                }
+            }, 0L, 20L);
+        }
+    }
 
+    public void updateSigns(){
+        if (signs.getConfig().contains("Signs")) {
+            for (String arenaName : signs.getConfig().getConfigurationSection("Signs").getKeys(false)) {
+                Arena arena = ArenaManager.getInstance().findArena(arenaName);
+                GameManager gm = ArenaManager.getInstance().findGame(arenaName);
+                if (arena != null) {
+                    List<String> signLists = new ArrayList<>();
+                    if (signs.getConfig().contains("Signs." + arenaName)) {
+                        signLists = signs.getConfig().getStringList("Signs." + arenaName);
+                    }
+                    for (int i = 0; i < signLists.size(); i++) {
+                        String[] location = signLists.get(i).split(";");
+                        String type = location[0];
+                        int x = Integer.valueOf(location[1]);
+                        int y = Integer.valueOf(location[2]);
+                        int z = Integer.valueOf(location[3]);
+                        World world = Bukkit.getWorld(location[4]);
+                        if (world != null) {
+                            if (!world.isChunkLoaded(x >> 4, z >> 4)) {
+                                continue;
+                            }
+                            Block block = world.getBlockAt(x, y, z);
+                            if (block.getType().name().contains("SIGN")) {
+                                Sign sign = (Sign) block.getState();
+                                updateSignType(sign, type, gm);
                             }
                         }
                     }
+
                 }
-            }, 0L, 20L);
+            }
         }
     }
 
