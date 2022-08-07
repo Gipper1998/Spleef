@@ -73,6 +73,7 @@ public class InSetupWizard implements Listener {
             event.setCancelled(true);
             for (Map.Entry<SetupWizard, ItemStoreManager> entry : inWizard.entrySet()) {
                 if (entry.getKey().getP().equals(event.getPlayer()) && bothClicks(event)) {
+                    event.setCancelled(true);
                     entry.getKey().onPlayerInteract(event.getItem());
                 }
             }
