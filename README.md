@@ -23,5 +23,5 @@ To use it, simply type in the following: '%spleef_(wins or losses)_top_(player o
 It should return the score at which position specified.
 ## Final Notes
 If anyone has any questions, issues, or problems regarding this plugin. Please let me know and I'll get back to you
-as soon as possible, for more information regarding commands, permissions, and placeholders, check out the spigot page here:
+as soon as possible, for more information regarding commands, permissions, and placeholders, check out the spigot page here (if I feel like making one):
 thank you and enjoy seeing those funny messages!!
