@@ -17,7 +17,7 @@ https://dev.bukkit.org/projects/vault
 #### PlaceholderAPI
 PlaceholderAPI can be used to project the top welcoming points a player has or their current score on a hologram plugin 
 (like HolographicDisplays, GHolos, DecentHolograms, etc..). You can find the latest version of PlaceholderAPI here: https://www.spigotmc.org/resources/placeholderapi.6245/
-To use it, simply type in the following: %spleef_(wins or losses)_top_(player or amount)_% 
+To use it, simply type in the following: '%spleef_(wins or losses)_top_(player or amount)_%'
 It should return the score at which position specified.
 ## Final Notes
 If anyone has any questions, issues, or problems regarding this plugin. Please let me know and I'll get back to you
