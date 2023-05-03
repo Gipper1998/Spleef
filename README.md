@@ -8,6 +8,10 @@ The API is built off of 1.18, but should be able to go up towards 1.13 and beyon
 1.8). However, it will get limited updates and not much support from me since the native version of this plugin is 1.13 and beyond.
 ### Instructions
 In order to access most of the commands, use /spleef help for information, but to create an arena, type /spleef create (arenaname) and follow the GUI process located in your hotbar. If you mess up something, you can cancel at anytime. Please note that the floor can only be a Snow_Block at this time, using anything else will not work.
+### Permissions
+Note: Only admins can create a spleef arena
+spleef.admin
+spleef.diamond
 ### Dependicies
 No Dependices are required for this plugin, just drag and drop into the plugins folder and restart your server.
 ### Soft Dependicies
