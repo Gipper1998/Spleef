@@ -7,7 +7,7 @@ There is a lot more it has to offer, but I refer you to look in the files for mo
 The API is built off of 1.18, but should be able to go up towards 1.13 and beyond. If theres enough requests, I can upload a 1.12 and below version (more than likely up to
 1.8). However, it will get limited updates and not much support from me since the native version of this plugin is 1.13 and beyond.
 ### Instructions
-In order to access most of the commands, use /spleef help for information, but to create an arena, type /spleef create (arenaname) and follow the GUI process located in your hotbar. If you mess up something, you can cancel at anytime.
+In order to access most of the commands, use /spleef help for information, but to create an arena, type /spleef create (arenaname) and follow the GUI process located in your hotbar. If you mess up something, you can cancel at anytime. Please note that the floor can only be a Snow_Block at this time, using anything else will not work.
 ### Dependicies
 No Dependices are required for this plugin, just drag and drop into the plugins and restart your server.
 ### Soft Dependicies
