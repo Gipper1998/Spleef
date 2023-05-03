@@ -9,7 +9,7 @@ The API is built off of 1.18, but should be able to go up towards 1.13 and beyon
 ### Instructions
 In order to access most of the commands, use /spleef help for information, but to create an arena, type /spleef create (arenaname) and follow the GUI process located in your hotbar. If you mess up something, you can cancel at anytime. Please note that the floor can only be a Snow_Block at this time, using anything else will not work.
 ### Dependicies
-No Dependices are required for this plugin, just drag and drop into the plugins and restart your server.
+No Dependices are required for this plugin, just drag and drop into the plugins folder and restart your server.
 ### Soft Dependicies
 #### Vault
 Vault can be used to give in-game currency and usually helps with most chat permission plugins. You can download the latest version of vault through here: 
